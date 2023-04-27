@@ -1,11 +1,18 @@
+<style scoped>
+
+</style>
+
 <template>
-  <v-app>
-    <v-main>
-      <HelloWorld />
-    </v-main>
-  </v-app>
+  <div>
+      <h2>Socks</h2>
+      <p>Stock: tenemos {{stock}}</p>
+
+
+
+  </div>
 </template>
 
 <script setup>
-  import HelloWorld from '@/components/HelloWorld.vue'
+  import {ref} from 'vue'
+  const stock = ref(5);
 </script>
