@@ -3,16 +3,13 @@
 </style>
 
 <template>
-  <div>
-      <h2>Socks</h2>
-      <p>Stock: tenemos {{stock}}</p>
 
-
-
-  </div>
+  <!--<p><RouterLink to="/">Home</RouterLink> | <RouterLink to="/about">About</RouterLink></p> -->
+    <TheNavigation/>
+  <RouterView/>
 </template>
 
 <script setup>
-  import {ref} from 'vue'
-  const stock = ref(5);
+  import {RouterView,RouterLink} from "vue-router";
+  import TheNavigation from "@/components/TheNavigation.vue"
 </script>
