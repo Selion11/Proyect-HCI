@@ -5,21 +5,29 @@
       <li class="links">
         <RouterLink to="/">Home</RouterLink>
       </li>
-      <li v-for="destination in destinations" :key="destination.id" class="links">
-        <RouterLink :to="{
-          name: 'destination',
-          params: {slug: destination.slug}
-        }">{{destination.name}}</RouterLink>
+      <li v-for="destination in destinations"
+          :key="destination.name"
+          class="links"
+      >
+        <RouterLink
+          :to="{
+                              name: 'destinationdetails',
+                              params: { slug: destination.slug },
+                            }"
+        >
+          {{ destination.name }}
+        </RouterLink>
+      </li>
+      <li class="links">
+        <RouterLink to="/user">Dashboard</RouterLink>
       </li>
     </ul>
   </div>
 </template>
 
 <script setup>
-
-import {RouterLink} from "vue-router";
-import store from '@/stores/destinations';
-import {ref} from "vue";
+import { ref } from 'vue'
+import store from '@/store/destinations'
 
 const destinations = ref(store.destinations)
 </script>
@@ -29,22 +37,32 @@ const destinations = ref(store.destinations)
   display: flex;
 }
 
-#nav a{
-  color: blueviolet;
+#nav a {
+  color: #2c3e50;
+  text-decoration: none;
+  font-weight: bold;
 }
-.nav-links{
+
+#nav a.router-link-exact-active {
+  color: #ab26ab;
+}
+
+.nav-links {
   display: flex;
 }
-.links{
+
+.links {
   padding-right: 20px;
   list-style: none;
 }
-.links:hover{
+
+.links:hover {
   text-decoration: underline;
 }
-.logo{
+
+.logo {
   font-size: 20px;
-  color: darkgreen;
+  color: purple;
   font-weight: bold;
 }
 </style>
