@@ -6,13 +6,15 @@
       center-active
       v-model="selectedTab"
     >
-      <RouterLink to="/">
+      <RouterLink to="/" class="links">
         <v-tab :key="1">Página Principal</v-tab>
       </RouterLink>
-      <RouterLink to="/devices">
+
+      <RouterLink to="/devices" class="links">
         <v-tab :key="2">Dispositivos</v-tab>
       </RouterLink>
-      <RouterLink to="/routines">
+
+      <RouterLink to="/routines" class="links">
         <v-tab :key="3">Rutinas</v-tab>
       </RouterLink>
     </v-tabs>
@@ -44,6 +46,10 @@
 
   watchEffect(() => { localStorage.setItem(selectedTabKey, selectedTab.value.toString()) })
 </script>
-<style>
 
+<style scoped>
+  .links {
+    text-decoration: none;
+    color: inherit;
+  }
 </style>
