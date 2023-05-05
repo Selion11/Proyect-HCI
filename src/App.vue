@@ -1,23 +1,24 @@
 <template>
   <v-card>
     <v-tabs
-      class="my-tabs"
       color="deep-purple-accent-4"
       align-tabs="center"
+      center-active
+      v-model="selectedTab"
     >
       <RouterLink to="/">
-        <v-tab :value="1">Página Principal</v-tab>
+        <v-tab :key="1">Página Principal</v-tab>
       </RouterLink>
       <RouterLink to="/devices">
-        <v-tab :value="2">Dispositivos</v-tab>
+        <v-tab :key="2">Dispositivos</v-tab>
       </RouterLink>
       <RouterLink to="/routines">
-        <v-tab :value="3">Rutinas</v-tab>
+        <v-tab :key="3">Rutinas</v-tab>
       </RouterLink>
     </v-tabs>
 
     <RouterView v-slot="{ Component }">
-      <v-window class="my-window">
+      <v-window>
         <v-window-item
           v-for="n in 3"
           :key="n"
@@ -33,9 +34,16 @@
 </template>
 
 <script setup>
-  import { RouterView, RouterLink } from 'vue-router'
-</script>
+  import {RouterView, RouterLink, useRouter, useRoute} from 'vue-router'
+  import { computed, ref, watchEffect } from 'vue'
 
+  const selectedTabKey = "selectedTab"
+
+  const selectedTab = ref(parseInt(localStorage.getItem(selectedTabKey)) || 0 )
+  const tabs = ref(["Tab 1", "Tab 2", "Tab 3"])
+
+  watchEffect(() => { localStorage.setItem(selectedTabKey, selectedTab.value.toString()) })
+</script>
 <style>
 
 </style>
