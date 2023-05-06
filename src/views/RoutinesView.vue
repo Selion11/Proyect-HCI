@@ -1,8 +1,10 @@
 <template>
-  <v-container>
-    <h1>Rutinas</h1>
-    <RoutinesContainer/>
-  </v-container>
+  <div>
+    <v-container>
+      <h1>Rutinas</h1>
+      <RoutinesContainer/>
+    </v-container>
+  </div>
 </template>
 
 <script>
@@ -12,7 +14,3 @@ export default {
   components: {RoutinesContainer}
 }
 </script>
-
-<style scoped>
-
-</style>

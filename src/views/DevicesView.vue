@@ -1,16 +1,18 @@
 <template>
-  <v-container>
-    <h1>Generic Device 1</h1>
-    <DevicesContainer/>
-  </v-container>
-  <v-container>
-    <h1>Generic Device 2</h1>
-    <DevicesContainer/>
-  </v-container>
-  <v-container>
-    <h1>Generic Device 3</h1>
-    <DevicesContainer/>
-  </v-container>
+  <div>
+    <v-container>
+      <h1>Generic Device 1</h1>
+      <DevicesContainer/>
+    </v-container>
+    <v-container>
+      <h1>Generic Device 2</h1>
+      <DevicesContainer/>
+    </v-container>
+    <v-container>
+      <h1>Generic Device 3</h1>
+      <DevicesContainer/>
+    </v-container>
+  </div>
 </template>
 
 <script>
@@ -21,7 +23,3 @@ export default {
   components: {RoutinesContainer, DevicesContainer}
 }
 </script>
-
-<style scoped>
-
-</style>

@@ -1,34 +1,40 @@
 <template>
   <v-card>
-    <v-tabs
-      color="deep-purple-accent-4"
-      align-tabs="center"
-      center-active
-      v-model="selectedTab"
-    >
-      <RouterLink to="/" class="links">
-        <v-tab :key="1">Página Principal</v-tab>
-      </RouterLink>
-
-      <RouterLink to="/devices" class="links">
-        <v-tab :key="2">Dispositivos</v-tab>
-      </RouterLink>
-
-      <RouterLink to="/routines" class="links">
-        <v-tab :key="3">Rutinas</v-tab>
-      </RouterLink>
-    </v-tabs>
-
+    <v-toolbar color="light-blue-darken-1">
+      <v-tabs
+        color="orange-lighten-2"
+        align-tabs="center"
+        center-active
+        v-model="selectedTab"
+        class="mx-auto"
+      >
+        <RouterLink to="/" class="links">
+          <v-tab :key="1" :value="1">
+            Página Principal
+          </v-tab>
+        </RouterLink>
+        <RouterLink to="/devices" class="links">
+          <v-tab :key="2" :value="2">
+            Dispositivos
+          </v-tab>
+        </RouterLink>
+        <RouterLink to="/routines" class="links">
+          <v-tab :key="3" :value="3">
+            Rutinas
+          </v-tab>
+        </RouterLink>
+      </v-tabs>
+    </v-toolbar>
     <RouterView v-slot="{ Component }">
-      <v-window>
+      <v-window >
         <v-window-item
           v-for="n in 3"
           :key="n"
           :value="n"
         >
-            <transition>
-              <component :is="Component" />
-            </transition>
+          <v-fade-transition>
+            <component :is="Component"/>
+          </v-fade-transition>
         </v-window-item>
       </v-window>
     </RouterView>
@@ -36,15 +42,14 @@
 </template>
 
 <script setup>
-  import {RouterView, RouterLink, useRouter, useRoute} from 'vue-router'
-  import { computed, ref, watchEffect } from 'vue'
+  import { RouterView, RouterLink } from 'vue-router'
+  import { ref, watchEffect } from 'vue'
 
-  const selectedTabKey = "selectedTab"
+  const selectedTabKey = ref("selectedTab")
 
-  const selectedTab = ref(parseInt(localStorage.getItem(selectedTabKey)) || 0 )
-  const tabs = ref(["Tab 1", "Tab 2", "Tab 3"])
+  const selectedTab = ref(parseInt(localStorage.getItem(selectedTabKey.toString())) || 0 )
 
-  watchEffect(() => { localStorage.setItem(selectedTabKey, selectedTab.value.toString()) })
+  watchEffect(() => { localStorage.setItem(selectedTabKey.toString(), selectedTab.value.toString()) })
 </script>
 
 <style scoped>
