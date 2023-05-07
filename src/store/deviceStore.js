@@ -13,6 +13,7 @@ import { RefrigeratorState } from "@/api/refrigerator"
 export const useDeviceStore = defineStore('devices', () =>{
   // State - ref
   const devices = ref([])
+  const events = ref([])
 
   async function getAll(controller = null) {
     let result = await DevicesApi.getAll(controller);
@@ -81,6 +82,7 @@ export const useDeviceStore = defineStore('devices', () =>{
   async function getAllEvents(){
     let result = await DevicesApi.getAllEvents()
     result = result.map((event) => Object.assign(new Event(), event))
+    events.value = result
     return result
   }
 
@@ -102,7 +104,7 @@ export const useDeviceStore = defineStore('devices', () =>{
       case "ac": return Object.assign(new ACState(), result)
       case "lamp": return Object.assign(new LampState(), result)
       case "faucet": return Object.assign(new FaucetState(), result)
-      case "refrigerator": return Object.assing(new RefrigeratorState(), result)
+      case "refrigerator": return Object.assign(new RefrigeratorState(), result)
     }
   }
 
@@ -116,5 +118,5 @@ export const useDeviceStore = defineStore('devices', () =>{
     return result
   }
 
-  return {getAll, get, add, execute, modify, remove}
+  return {getAll, getAllByType, get, add, execute, modify, getLog, getLogs, getAllEvents, getEvent, getState, remove}
 })
