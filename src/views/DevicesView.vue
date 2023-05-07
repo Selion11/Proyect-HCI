@@ -15,11 +15,6 @@
   </div>
 </template>
 
-<script>
-import DevicesContainer from "@/components/DevicesContainer.vue";
-import RoutinesContainer from "@/components/RoutinesContainer.vue";
-export default {
-  name: "DevicesView",
-  components: {RoutinesContainer, DevicesContainer}
-}
+<script setup>
+import DevicesContainer from "@/components/DevicesContainer.vue"
 </script>

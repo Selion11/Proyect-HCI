@@ -1,6 +1,6 @@
 <script setup>
-export default{
-  data: () => ({
+import { ref } from 'vue'
+const data = ref({
     name: "Speaker 1",
     expand: false,
     actions: [
@@ -10,9 +10,7 @@ export default{
       {
         name: "Turn Off"
       }
-    ]
-  }),
-}
+]})
 
 </script>
 

@@ -33,25 +33,21 @@
     </v-card-actions>
   </v-card>
 </template>
-<script>
-export default{
-  data: () => ({
-    name: "AIRE ACONDICIONADO",
-    area: "Kitchen",
-    stat: "OFF",
-    expand: false,
-    actions: [{
-      name: "ON"
-    },
-      {
-        name: "OFF"
-      }
-    ]
-  }),
-}
+<script setup>
+import { ref } from 'vue'
+const name = ref("AIRE ACONDICIONADO")
+const area = ref("Kitchen")
+const stat = ref("OFF")
+const expand = ref(false)
+const actions = ref([{
+    name: "ON"
+  },
+    {
+      name: "OFF"
+    }
+  ]
+)
 </script>
-
-
 
 <style scoped>
 #acts{

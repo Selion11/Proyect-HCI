@@ -24,28 +24,22 @@
     </v-card-actions>
   </v-card>
 </template>
-<script>
-export default{
-  data: () => ({
-    name: "Roger Waters",
-    expand: false,
-    actions: [{
-      name: "TEMP UP"
-    },
-      {
-        name: "TEMP DOWN"
-      }
-    ]
-  }),
-}
+<script setup>
+import { ref } from 'vue'
+const name = ref("Roger Waters")
+const expand = ref(false)
+const actions = ref([{
+    name: "TEMP UP"
+  },
+    {
+      name: "TEMP DOWN"
+    }
+])
 </script>
-
-
 
 <style scoped>
 #acts{
   margin-right: 7px;
   margin-left: 7px;
 }
-
 </style>

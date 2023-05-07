@@ -34,22 +34,19 @@
     </v-card-actions>
   </v-card>
 </template>
-<script>
-export default{
-  data: () => ({
-    name: "Lamp",
-    area: "Kitchen",
-    stat: "OFF",
-    expand: false,
-    actions: [{
-      name: "ON"
-    },
-      {
-      name: "OFF"
-    }
-    ]
-  }),
-}
+<script setup>
+import { ref } from 'vue'
+const name = ref("Lamp")
+const area = ref("Kitchen")
+const stat = ref("OFF")
+const expand =  ref(false)
+const actions = ref([{
+    name: "ON"
+  },
+    {
+    name: "OFF"
+  }
+])
 </script>
 
 

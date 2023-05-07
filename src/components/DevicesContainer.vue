@@ -12,6 +12,7 @@
 </template>
 
 <script setup>
+  import { ref } from 'vue'
   import ACCard from './devices/ACCard.vue'
   import FridgeCard from "./devices/FridgeCard.vue"
   import GrifoCard from "./devices/GrifoCard.vue"

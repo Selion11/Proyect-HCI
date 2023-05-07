@@ -7,10 +7,6 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import RoutinesContainer from "@/components/RoutinesContainer.vue";
-export default {
-  name: "RoutinesView",
-  components: {RoutinesContainer}
-}
 </script>

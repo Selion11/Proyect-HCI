@@ -33,21 +33,19 @@
     </v-card-actions>
   </v-card>
 </template>
-<script>
-export default{
-  data: () => ({
-    name: "Fridgy Refrigerator",
-    temp: "08 C",
-    expand: false,
-    actions: [{
-      name: "TEMP UP"
-    },
-      {
-        name: "TEMP DOWN"
-      }
-    ]
-  }),
-}
+<script setup>
+import { ref } from 'vue'
+const name = ref("Fridgy Refrigerator")
+const temp = ref("08 C")
+const expand = ref(false)
+const actions = ref([{
+    name: "TEMP UP"
+  },
+    {
+      name: "TEMP DOWN"
+    }
+])
+
 </script>
 
 
