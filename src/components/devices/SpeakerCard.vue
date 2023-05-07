@@ -1,24 +1,76 @@
 <script setup>
 import { ref } from 'vue'
-const data = ref({
-    name: "Speaker 1",
-    expand: false,
-    actions: [
+
+const props = defineProps(['name','stat'])
+
+const actions = ref([
+  {
+    name: "Set Volume",
+    params: [
       {
-        name: "Turn On"
-      },
-      {
-        name: "Turn Off"
+        name: "volume",
+        type: "number",
+        description: "volume level",
+        minValue: 0,
+        maxValue: 10
       }
-]})
+    ]
+  },
+  {
+    name: "Play",
+    params: []
+  },
+  {
+    name: "Stop",
+    params: []
+  },
+  {
+    name: "Pause",
+    params: []
+  },
+  {
+    name: "Resume",
+    params: []
+  },
+  {
+    name: "Next Song",
+    params: []
+  },
+  {
+    name: "Previous Song",
+    params: []
+  },
+  {
+    name: "Set Genre",
+    params: [
+      {
+        name: "genre",
+        type: "string",
+        description: "music genre",
+        supportedValues: [
+          "classical",
+          "country",
+          "dance",
+          "latina",
+          "pop",
+          "rock"
+        ]
+      }
+    ]
+  },
+  {
+    name: 'Get Playlist',
+    params: []
+  }
+])
 
 </script>
 
 <template>
 <v-container>
   <v-card class="mx-auto" max-width="368">
-    <v-card-item title="Speaker"/>
     <v-card-text>
+      {{name}}
       <v-icon icon="mdi-speaker" size="75" color="error" class="me-1 pb-1"></v-icon>
     </v-card-text>
 
@@ -26,7 +78,7 @@ const data = ref({
 
     <div class="subtitle">
       <v-list-item density="compact" prepend-icon="mdi-battery" >
-        <v-list-item-subtitle>50%</v-list-item-subtitle>
+        <v-list-item-subtitle>{{battery}}</v-list-item-subtitle>
       </v-list-item>
     </div>
 

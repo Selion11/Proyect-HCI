@@ -26,15 +26,44 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-const name = ref("Roger Waters")
-const expand = ref(false)
-const actions = ref([{
-    name: "TEMP UP"
-  },
+
+const actions = ref([
     {
-      name: "TEMP DOWN"
+      name: "Open",
+      params: []
+    },
+    {
+      name: "Close",
+      params: []
+    },
+    {
+      name: "Dispense",
+      params: [
+        {
+          name: "quantity",
+          type: "number",
+          description: "quantity",
+          minValue: 1,
+          maxValue: 100
+        },
+        {
+          name: "unit",
+          type: "string",
+          description: "unit",
+          supportedValues: [
+            "ml",
+            "cl",
+            "dl",
+            "l",
+            "dal",
+            "hl",
+            "kl"
+          ]
+        }
+      ],
     }
 ])
+const props = defineProps(['name','stat'])
 </script>
 
 <style scoped>

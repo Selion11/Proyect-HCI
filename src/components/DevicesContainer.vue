@@ -1,23 +1,51 @@
 <template>
-  <v-container>
-    <v-row justify="center" align="center">
-      <v-col v-for="(item, index) in items" :key="index" cols="auto">
-        <v-card>
-          <v-card-title>{{ item.title }}</v-card-title>
-          <v-card-text>{{ item.text }}</v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+  <v-container v-for="device in idS">
+    <h1>{{device.name}}</h1>
+
+    <div v-for="item in devStore.getAllByType(device.id)">
+      <ACCard v-if="device.id === 'li6cbv5sdlatti0j'" :name="item.name" :stat="item.state"/>
+      <GrifoCard v-else-if="device.id === 'dbrlsh7o5sn8ur4i'" :name="item.name" :stat="item.state"/>
+      <LampCard v-else-if="device.id === 'go46xmbqeomjrsjr'" :name="item.name" :stat="item.state"/>
+      <FridgeCard v-else-if="device.id === 'rnizejqr2di0okho'" :name="item.name" :stat="item.state"/>
+      <GrifoCard v-else-if="device.id === 'dbrlsh7o5sn8ur4i'" :name="item.name" :stat="item.state"/>
+      <SpeakerCard v-else :name="item.name" :stat="item.state"/>
+    </div>
   </v-container>
 </template>
 
 <script setup>
   import { ref } from 'vue'
+  import {useDeviceStore} from "@/store/deviceStore";
   import ACCard from './devices/ACCard.vue'
   import FridgeCard from "./devices/FridgeCard.vue"
   import GrifoCard from "./devices/GrifoCard.vue"
   import LampCard from "./devices/LampCard.vue"
   import SpeakerCard from "./devices/SpeakerCard.vue"
+  const devStore = useDeviceStore()
+  const idS = ref([
+    {
+      name: "Speaker",
+      id: "c89b94e8581855bc"
+    },
+    {
+      name: "Faucet",
+      id: "dbrlsh7o5sn8ur4i"
+    },
+    {
+      name: "Lamp",
+      id: "go46xmbqeomjrsjr"
+    },
+    {
+      name: "Ac",
+      id: "li6cbv5sdlatti0j"
+    },
+    {
+      name: "Fridge",
+      id: "rnizejqr2di0okho"
+    }
+
+
+  ])
   const items = ref([
     {
       title: 'Dispositivos 1',

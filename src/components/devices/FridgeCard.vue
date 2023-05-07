@@ -38,12 +38,46 @@ import { ref } from 'vue'
 const name = ref("Fridgy Refrigerator")
 const temp = ref("08 C")
 const expand = ref(false)
-const actions = ref([{
-    name: "TEMP UP"
+const actions = ref([
+  {
+    name: "Set Freezer Temperature",
+    params: [
+      {
+        name: "temperature",
+        type: "number",
+        description: "temperature in centigrades",
+        minValue: -20,
+        maxValue: -8,
+      }
+    ]
   },
-    {
-      name: "TEMP DOWN"
-    }
+  {
+    name: "Set Temperature",
+    "params": [
+      {
+        name: "temperature",
+        type: "number",
+        description: "temperature in centigrades",
+        minValue: 2,
+        maxValue: 8
+      }
+    ]
+  },
+  {
+    name: "Set Mode",
+    params: [
+      {
+        name: "mode",
+        type: "string",
+        description: "mode",
+        supportedValues: [
+          "default",
+          "vacation",
+          "party"
+        ]
+      }
+    ]
+  }
 ])
 
 </script>
