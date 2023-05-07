@@ -11,52 +11,50 @@
   </v-container>
 </template>
 
-<script>
-export default {
-  name: "DevicesContainer",
-  data() {
-    return {
-      items: [
-        {
-          title: 'Dispositivos 1',
-          text: 'Texto del elemento 1'
-        },
-        {
-          title: 'Dispositivos 2',
-          text: 'Texto del elemento 2'
-        },
-        {
-          title: 'Dispositivos 3',
-          text: 'Texto del elemento 3'
-        },
-        {
-          title: 'Dispositivos 4',
-          text: 'Texto del elemento 4'
-        },
-        {
-          title: 'Dispositivos 5',
-          text: 'Texto del elemento 5'
-        },
-        {
-          title: 'Dispositivos 6',
-          text: 'Texto del elemento 6'
-        },
-        {
-          title: 'Dispositivos 7',
-          text: 'Texto del elemento 7'
-        },
-        {
-          title: 'Dispositivos 8',
-          text: 'Texto del elemento 8'
-        },
-        {
-          title: 'Dispositivos 9',
-          text: 'Texto del elemento 9'
-        }
-      ]
+<script setup>
+  import ACCard from './devices/ACCard.vue'
+  import FridgeCard from "./devices/FridgeCard.vue"
+  import GrifoCard from "./devices/GrifoCard.vue"
+  import LampCard from "./devices/LampCard.vue"
+  import SpeakerCard from "./devices/SpeakerCard.vue"
+  const items = ref([
+    {
+      title: 'Dispositivos 1',
+      text: 'Texto del elemento 1'
+    },
+    {
+      title: 'Dispositivos 2',
+      text: 'Texto del elemento 2'
+    },
+    {
+      title: 'Dispositivos 3',
+      text: 'Texto del elemento 3'
+    },
+    {
+      title: 'Dispositivos 4',
+      text: 'Texto del elemento 4'
+    },
+    {
+      title: 'Dispositivos 5',
+      text: 'Texto del elemento 5'
+    },
+    {
+      title: 'Dispositivos 6',
+      text: 'Texto del elemento 6'
+    },
+    {
+      title: 'Dispositivos 7',
+      text: 'Texto del elemento 7'
+    },
+    {
+      title: 'Dispositivos 8',
+      text: 'Texto del elemento 8'
+    },
+    {
+      title: 'Dispositivos 9',
+      text: 'Texto del elemento 9'
     }
-  }
-}
+  ])
 </script>
 
 <style scoped>

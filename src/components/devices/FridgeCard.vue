@@ -36,7 +36,7 @@
 <script>
 export default{
   data: () => ({
-    name: "Fridgy Fridge",
+    name: "Fridgy Refrigerator",
     temp: "08 C",
     expand: false,
     actions: [{
