@@ -47,7 +47,8 @@ class DevicesApi {
   }
 
   // Creates a new device
-  static async add(device){
+  static async add(device) {
+    console.log("Second hurdle passed")
     return await Api.post(DevicesApi.getURL(), device)
   }
 

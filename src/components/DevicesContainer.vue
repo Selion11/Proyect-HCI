@@ -1,16 +1,16 @@
 <template>
   <v-container v-for="device in idS">
-    <h1>{{device.name}}</h1>
-
-    <div v-for="item in devStore.getAllByType(device.id)">
-      <ACCard v-if="device.id === 'li6cbv5sdlatti0j'" :name="item.name" :stat="item.state"/>
-      <GrifoCard v-else-if="device.id === 'dbrlsh7o5sn8ur4i'" :name="item.name" :stat="item.state"/>
-      <LampCard v-else-if="device.id === 'go46xmbqeomjrsjr'" :name="item.name" :stat="item.state"/>
-      <FridgeCard v-else-if="device.id === 'rnizejqr2di0okho'" :name="item.name" :stat="item.state"/>
-      <GrifoCard v-else-if="device.id === 'dbrlsh7o5sn8ur4i'" :name="item.name" :stat="item.state"/>
-      <SpeakerCard v-else :name="item.name" :stat="item.state"/>
+    <h2>{{device.name}}</h2>
+    <v-container>
+      <v-btn prepend-icon="mdi-plus" dark color="primary" @click="elemCreate(device.id,device.name,nums)">
+        Add</v-btn>
+    </v-container>
+    <div v-for="item in devStore.getAll()">
+      <SpeakerCard :name="item.name" :stat="item.state"/>
     </div>
   </v-container>
+
+
 </template>
 
 <script setup>
@@ -22,6 +22,18 @@
   import LampCard from "./devices/LampCard.vue"
   import SpeakerCard from "./devices/SpeakerCard.vue"
   const devStore = useDeviceStore()
+
+  const nums = ref(0)
+  function elemCreate (tid,tname,num){
+    devStore.add({
+      type : {
+        id: tid
+      },
+      name: 'New ' + tname + 'sacatrulidudbwue',
+      meta: {}
+    })
+    num += 1
+  }
   const idS = ref([
     {
       name: "Speaker",

@@ -1,20 +1,18 @@
 <template>
   <div>
-    <v-container>
-      <h1>Generic Device 1</h1>
+    <v-container id="dispositivos">
+      <h1 align="center">Dispositivos</h1>
       <DevicesContainer/>
     </v-container>
-    <v-container>
-      <h1>Generic Device 2</h1>
-      <DevicesContainer/>
-    </v-container>
-    <v-container>
-      <h1>Generic Device 3</h1>
-      <DevicesContainer/>
-    </v-container>
+    <v-divider/>
+
   </div>
 </template>
 
 <script setup>
 import DevicesContainer from "@/components/DevicesContainer.vue"
 </script>
+
+
+<style scoped>
+</style>
