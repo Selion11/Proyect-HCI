@@ -1,13 +1,12 @@
 <template>
   <v-container v-for="device in idS">
-    <h2>{{device.name}}</h2>
-    <v-container>
-      <SpeakerCard :name="'HI'" :stat="'Hello'"/>
-      <v-btn prepend-icon="mdi-plus" dark color="primary" @click="elemCreate(device.id,device.name,nums)">
-        Add</v-btn>
-    </v-container>
+    <h2>{{ device.name }}</h2>
     <v-container v-for="item in getAllByType('c89b94e8581855bc')">
-      <SpeakerCard :name="'HI'" :stat="'Hello'"/>
+      <SpeakerCard :id="item.id"/>
+    </v-container>
+    <v-container>
+      <v-btn prepend-icon="mdi-plus" dark color="primary" @click="elemCreate(device.id,device.name)">
+        Add</v-btn>
     </v-container>
   </v-container>
 
@@ -16,42 +15,38 @@
 
 <script setup>
   import { ref } from 'vue'
-  import {useDeviceStore} from "@/store/deviceStore";
-  import ACCard from './devices/ACCard.vue'
-  import FridgeCard from "./devices/FridgeCard.vue"
-  import GrifoCard from "./devices/GrifoCard.vue"
-  import LampCard from "./devices/LampCard.vue"
+  import { useDeviceStore } from "@/store/deviceStore";
   import SpeakerCard from "./devices/SpeakerCard.vue"
+
   const devStore = useDeviceStore()
 
   const nums = ref(0)
+  const result = ref(null)
 
   async function getAllByType(deviceId){
     try{
-      const result = await devStore.getAllByType(deviceId)
-      console.log(result)
-      return result
+      return await devStore.getAllByType(deviceId)
     } catch(error){
-      console.log(error)
+      console.error(error)
     }
   }
 
   // EVERY function that uses the store MUST be async, and the method of the
   //store must use the 'await' directive, and use a try-catch block to catch any error
   //the api throws
-  async function elemCreate (tid,tname,num){
+  async function elemCreate (typeId,typeName){
     try {
       const device = await devStore.add({
         type: {
-          id: tid
+          id: typeId
         },
-        name: 'New ' + tname + 'sae',
+        name: 'New ' + typeName + 'sae',
         meta: {}
       })
-      console.log(device)
       nums.value += 1
+      return device
     } catch(error){
-      console.log(error)
+      console.error(error)
     }
   }
   const idS = ref([

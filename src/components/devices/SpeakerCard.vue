@@ -1,7 +1,31 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, defineProps, ref } from 'vue'
+import { useDeviceStore } from "@/store/deviceStore"
 
-const props = defineProps(['name','stat'])
+const props = defineProps(['id'])
+
+const devStore = useDeviceStore()
+async function get(deviceId){
+  try{
+    const device = await devStore.get(deviceId)
+    console.log(device)
+    return device
+  } catch(error){
+    throw error
+  }
+}
+
+const speaker = computed(async () => {
+  try{
+    const result = await get(props.id)
+    console.log(result)
+    return result
+  } catch(error){
+    return error
+  }
+}).value
+
+const expand = ref(false)
 
 const actions = ref([
   {
@@ -63,14 +87,13 @@ const actions = ref([
     params: []
   }
 ])
-
 </script>
 
 <template>
 <v-container>
   <v-card class="mx-auto" max-width="368">
-    <v-card-title align="center">
-      {{name}}
+    <v-card-title>
+      {{ speaker }}
     </v-card-title>
     <v-card-text>
       <v-icon icon="mdi-speaker" size="75" color="error" class="me-1 pb-1"></v-icon>
@@ -105,9 +128,12 @@ const actions = ref([
 </template>
 
 <style scoped>
-#actions{
+#actions {
   margin-right: 7px;
   margin-left: 7px;
+}
+v-card-title {
+  text-align: center;
 }
 
 </style>
