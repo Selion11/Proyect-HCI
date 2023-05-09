@@ -35,6 +35,8 @@
 </template>
 <script setup>
 import { ref } from 'vue'
+const props = defineProps(["id"])
+
 const name = ref("Fridgy Refrigerator")
 const temp = ref("08 C")
 const expand = ref(false)

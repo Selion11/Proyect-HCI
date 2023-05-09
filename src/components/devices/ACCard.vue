@@ -37,7 +37,7 @@
 <script setup>
 import { ref } from 'vue'
 
-const props = defineProps(['name','stat'])
+const props = defineProps(["id"])
 const expand = ref(false)
 
 const actions = ref( [

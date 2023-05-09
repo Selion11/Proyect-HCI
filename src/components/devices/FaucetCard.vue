@@ -1,7 +1,7 @@
 <template>
 
-  <v-card class="mx-auto" max-width="368">
-    <v-card-item>{{name}}</v-card-item>
+  <v-card class="mx-auto" max-width="368" v-if="!isLoading">
+    <v-card-item>{{device.name}}</v-card-item>
     <v-card-text>
       <v-icon icon="mdi-water" size="55" color="error" class="me-1 pb-1"></v-icon>
     </v-card-text>
@@ -9,7 +9,7 @@
     <v-expand-transition>
       <div v-if="expand">
         <div class="py-2">
-          <v-btn v-for="action in actions" id="acts" :@click="stat = action.name">{{ action.name }}</v-btn>
+          <v-btn v-for="action in actions" id="acts" :@click="execute(action)">{{ action.name }}</v-btn>
         </div>
 
       </div>
@@ -18,14 +18,31 @@
     <v-divider></v-divider>
 
     <v-card-actions>
-      <v-btn @click="expand = !expand">
+      <v-btn @click="expand.value = !expand">
         {{ !expand ? 'All Actions' : 'Hide Actions' }}
       </v-btn>
     </v-card-actions>
   </v-card>
 </template>
+
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useDeviceStore } from "@/store/deviceStore"
+
+const props = defineProps(["id"])
+const deviceStore = useDeviceStore()
+const isLoading = ref(true)
+const expand = ref(false)
+
+const device = ref({})
+
+async function execute(action){
+  try{
+    device.value = await deviceStore.execute(props.id, action.name, action.params)
+  } catch(error){
+    console.log(error)
+  }
+}
 
 const actions = ref([
     {
@@ -63,7 +80,11 @@ const actions = ref([
       ],
     }
 ])
-const props = defineProps(['name','stat'])
+
+onMounted( () => {
+  device.value = deviceStore.devices.find((device) => device.id === props.id)
+  isLoading.value = false
+})
 </script>
 
 <style scoped>

@@ -14,7 +14,6 @@ export const useDeviceStore = defineStore('devices', () =>{
   // State - ref
   const devices = ref([])
   const events = ref([])
-
   async function getAll(controller = null) {
     let result = await DevicesApi.getAll(controller);
     result = result.map((device) => Object.assign(new Device(), device))
