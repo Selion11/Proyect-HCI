@@ -13,7 +13,7 @@ class DevicesApi {
 
   // Retrieve devices from specific device type
   static async getAllByType(deviceTypeId){
-    return await Api.get(DevicesApi.getURL(`deviceType/${deviceTypeId}`))
+    return await Api.get(DevicesApi.getURL(`devicetypes/${deviceTypeId}`))
   }
 
   // Retrieve a specific device

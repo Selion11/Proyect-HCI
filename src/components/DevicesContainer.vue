@@ -6,7 +6,7 @@
       <v-btn prepend-icon="mdi-plus" dark color="primary" @click="elemCreate(device.id,device.name,nums)">
         Add</v-btn>
     </v-container>
-    <v-container v-for="item in devStore.getAllByType('c89b94e8581855bc')">
+    <v-container v-for="item in getAllByType('c89b94e8581855bc')">
       <SpeakerCard :name="'HI'" :stat="'Hello'"/>
     </v-container>
   </v-container>
@@ -26,6 +26,16 @@
 
   const nums = ref(0)
 
+  async function getAllByType(deviceId){
+    try{
+      const result = await devStore.getAllByType(deviceId)
+      console.log(result)
+      return result
+    } catch(error){
+      console.log(error)
+    }
+  }
+
   // EVERY function that uses the store MUST be async, and the method of the
   //store must use the 'await' directive, and use a try-catch block to catch any error
   //the api throws
@@ -39,6 +49,7 @@
         meta: {}
       })
       console.log(device)
+      nums.value += 1
     } catch(error){
       console.log(error)
     }
