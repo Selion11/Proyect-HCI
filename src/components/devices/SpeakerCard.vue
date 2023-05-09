@@ -69,8 +69,10 @@ const actions = ref([
 <template>
 <v-container>
   <v-card class="mx-auto" max-width="368">
-    <v-card-text>
+    <v-card-title align="center">
       {{name}}
+    </v-card-title>
+    <v-card-text>
       <v-icon icon="mdi-speaker" size="75" color="error" class="me-1 pb-1"></v-icon>
     </v-card-text>
 
@@ -78,7 +80,7 @@ const actions = ref([
 
     <div class="subtitle">
       <v-list-item density="compact" prepend-icon="mdi-battery" >
-        <v-list-item-subtitle>{{battery}}</v-list-item-subtitle>
+        OFF
       </v-list-item>
     </div>
 

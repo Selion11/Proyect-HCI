@@ -81,9 +81,13 @@ export const useDeviceStore = defineStore('devices', () =>{
 
   async function getAllEvents(){
     let result = await DevicesApi.getAllEvents()
+    if(result){
     result = result.map((event) => Object.assign(new Event(), event))
     events.value = result
     return result
+    }else
+      events.value = []
+      return []
   }
 
   async function getEvent(id){

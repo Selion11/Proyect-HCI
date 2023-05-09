@@ -2,12 +2,13 @@
   <v-container v-for="device in idS">
     <h2>{{device.name}}</h2>
     <v-container>
+      <SpeakerCard :name="'HI'" :stat="'Hello'"/>
       <v-btn prepend-icon="mdi-plus" dark color="primary" @click="elemCreate(device.id,device.name,nums)">
         Add</v-btn>
     </v-container>
-    <div v-for="item in devStore.getAll()">
-      <SpeakerCard :name="item.name" :stat="item.state"/>
-    </div>
+    <v-container v-for="item in devStore.getAllByType('c89b94e8581855bc')">
+      <SpeakerCard :name="'HI'" :stat="'Hello'"/>
+    </v-container>
   </v-container>
 
 
@@ -34,10 +35,9 @@
         type: {
           id: tid
         },
-        name: 'New ' + tname + 'sacatrulidudbwue',
+        name: 'New ' + tname + 'sae',
         meta: {}
       })
-      num += 1
       console.log(device)
     } catch(error){
       console.log(error)
