@@ -2,9 +2,22 @@
   <v-container v-for="device in idS">
     <h2>{{ device.name }}</h2>
     <div v-if="isLoading">
-    <v-container v-for="item in asyncSpeakers">
-      <SpeakerCard :id="item.id"/>
-    </v-container>
+      <v-container v-if="device.name ==='Speaker'" v-for="item in asyncSpeakers">
+        <SpeakerCard :id="item.id"/>
+      </v-container>
+      <v-container v-if="device.name ==='Ac'" v-for="item in asyncAc">
+        <ACCard :id="item.id"/>
+      </v-container>
+      <v-container v-if="device.name ==='Faucet'" v-for="item in asyncFaucet">
+        <GrifoCard :id="item.id"/>
+      </v-container>
+      <v-container v-if="device.name ==='Lamp'" v-for="item in asyncLamp">
+        <LampCard :id="item.id"/>
+      </v-container>
+      <v-container v-if="device.name==='Fridge'" v-for="item in asyncFridge">
+        <FridgeCard :id="item.id"/>
+      </v-container>
+
     </div>
     <v-container>
       <v-btn prepend-icon="mdi-plus" dark color="primary" @click="elemCreate(device.id,device.name)">
@@ -18,14 +31,8 @@
 <script setup>
   import { ref, onMounted } from 'vue'
   import { useDeviceStore } from "@/store/deviceStore";
-  import SpeakerCard from "./devices/SpeakerCard.vue"
-
+  import {SpeakerCard,ACCard,FridgeCard,GrifoCard,LampCard} from "@/components/devices"
   const devStore = useDeviceStore()
-
-  const nums = ref(0)
-  const isLoading = ref(true)
-  const asyncSpeakers = ref(null)
-
   async function getAllByType(deviceId){
     try{
       return await devStore.getAllByType(deviceId)
@@ -33,6 +40,24 @@
       console.error(error)
     }
   }
+  const asyncSpeakers = ref(null)
+  const asyncFaucet = ref(null)
+  const asyncLamp = ref (null)
+  const asyncAc = ref(null)
+  const asyncFridge = ref(null)
+  const isLoading = ref(true)
+  onMounted( async () => {
+    try {
+      asyncSpeakers.value = await getAllByType("c89b94e8581855bc")
+      asyncFaucet.value = await getAllByType("dbrlsh7o5sn8ur4i")
+      asyncLamp.value = await getAllByType("go46xmbqeomjrsjr")
+      asyncAc.value = await getAllByType("li6cbv5sdlatti0j")
+      asyncFridge.value = await getAllByType("rnizejqr2di0okho")
+      isLoading.value = true
+    } catch(error){
+      throw error
+    }
+  })
 
   // EVERY function that uses the store MUST be async, and the method of the
   //store must use the 'await' directive, and use a try-catch block to catch any error
@@ -52,6 +77,7 @@
       console.error(error)
     }
   }
+
   const idS = ref([
     {
       name: "Speaker",
@@ -114,14 +140,6 @@
       text: 'Texto del elemento 9'
     }
   ])
-  onMounted( async () => {
-    try {
-      asyncSpeakers.value = await getAllByType("c89b94e8581855bc")
-      isLoading.value = true
-    } catch(error){
-      throw error
-    }
-  })
 </script>
 
 <style scoped>
