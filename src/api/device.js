@@ -58,7 +58,7 @@ class DevicesApi {
 
   // Executes action in a specific device
   static async execute(id, actionName, params){
-    return await Api.put(DevicesApi.getURL(`${id}/${actionName}`), parameters)
+    return await Api.put(DevicesApi.getURL(`${id}/${actionName}`), params)
   }
 
   // Delete an existing device

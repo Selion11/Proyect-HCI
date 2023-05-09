@@ -16,6 +16,7 @@ class Api {
     try {
       const response = await fetch(url, init)
       const text = await response.text()
+      console.log(text)
       const json = text ? JSON.parse(text) : {}
       if (json.error) throw json.error
       return json.result

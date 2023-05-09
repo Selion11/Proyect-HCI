@@ -1,17 +1,17 @@
 <template>
 
-  <v-card class="mx-auto" max-width="368">
-    <v-card-item>{{name}}</v-card-item>
+  <v-card class="mx-auto" max-width="368" v-if="!isLoading">
+    <v-card-item>{{device.name}}</v-card-item>
     <v-card-text>
-      <v-icon v-if="stat === 'OFF'" icon="mdi-lightbulb-outline" size="55" color="error" class="me-1 pb-1"></v-icon>
-      <v-icon v-else-if="stat === 'ON'" icon="mdi-lightbulb" size="55" color="error" class="me-1 pb-1"></v-icon>
+      <v-icon v-if="device.state.status === 'OFF'" icon="mdi-lightbulb-outline" size="55" color="error" class="me-1 pb-1"></v-icon>
+      <v-icon v-else-if="device.state.status === 'ON'" icon="mdi-lightbulb" size="55" color="error" class="me-1 pb-1"></v-icon>
     </v-card-text>
 
 
 
     <div class="subtitle">
       <v-list-item density="compact">
-        <v-list-item-subtitle>Status: {{stat}}</v-list-item-subtitle>
+        <v-list-item-subtitle>Status: {{device.state.status}}</v-list-item-subtitle>
       </v-list-item>
     </div>
 
@@ -20,7 +20,7 @@
       <div v-if="expand">
         <div class="py-2">
           <v-col>
-            <v-btn v-for="action in actions" id="acts" @click="stat = action.name">{{ action.name }}</v-btn></v-col>
+            <v-btn v-for="action in actions" id="acts" @click="execute(action)">{{ action.name }}</v-btn></v-col>
         </div>
 
       </div>
@@ -36,18 +36,49 @@
   </v-card>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useDeviceStore } from "@/store/deviceStore"
 
 const props = defineProps(["id"])
+const device = ref({})
+const deviceStore = useDeviceStore()
+const isLoading = ref(true)
 const expand = ref(false)
+
+async function execute(action){
+  try{
+    // Acá tenés que armar el objeto en función la action que estás mandando, ya se manda bien
+    const actionParam = action.param
+
+    let result = await deviceStore.execute(props.id, action.realName, {params: actionParam})
+    if(result){
+      device.value = await deviceStore.get(props.id)
+    } else {
+      console.error(result)
+    }
+  } catch(error){
+    console.log(error)
+  }
+}
+
+onMounted( async () => {
+  try{
+    device.value = await deviceStore.get(props.id)
+    isLoading.value = false
+  } catch(error) {
+    console.log(error)
+  }
+})
 
 const actions = ref( [
   {
     name: "ON",
+    realName: "turnOn",
     params: []
   },
   {
     name: "OFF",
+    realName: "turnOff",
     params: []
   },
   {

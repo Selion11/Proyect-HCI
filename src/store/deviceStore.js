@@ -79,14 +79,20 @@ export const useDeviceStore = defineStore('devices', () =>{
   }
 
   async function getAllEvents(){
-    let result = await DevicesApi.getAllEvents()
-    if(result){
-    result = result.map((event) => Object.assign(new Event(), event))
-    events.value = result
-    return result
-    }else
-      events.value = []
+    // CREEEO que la API está rota porque devuelve algo que ni siquiera es un JSON cuando
+    //ejecuto este evento
+    try {
+      let result = await DevicesApi.getAllEvents()
+      if (result) {
+        result = result.map((event) => Object.assign(new Event(), event))
+        events.value = result
+        return result
+      } else
+        events.value = []
       return []
+    } catch(error){
+      return []
+    }
   }
 
   async function getEvent(id){

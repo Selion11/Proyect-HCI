@@ -35,10 +35,40 @@
   </v-card>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useDeviceStore } from "@/store/deviceStore"
 
 const props = defineProps(["id"])
+const device = ref({})
+const deviceStore = useDeviceStore()
+const isLoading = ref(true)
 const expand = ref(false)
+
+async function execute(action){
+  try{
+    // Acá tenés que armar el objeto en función la action que estás mandando, ya se manda bien
+    const actionParam = action.param
+
+    let result = await deviceStore.execute(props.id, action.realName, {params: actionParam})
+    if(result){
+      device.value = await deviceStore.get(props.id)
+    } else {
+      console.error(result)
+    }
+  } catch(error){
+    console.log(error)
+  }
+}
+
+onMounted( async () => {
+  try{
+    device.value = await deviceStore.get(props.id)
+    isLoading.value = false
+  } catch(error) {
+    console.log(error)
+  }
+})
+
 
 const actions = ref( [
   {
