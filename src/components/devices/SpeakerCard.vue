@@ -1,5 +1,5 @@
 <script setup>
-import { computed, defineProps, ref } from 'vue'
+import { computed, defineProps, ref, onMounted } from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
 
 const props = defineProps(['id'])
@@ -7,23 +7,14 @@ const props = defineProps(['id'])
 const devStore = useDeviceStore()
 async function get(deviceId){
   try{
-    const device = await devStore.get(deviceId)
-    console.log(device)
-    return device
+    return await devStore.get(deviceId)
   } catch(error){
     throw error
   }
 }
+const isLoading = ref(false)
 
-const speaker = computed(async () => {
-  try{
-    const result = await get(props.id)
-    console.log(result)
-    return result
-  } catch(error){
-    return error
-  }
-}).value
+const speaker = ref(null)
 
 const expand = ref(false)
 
@@ -87,14 +78,26 @@ const actions = ref([
     params: []
   }
 ])
+
+onMounted(async () => {
+  try{
+    speaker.value = await get(props.id)
+    isLoading.value = true
+  } catch(error){
+    throw error
+  }
+})
+
 </script>
 
 <template>
 <v-container>
   <v-card class="mx-auto" max-width="368">
-    <v-card-title>
-      {{ speaker }}
-    </v-card-title>
+    <div v-if="isLoading">
+      <v-card-title>
+        {{ speaker.name }}
+      </v-card-title>
+    </div>
     <v-card-text>
       <v-icon icon="mdi-speaker" size="75" color="error" class="me-1 pb-1"></v-icon>
     </v-card-text>

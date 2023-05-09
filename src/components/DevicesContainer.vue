@@ -1,9 +1,11 @@
 <template>
   <v-container v-for="device in idS">
     <h2>{{ device.name }}</h2>
-    <v-container v-for="item in getAllByType('c89b94e8581855bc')">
+    <div v-if="isLoading">
+    <v-container v-for="item in asyncSpeakers">
       <SpeakerCard :id="item.id"/>
     </v-container>
+    </div>
     <v-container>
       <v-btn prepend-icon="mdi-plus" dark color="primary" @click="elemCreate(device.id,device.name)">
         Add</v-btn>
@@ -14,14 +16,15 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
   import { useDeviceStore } from "@/store/deviceStore";
   import SpeakerCard from "./devices/SpeakerCard.vue"
 
   const devStore = useDeviceStore()
 
   const nums = ref(0)
-  const result = ref(null)
+  const isLoading = ref(true)
+  const asyncSpeakers = ref(null)
 
   async function getAllByType(deviceId){
     try{
@@ -111,6 +114,14 @@
       text: 'Texto del elemento 9'
     }
   ])
+  onMounted( async () => {
+    try {
+      asyncSpeakers.value = await getAllByType("c89b94e8581855bc")
+      isLoading.value = true
+    } catch(error){
+      throw error
+    }
+  })
 </script>
 
 <style scoped>

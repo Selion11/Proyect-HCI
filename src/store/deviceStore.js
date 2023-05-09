@@ -1,5 +1,5 @@
 // Utilities
-import {ref} from "vue";
+import { ref, computed } from "vue";
 import { defineStore } from 'pinia'
 import { DevicesApi, Device, Log, Event} from '@/api/device'
 import { SpeakerState } from '@/api/speaker'
@@ -122,5 +122,5 @@ export const useDeviceStore = defineStore('devices', () =>{
     return result
   }
 
-  return {getAll, getAllByType, get, add, execute, modify, getLog, getLogs, getAllEvents, getEvent, getState, remove}
+  return { getAll, getAllByType, get, add, execute, modify, getLog, getLogs, getAllEvents, getEvent, getState, remove, devices, events }
 })
