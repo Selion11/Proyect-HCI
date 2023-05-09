@@ -38,7 +38,6 @@ export const useDeviceStore = defineStore('devices', () =>{
   }
 
   async function add(device) {
-    console.log("Entered add")
     const result = await DevicesApi.add(device)
     await getAll()
     await getAllEvents()

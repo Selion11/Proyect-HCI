@@ -24,15 +24,24 @@
   const devStore = useDeviceStore()
 
   const nums = ref(0)
-  function elemCreate (tid,tname,num){
-    devStore.add({
-      type : {
-        id: tid
-      },
-      name: 'New ' + tname + 'sacatrulidudbwue',
-      meta: {}
-    })
-    num += 1
+
+  // EVERY function that uses the store MUST be async, and the method of the
+  //store must use the 'await' directive, and use a try-catch block to catch any error
+  //the api throws
+  async function elemCreate (tid,tname,num){
+    try {
+      const device = await devStore.add({
+        type: {
+          id: tid
+        },
+        name: 'New ' + tname + 'sacatrulidudbwue',
+        meta: {}
+      })
+      num += 1
+      console.log(device)
+    } catch(error){
+      console.log(error)
+    }
   }
   const idS = ref([
     {

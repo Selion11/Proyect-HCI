@@ -9,6 +9,9 @@
     </v-row>
   </v-container>
 
+// EVERY function that uses the store MUST be async, and the method of the
+//store must use the 'await' directive, and use a try-catch block to catch any error
+//the api throws
   devStore.add({
                 type : {
                   id: dev.id

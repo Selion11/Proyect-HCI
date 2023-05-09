@@ -23,7 +23,7 @@ class DevicesApi {
 
   // Retrieve events for all devices
   static async getAllEvents(){
-    return await Api.get(DevicesApi.getURL(`/events`))
+    return await Api.get(DevicesApi.getURL(`events`))
   }
 
   // Retrieve logs for all devices
@@ -48,7 +48,6 @@ class DevicesApi {
 
   // Creates a new device
   static async add(device) {
-    console.log("Second hurdle passed")
     return await Api.post(DevicesApi.getURL(), device)
   }
 
