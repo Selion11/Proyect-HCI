@@ -1,7 +1,6 @@
 <script setup>
 import { defineProps, ref, onMounted } from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
-import { Device } from "@/api/device"
 
 const props = defineProps(['id'])
 
@@ -122,12 +121,12 @@ onMounted(async () => {
         OFF
       </v-list-item>
       <v-row class="music">
-         <v-btn class="mbtn" prepend-icon="mdi-skip-previous">Previous</v-btn>
-          <v-btn @click="play = !play" max-width="30px">
+         <v-btn width="flex" class="mbtn" prepend-icon="mdi-skip-previous"/>
+          <v-btn width="flex" @click="play = !play" max-width="30px">
             <v-icon v-if="play === false" icon="mdi-play"/>
             <v-icon v-else icon="mdi-pause"/>
           </v-btn>
-       <v-btn class="mbtn" prepend-icon="mdi-skip-next">Next</v-btn>
+       <v-btn width="flex" class="mbtn" prepend-icon="mdi-skip-next"/>
       </v-row>
     </div>
 

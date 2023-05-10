@@ -32,3 +32,5 @@
                       <SpeakerCard v-else :name="item.name" :stat="item.state"/>
                     </div>
                   </v-container>
+
+                  @click="elemCreate(device.id,device.name)"
