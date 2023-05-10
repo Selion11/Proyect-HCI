@@ -9,7 +9,10 @@
     <v-expand-transition>
       <div v-if="expand">
         <div class="py-2">
-          <v-btn v-for="action in actions" id="acts" :@click="execute(action)">{{ action.name }}</v-btn>
+          <v-row justify="center">
+            <v-btn class="actions" id="acts" :@click="execute(action)">{{ Abrir }}</v-btn>
+          </v-row>
+
         </div>
 
       </div>
@@ -18,7 +21,7 @@
     <v-divider></v-divider>
 
     <v-card-actions>
-      <v-btn @click="expand.value = !expand">
+      <v-btn @click="expand = !expand">
         {{ !expand ? 'All Actions' : 'Hide Actions' }}
       </v-btn>
     </v-card-actions>
@@ -114,4 +117,11 @@ const actions = ref([
   margin-right: 7px;
   margin-left: 7px;
 }
+
+.actions {
+  margin-right: 7px;
+  margin-left: 7px;
+  margin-bottom: 4px;
+}
+
 </style>

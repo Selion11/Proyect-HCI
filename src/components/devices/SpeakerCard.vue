@@ -120,7 +120,7 @@ async function refreshState(){
         {{ speaker.name }}
       </v-card-title>
     </div>
-    <v-card-text>
+    <v-card-text class="centered">
       <v-icon icon="mdi-speaker" size="75" color="error" class="me-1 pb-1"></v-icon>
     </v-card-text>
 
@@ -144,25 +144,35 @@ async function refreshState(){
       <div v-if="expand">
         <div class="py-2">
           <v-container>
-            <v-btn class="actions" prepend-icon="mdi-stop">Stop</v-btn>
-            <v-btn class="actions" prepend-icon="mdi-play">Resume</v-btn>
-            <v-btn class="actions" prepend-icon="mdi-music-note">Set Genre</v-btn>
-            <v-btn class="actions" prepend-icon="mdi-playlist-music">Get Playlist</v-btn>
-            <v-btn class="actions" prepend-icon="mdi-volume-high">
-              Set Volume
-              <v-dialog v-model="dialog" activator="parent" width="300px" height="auto">
-                <v-card>
-                  <v-card-text >
-                    <v-row>
-                    <v-icon icon="mdi-plus" @click="volume = volume+1"/>
-                    <v-slider max="100" min="0" step="1" v-model="volume"></v-slider>
-                      <v-icon icon="mdi-minus" @click="volume = volume-1"/>
-                    </v-row>
-                    Volume: {{volume}}
-                  </v-card-text>
-                </v-card>
-              </v-dialog>
-            </v-btn>
+            <v-row justify="center">
+              <v-btn class="actions" prepend-icon="mdi-stop">Stop</v-btn>
+            </v-row>
+            <v-row justify="center">
+              <v-btn class="actions" prepend-icon="mdi-play">Resume</v-btn>
+            </v-row>
+            <v-row justify="center">
+              <v-btn class="actions" prepend-icon="mdi-music-note">Set Genre</v-btn>
+            </v-row>
+            <v-row justify="center">
+              <v-btn class="actions" prepend-icon="mdi-playlist-music">Get Playlist</v-btn>
+            </v-row>
+            <v-row justify="center">
+              <v-btn class="actions" prepend-icon="mdi-volume-high">
+                Set Volume
+                <v-dialog v-model="dialog" activator="parent" width="300px" height="auto">
+                  <v-card>
+                    <v-card-text >
+                      <v-row>
+                      <v-icon icon="mdi-plus" @click="volume = volume+1"/>
+                      <v-slider max="100" min="0" step="1" v-model="volume"></v-slider>
+                        <v-icon icon="mdi-minus" @click="volume = volume-1"/>
+                      </v-row>
+                      Volume: {{volume}}
+                    </v-card-text>
+                  </v-card>
+                </v-dialog>
+              </v-btn>
+            </v-row>
           </v-container>
         </div>
 
@@ -181,12 +191,17 @@ async function refreshState(){
 </template>
 
 <style scoped>
+.centered{
+  text-align: center;
+}
+
+
 .actions {
   margin-right: 7px;
   margin-left: 7px;
   margin-bottom: 4px;
 }
-.mbtn{
+.mbtn {
   margin-right: 4px;
   margin-left: 4px;
 }

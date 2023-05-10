@@ -189,27 +189,32 @@
 
   const devicesTypes = ref([
     {
+      frontName: "Parlantes",
       name: "Speaker",
       id: "c89b94e8581855bc",
       store: asyncSpeakers
     },
     {
+      frontName: "Aspersores",
       name: "Faucet",
       id: "dbrlsh7o5sn8ur4i",
       store: asyncFaucet
     },
     {
+      frontName: "Lámparas",
       name: "Lamp",
       id: "go46xmbqeomjrsjr",
       store: asyncLamp
     },
     {
+      frontName: "Aires Acondicionados",
       name: "Ac",
       id: "li6cbv5sdlatti0j",
       store: asyncAc
     },
     {
-      name: "Refrigerator",
+      frontName: "Heladeras",
+      name: "Fridge",
       id:"rnizejqr2di0okho",
       store: asyncRefrigerator
     }])
