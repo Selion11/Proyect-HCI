@@ -1,17 +1,17 @@
 <template>
 
   <v-card class="mx-auto" max-width="368" v-if="!isLoading">
-    <v-card-item>{{device.name}}</v-card-item>
+    <v-card-item>{{ lamp.name }}</v-card-item>
     <v-card-text>
-      <v-icon v-if="device.state.status === 'OFF'" icon="mdi-lightbulb-outline" size="55" color="error" class="me-1 pb-1"></v-icon>
-      <v-icon v-else-if="device.state.status === 'ON'" icon="mdi-lightbulb" size="55" color="error" class="me-1 pb-1"></v-icon>
+      <v-icon v-if="lamp.state.status === 'OFF'" icon="mdi-lightbulb-outline" size="55" color="error" class="me-1 pb-1"></v-icon>
+      <v-icon v-else-if="lamp.state.status === 'ON'" icon="mdi-lightbulb" size="55" color="error" class="me-1 pb-1"></v-icon>
     </v-card-text>
 
 
 
     <div class="subtitle">
       <v-list-item density="compact">
-        <v-list-item-subtitle>Status: {{device.state.status}}</v-list-item-subtitle>
+        <v-list-item-subtitle>Status: {{ lamp.state.status }}</v-list-item-subtitle>
       </v-list-item>
     </div>
 
@@ -41,7 +41,7 @@ import { useDeviceStore } from "@/store/deviceStore"
 import { Device } from "@/api/device"
 
 const props = defineProps(["id"])
-const device = ref({})
+const lamp = ref({})
 const deviceStore = useDeviceStore()
 const isLoading = ref(true)
 const expand = ref(false)
@@ -53,7 +53,7 @@ async function execute(action){
 
     let result = await deviceStore.execute(props.id, action.realName, {params: actionParam})
     if(result){
-      device.value = await deviceStore.get(props.id)
+      lamp.value = await deviceStore.get(props.id)
     } else {
       console.error(result)
     }
@@ -64,12 +64,21 @@ async function execute(action){
 
 onMounted( async () => {
   try{
-    device.value = await deviceStore.get(props.id)
+    lamp.value = await deviceStore.get(props.id)
     isLoading.value = false
   } catch(error) {
     console.log(error)
   }
+  try{
+    setInterval(refreshState, 1000)
+  } catch(error){
+    console.log(error)
+  }
 })
+
+async function refreshState(){
+  lamp.value = await deviceStore.get(props.id)
+}
 
 const actions = ref( [
   {

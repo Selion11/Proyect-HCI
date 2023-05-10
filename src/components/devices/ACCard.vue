@@ -1,6 +1,6 @@
 <template>
   <v-card v-if="!isLoading" class="mx-auto" max-width="368">
-    <v-card-item>{{device.name}}</v-card-item>
+    <v-card-item>{{ ac.name }}</v-card-item>
     <v-card-text>
       <v-icon icon="mdi-air-conditioner" size="55" color="error" class="me-1 pb-1"></v-icon>
     </v-card-text>
@@ -142,35 +142,35 @@ import { Device } from "@/api/device"
 import { ACState } from "@/api/ac"
 
 const props = defineProps(["id"])
-const device = ref( null)
+const ac = ref( {})
 const deviceStore = useDeviceStore()
 const isLoading = ref(true)
-const status = computed( () => device.value.state.status === 'on' ? "Encendido" : "Apagado")
-const isOn = computed( () => device.value.state.status === 'on')
-const temperature = computed( () =>  device.value.state.temperature)
+const status = computed( () => ac.value.state.status === 'on' ? "Encendido" : "Apagado")
+const isOn = computed( () => ac.value.state.status === 'on')
+const temperature = computed( () =>  ac.value.state.temperature)
 const mode = computed( () => {
-  switch(typeof(device.value.state.mode) === 'object' ? device.value.state.mode.mode : device.value.state.mode){
+  switch(typeof(ac.value.state.mode) === 'object' ? ac.value.state.mode.mode : ac.value.state.mode){
     case "cool": return "Frio"
     case "heat": return "Calor"
     case "fan": return "Ventilador"
   }
 })
 const vSwing = computed( () => {
-  switch(device.value.state.verticalSwing){
+  switch(ac.value.state.verticalSwing){
     case "auto": return "Automático"
-    default: return `${device.value.state.verticalSwing}º`
+    default: return `${ac.value.state.verticalSwing}º`
   }
 })
 const hSwing = computed( () => {
-  switch(device.value.state.horizontalSwing){
+  switch(ac.value.state.horizontalSwing){
     case "auto": return "Automático"
-    default: return `${device.value.state.horizontalSwing}º`
+    default: return `${ac.value.state.horizontalSwing}º`
   }
 })
 const fanSpeed = computed ( () => {
-  switch(device.value.state.fanSpeed){
+  switch(ac.value.state.fanSpeed){
     case "auto": return "Automático"
-    default: return `${device.value.state.fanSpeed}km/h`
+    default: return `${ac.value.state.fanSpeed}km/h`
   }
 })
 const expand = ref(false)
@@ -244,7 +244,7 @@ async function execute(actionName, params){
 
     let result = await deviceStore.execute(props.id, actionName, params)
     if(result){
-      device.value = await deviceStore.get(props.id)
+      ac.value = await deviceStore.get(props.id)
     } else {
       console.error(result)
     }
@@ -255,7 +255,7 @@ async function execute(actionName, params){
 
 onMounted( async () => {
   try{
-    device.value = await deviceStore.get(props.id)
+    ac.value = await deviceStore.get(props.id)
     isLoading.value = false
   } catch(error) {
     console.log(error)
@@ -267,7 +267,7 @@ onMounted( async () => {
   }
 })
 async function refreshState(){
-  device.value = await deviceStore.get(props.id)
+  ac.value = await deviceStore.get(props.id)
 }
 
 const actions = ref( {

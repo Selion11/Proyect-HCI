@@ -1,7 +1,7 @@
 <template>
 
   <v-card class="mx-auto" max-width="368" v-if="!isLoading">
-    <v-card-item>{{device.name}}</v-card-item>
+    <v-card-item>{{ faucet.name }}</v-card-item>
     <v-card-text>
       <v-icon icon="mdi-water" size="55" color="error" class="me-1 pb-1"></v-icon>
     </v-card-text>
@@ -31,7 +31,7 @@ import { useDeviceStore } from "@/store/deviceStore"
 import { Device } from "@/api/device"
 
 const props = defineProps(["id"])
-const device = ref({})
+const faucet = ref({})
 const deviceStore = useDeviceStore()
 const isLoading = ref(true)
 const expand = ref(false)
@@ -43,7 +43,7 @@ async function execute(action){
 
     let result = await deviceStore.execute(props.id, action.realName, {params: actionParam})
     if(result){
-      device.value = await deviceStore.get(props.id)
+      faucet.value = await deviceStore.get(props.id)
     } else {
       console.error(result)
     }
@@ -54,12 +54,21 @@ async function execute(action){
 
 onMounted( async () => {
   try{
-    device.value = await deviceStore.get(props.id)
+    faucet.value = await deviceStore.get(props.id)
     isLoading.value = false
   } catch(error) {
     console.log(error)
   }
+  try{
+    setInterval(refreshState, 1000)
+  } catch(error){
+    console.log(error)
+  }
 })
+
+async function refreshState(){
+  faucet.value = await deviceStore.get(props.id)
+}
 
 
 const actions = ref([

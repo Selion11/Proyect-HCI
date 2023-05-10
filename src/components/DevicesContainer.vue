@@ -5,7 +5,7 @@
     <div v-if="!isLoading">
       <v-container v-if="device.name === 'Speaker'">
         <v-row >
-          <v-col cols="3" v-for="item in asyncSpeakers" :key="item.id">
+          <v-col cols="auto" v-for="item in asyncSpeakers" :key="item.id">
             <SpeakerCard :id="item.id"/>
           </v-col>
         </v-row>
@@ -34,7 +34,7 @@
       </v-container>
       <v-container v-if="device.name === 'Ac'">
         <v-row >
-          <v-col cols="3"  v-for="item in asyncAc" :key="item.id">
+          <v-col cols="auto"  v-for="item in asyncAc" :key="item.id">
             <ACCard :id="item.id"/>
           </v-col>
         </v-row>
@@ -63,7 +63,7 @@
       </v-container>
       <v-container v-if="device.name === 'Faucet'">
         <v-row >
-          <v-col cols="3"  v-for="item in asyncFaucet" :key="item.id">
+          <v-col cols="auto"  v-for="item in asyncFaucet" :key="item.id">
             <FaucetCard :id="item.id"/>
           </v-col>
         </v-row>
@@ -92,7 +92,7 @@
       </v-container>
       <v-container v-if="device.name === 'Lamp'" >
         <v-row >
-          <v-col cols="3"  v-for="item in asyncLamp" :key="item.id">
+          <v-col cols="auto"  v-for="item in asyncLamp" :key="item.id">
             <LampCard :id="item.id"/>
           </v-col>
         </v-row>
@@ -119,10 +119,10 @@
           </v-btn>
         </v-container>
       </v-container>
-      <v-container v-if="device.name === 'Fridge'" >
+      <v-container v-if="device.name === 'Refrigerator'" >
         <v-row >
-          <v-col cols="3"  v-for="item in asyncFridge" :key="item.id">
-            <FridgeCard :id="item.id"/>
+          <v-col cols="auto"  v-for="item in asyncRefrigerator" :key="item.id">
+            <RefrigeratorCard :id="item.id"/>
           </v-col>
         </v-row>
         <v-container>
@@ -159,7 +159,7 @@
   import ACCard from "@/components/devices/ACCard.vue"
   import FaucetCard from "@/components/devices/FaucetCard.vue"
   import LampCard from "@/components/devices/LampCard.vue"
-  import FridgeCard from "@/components/devices/FridgeCard.vue"
+  import RefrigeratorCard from "@/components/devices/RefrigeratorCard.vue"
 
   const devStore = useDeviceStore()
   async function getAllByType(deviceId){
@@ -183,7 +183,7 @@
   const asyncFaucet = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[1].id))
   const asyncLamp = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[2].id))
   const asyncAc = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[3].id))
-  const asyncFridge = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[4].id))
+  const asyncRefrigerator = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[4].id))
 
   const isLoading = ref(true)
 
@@ -209,9 +209,9 @@
       store: asyncAc
     },
     {
-      name: "Fridge",
+      name: "Refrigerator",
       id:"rnizejqr2di0okho",
-      store: asyncFridge
+      store: asyncRefrigerator
     }])
 
   onMounted(  async () => {

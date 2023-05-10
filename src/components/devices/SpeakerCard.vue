@@ -4,19 +4,20 @@ import { useDeviceStore } from "@/store/deviceStore"
 
 const props = defineProps(['id'])
 
-const devStore = useDeviceStore()
+const deviceStore = useDeviceStore()
 
 const play = ref(false)
 async function get(deviceId){
   try{
-    return await devStore.get(deviceId)
+    return await deviceStore.get(deviceId)
   } catch(error){
     throw error
   }
 }
+
 const isLoading = ref(false)
 const volume = ref(50)
-const speaker = ref(null)
+const speaker = ref({})
 
 const expand = ref(false)
 
@@ -99,7 +100,16 @@ onMounted(async () => {
   } catch(error){
     throw error
   }
+  try{
+    setInterval(refreshState, 1000)
+  } catch(error){
+    throw error
+  }
 })
+
+async function refreshState(){
+  speaker.value = await deviceStore.get(props.id)
+}
 </script>
 
 <template>

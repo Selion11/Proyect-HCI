@@ -1,7 +1,7 @@
 <template>
 
   <v-card v-if="!isLoading" class="mx-auto" max-width="368">
-    <v-card-item>{{device.name}}</v-card-item>
+    <v-card-item>{{ refrigerator.name }}</v-card-item>
     <v-card-text>
       <v-icon icon="mdi-fridge" size="55" color="error" class="me-1 pb-1"></v-icon>
     </v-card-text>
@@ -10,7 +10,7 @@
 
     <div class="subtitle">
       <v-list-item density="compact">
-        <v-list-item-subtitle>Current temp: {{device.state.temperature}}</v-list-item-subtitle>
+        <v-list-item-subtitle>Current temp: {{ refrigerator.state.temperature }}</v-list-item-subtitle>
 
       </v-list-item>
     </div>
@@ -39,7 +39,7 @@ import { useDeviceStore } from "@/store/deviceStore"
 import { Device } from "@/api/device"
 
 const props = defineProps(["id"])
-const device = ref(new Device())
+const refrigerator = ref({})
 const deviceStore = useDeviceStore()
 const isLoading = ref(true)
 const expand = ref(false)
@@ -51,7 +51,7 @@ async function execute(action){
 
     let result = await deviceStore.execute(props.id, action.realName, {params: actionParam})
     if(result){
-      device.value = await deviceStore.get(props.id)
+      refrigerator.value = await deviceStore.get(props.id)
     } else {
       console.error(result)
     }
@@ -62,13 +62,21 @@ async function execute(action){
 
 onMounted( async () => {
   try{
-    device.value = await deviceStore.get(props.id)
+    refrigerator.value = await deviceStore.get(props.id)
     isLoading.value = false
   } catch(error) {
     console.log(error)
   }
+  try{
+    setInterval(refreshState, 1000)
+  } catch(error){
+    console.log(error)
+  }
 })
 
+async function refreshState(){
+  refrigerator.value = await deviceStore.get(props.id)
+}
 const actions = ref([
   {
     name: "Set Freezer Temperature",
