@@ -24,10 +24,9 @@
           Seleccione la categoría del dispositivo
         </v-card-title>
         <v-card-text v-for="device in devicesTypes">
-          <v-btn @click="saveDevice(device.id)">{{device.name}}</v-btn>
+          <v-btn @click="saveDeviceCategory(device.id)">{{device.name}}</v-btn>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="primary" >OK</v-btn>
           <v-btn @click="showDevicesCategories = false">Atrás</v-btn>
         </v-card-actions>
       </v-card>
@@ -38,13 +37,15 @@
         <v-card-title>
           Seleccione los dispositivos
         </v-card-title>
+        <v-card-text v-for="device in selectedDeviceStore">
+          <v-btn>{{device.name}}</v-btn>
+        </v-card-text>
         <v-card-actions>
-          <v-btn color="primary" @click="saveDevices">OK</v-btn>
-          <v-btn @click="showDevicesCategories = false">Atrás</v-btn>
+          <v-btn color="primary" @click="saveDevices()">OK</v-btn>
+          <v-btn @click="showDevices = false">Atrás</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-
   </div>
 </template>
 
@@ -52,36 +53,66 @@
 import {UseRoutineStore} from "@/store/routineStore.js"
 import {useDeviceStore} from "@/store/deviceStore.js"
 import {Routine, RoutineActions, RoutineMeta} from "@/api/routine";
-import {ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 
 const routineStore = UseRoutineStore()
 const deviceStore = useDeviceStore()
 
-const routine = ref(null);
-
-
+const routine = ref(null)
 
 const showRoutine = ref(false)
 const showDevices = ref(false)
 const showDevicesCategories = ref(false)
 
 const deviceSelected = ref(0)
-let devices = ref([])
-
-
 const routineName = ref('')
-const devicesSelected = ref([])
+const devices = ref([])
+let selectedDeviceStore = ref([])
 
+const asyncSpeakers = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[0].id))
+const asyncFaucet = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[1].id))
+const asyncLamp = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[2].id))
+const asyncAc = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[3].id))
+const asyncFridge = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[4].id))
 
-function saveDevice(id){
-  showDevices.value = true
-  deviceSelected.value = id
-  devices = deviceStore.getAllByType(id)
-}
+const devicesTypes = ref([
+  {
+    name: "Speaker",
+    id: "c89b94e8581855bc",
+    store: asyncSpeakers
+  },
+  {
+    name: "Faucet",
+    id: "dbrlsh7o5sn8ur4i",
+    store: asyncFaucet
+  },
+  {
+    name: "Lamp",
+    id: "go46xmbqeomjrsjr",
+    store: asyncLamp
+  },
+  {
+    name: "Ac",
+    id: "li6cbv5sdlatti0j",
+    store: asyncAc
+  },
+  {
+    name: "Fridge",
+    id:"rnizejqr2di0okho",
+    store: asyncFridge
+  }])
 
 
 function saveRoutine() {
 
+}
+function saveDeviceCategory(id){
+  showDevices.value = true
+  deviceSelected.value = id
+  selectedDeviceStore = devicesTypes.value.find(device => device.id === deviceSelected.value)?.store
+}
+function saveDevices(){
+  showDevices.value = false
 }
 
 async function createRoutine(){
@@ -95,31 +126,15 @@ async function createRoutine(){
   }
 }
 
+onMounted(async ()=>{
+  try {
+    devices.value=await deviceStore.getAll()
+  }catch (error){
+    throw error
+  }
+})
 
-
-const devicesTypes = ref([
-  {
-    name: "Parlante",
-    id: "c89b94e8581855bc",
-  },
-  {
-    name: "Grifo",
-    id: "dbrlsh7o5sn8ur4i"
-  },
-  {
-    name: "Lámpara",
-    id: "go46xmbqeomjrsjr",
-  },
-  {
-    name: "Accondiconador de aire",
-    id: "li6cbv5sdlatti0j",
-  },
-  {
-    name: "Heladera",
-    id:"rnizejqr2di0okho",
-  }])
 </script>
-
 
 <style scoped>
 
