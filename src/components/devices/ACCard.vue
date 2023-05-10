@@ -9,7 +9,13 @@
 
     <div class="subtitle">
       <v-list-item density="compact">
-        <v-list-item-subtitle>Status: {{device.status.temperature}}</v-list-item-subtitle>
+        <v-list-item-subtitle>Status:</v-list-item-subtitle>
+        <v-list>Estado: {{device.state.status === 'on' ? "Encendido" : "Apagado"}}</v-list>
+        <v-list>Temperatura: {{ `${device.state.temperature}ºC`}}</v-list>
+        <v-list>Modo: {{mode}}</v-list>
+        <v-list>VSwing: {{vSwing}}</v-list>
+        <v-list>HSwing: {{hSwing}}</v-list>
+        <v-list>Fan Speed: {{fanSpeed}}</v-list>
       </v-list-item>
     </div>
 
@@ -17,11 +23,27 @@
     <v-expand-transition>
       <div v-if="expand">
         <div class="py-2">
+          <v-row class="py-2">
+            <v-btn  id="switch" @click="turnOnOff()">{{ isOn ? "Apagar" : "Encender" }}</v-btn>
+          </v-row>
           <v-row>
-          <v-btn v-for="action in actions" id="acts" @click="stat = action.name">{{ action.name }}</v-btn>
+            <v-btn  id="increase-temp" @click="">{{ '-' }}</v-btn>
+            <v-card-text align="center">Temperatura</v-card-text>
+            <v-btn  id="decrease-temp" @click="">{{ '+' }}</v-btn>
+          </v-row>
+          <v-row>
+            <v-btn  id="set-mode" @click="">{{ 'Cambiar Modo' }}</v-btn>
+          </v-row>
+          <v-row>
+            <v-btn  id="set-vswing" @click="">{{ 'Rotación Vertical' }}</v-btn>
+          </v-row>
+          <v-row>
+            <v-btn  id="set-hswing" @click="">{{ 'Rotación Horizontal' }}</v-btn>
+          </v-row>
+          <v-row>
+            <v-btn  id="set-fan-speed" @click="">{{ 'Velocidad' }}</v-btn>
           </v-row>
         </div>
-
       </div>
     </v-expand-transition>
 
@@ -34,22 +56,60 @@
     </v-card-actions>
   </v-card>
 </template>
+
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
+import { Device } from "@/api/device"
+import { ACState } from "@/api/ac"
 
 const props = defineProps(["id"])
-const device = ref({})
+const device = ref( null)
 const deviceStore = useDeviceStore()
 const isLoading = ref(true)
+const isOn = computed( () => device.value.state.status === 'on')
+const temperature = computed( () =>  device.value.state.temperature)
+const mode = computed( () => {
+  switch(device.value.state.mode){
+    case "cool": return "Frio"
+    case "heat": return "Calor"
+    case "fan": return "Ventilador"
+  }
+})
+const vSwing = computed( () => {
+  switch(device.value.state.verticalSwing){
+    case "auto": return "Automático"
+    default: return `${device.value.state.verticalSwing}º`
+  }
+})
+const hSwing = computed( () => {
+  switch(device.value.state.horizontalSwing){
+    case "auto": return "Automático"
+    default: return `${device.value.state.horizontalSwing}º`
+  }
+})
+const fanSpeed = computed ( () => {
+  switch(device.value.state.fanSpeed){
+    case "auto": return "Automático"
+    default: return `${device.state.fanSpeed}km/h`
+  }
+})
 const expand = ref(false)
 
-async function execute(action){
+async function turnOnOff(){
+  let result
+  if(isOn.value){
+    await execute("turnOff", [])
+  } else {
+    await execute("turnOn", [])
+  }
+}
+
+async function execute(actionName, params){
   try{
     // Acá tenés que armar el objeto en función la action que estás mandando, ya se manda bien
-    const actionParam = action.param
 
-    let result = await deviceStore.execute(props.id, action.realName, {params: actionParam})
+    let result = await deviceStore.execute(props.id, actionName, {params: params})
     if(result){
       device.value = await deviceStore.get(props.id)
     } else {
@@ -64,22 +124,25 @@ onMounted( async () => {
   try{
     device.value = await deviceStore.get(props.id)
     isLoading.value = false
+    setInterval(refreshState, 1000)
   } catch(error) {
     console.log(error)
   }
 })
+async function refreshState(){
+  device.value = await deviceStore.get(props.id)
+}
 
-
-const actions = ref( [
-  {
+const actions = ref( {
+  on: {
     name: "ON",
     params: [],
   },
-  {
+  off: {
     name: "OFF",
     params: []
   },
-  {
+  setTemperature: {
     name: "Set Temperature",
     params: [
       {
@@ -91,7 +154,7 @@ const actions = ref( [
       }
     ]
   },
-  {
+  setMode: {
     name: "Set Mode",
     params: [
       {
@@ -106,7 +169,7 @@ const actions = ref( [
       }
     ]
   },
-  {
+  setVerticalSwing: {
     name: "Set Vertical Swing",
     params: [
       {
@@ -123,7 +186,7 @@ const actions = ref( [
       }
     ]
   },
-  {
+  setHorizontalSwing: {
     name: "Set Horizontal Swing",
     params: [
       {
@@ -141,7 +204,7 @@ const actions = ref( [
       }
     ]
   },
-  {
+  setFanSpeed: {
     name: "Set Fan Speed",
     params: [
       {
@@ -158,7 +221,7 @@ const actions = ref( [
       }
     ]
   }
-])
+})
 </script>
 
 <style scoped>

@@ -4,7 +4,7 @@ class ACState {
     this.temperature = temperature
     this.mode = mode
     this.verticalSwing = verticalSwing
-    this.horizonalSwing = horizontalSwing
+    this.horizontalSwing = horizontalSwing
     this.fanSpeed = fanSpeed
   }
 }

@@ -36,9 +36,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
+import { Device } from "@/api/device"
 
 const props = defineProps(["id"])
-const device = ref({})
+const device = ref(new Device())
 const deviceStore = useDeviceStore()
 const isLoading = ref(true)
 const expand = ref(false)

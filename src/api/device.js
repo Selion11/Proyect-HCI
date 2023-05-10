@@ -78,7 +78,7 @@ class Type {
 }
 
 class Device {
-  constructor(id, name, type, state, meta) {
+  constructor(id , name, type, state = {}, meta = {}) {
     this.id = id
     this.name = name
     this.type = type
@@ -103,8 +103,8 @@ class Log{
 
 class Event{
   constructor(name, args){
-    this.name
-    this.args
+    this.name = name
+    this.args = args
   }
 }
 

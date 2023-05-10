@@ -30,6 +30,7 @@
 <script setup>
   import { ref, computed, onMounted } from 'vue'
   import { useDeviceStore } from "@/store/deviceStore";
+  import { Device } from "@/api/device"
   import SpeakerCard from "@/components/devices/SpeakerCard.vue"
   import ACCard from "@/components/devices/ACCard.vue"
   import FaucetCard from "@/components/devices/FaucetCard.vue"

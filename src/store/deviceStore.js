@@ -25,27 +25,23 @@ export const useDeviceStore = defineStore('devices', () =>{
     let result = await DevicesApi.getAllByType(deviceTypeId);
     result.map((device) => Object.assign(new Device(), device))
     await getAll()
-    await getAllEvents()
     return result
   }
 
   async function get(id) {
     const result = await DevicesApi.get(id);
     await getAll()
-    await getAllEvents()
     return Object.assign(new Device(), result)
   }
 
   async function add(device) {
     const result = await DevicesApi.add(device)
     await getAll()
-    await getAllEvents()
     return Object.assign(new Device(), device)
   }
   async function modify(device) {
     const result = await DevicesApi.modify(device)
     await getAll()
-    await getAllEvents()
 
     // result = { "result": [boolean, boolean, ..., boolean] }
     // El orden de los booleanos es el orden de los dispositivos en la rutina
@@ -55,7 +51,6 @@ export const useDeviceStore = defineStore('devices', () =>{
   async function execute(id, actionName, parameters) {
     const result = await DevicesApi.execute(id, actionName, parameters)
     await getAll()
-    await getAllEvents()
 
     // result = { "result": [boolean, boolean, ..., boolean] }
     // El orden de los booleanos es el orden de los dispositivos en la rutina
@@ -65,7 +60,6 @@ export const useDeviceStore = defineStore('devices', () =>{
   async function getLog(id, limit, offset){
     let result = await DevicesApi.getLog(id, limit, offset)
     await getAll()
-    await getAllEvents()
     result = result.map((log) => Object.assign(new Log(), log))
     return result
   }
@@ -73,7 +67,6 @@ export const useDeviceStore = defineStore('devices', () =>{
   async function getLogs(limit, offset){
     let result = await DevicesApi.getLogs(limit, offset)
     await getAll()
-    await getAllEvents()
     result = result.map((log) => Object.assign(new Log(), log))
     return result
   }
@@ -98,7 +91,6 @@ export const useDeviceStore = defineStore('devices', () =>{
   async function getEvent(id){
     const result = await DevicesApi.getEvent(id)
     await getAll()
-    await getAllEvents()
     return Object.assign(new Event(), result)
   }
 
@@ -106,7 +98,6 @@ export const useDeviceStore = defineStore('devices', () =>{
     const result = await DevicesApi.getState(id)
     let aux = await DevicesApi.get(id)
     await getAll()
-    await getAllEvents()
     aux = Object.assign(new Device(), aux)
     switch(aux.type.name){
       case "speaker": return Object.assign(new SpeakerState(), result)
@@ -120,7 +111,6 @@ export const useDeviceStore = defineStore('devices', () =>{
   async function remove(id) {
     const result = await DevicesApi.remove(id)
     await getAll()
-    await getAllEvents()
 
     // result = { "result": [boolean, boolean, ..., boolean] }
     // El orden de los booleanos es el orden de los dispositivos en la rutina
