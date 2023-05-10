@@ -10,12 +10,12 @@
     <div class="subtitle">
       <v-list-item density="compact">
         <v-list-item-subtitle>Status:</v-list-item-subtitle>
-        <v-list>Estado: {{device.state.status === 'on' ? "Encendido" : "Apagado"}}</v-list>
-        <v-list>Temperatura: {{ `${device.state.temperature}ºC`}}</v-list>
+        <v-list>Estado: {{status}}</v-list>
+        <v-list>Temperatura: {{ `${temperature}ºC`}}</v-list>
         <v-list>Modo: {{mode}}</v-list>
-        <v-list>VSwing: {{vSwing}}</v-list>
-        <v-list>HSwing: {{hSwing}}</v-list>
-        <v-list>Fan Speed: {{fanSpeed}}</v-list>
+        <v-list>Oscilación Vertical: {{vSwing}}</v-list>
+        <v-list>Oscilación Horizontal: {{hSwing}}</v-list>
+        <v-list>Velocidad del Ventilador: {{fanSpeed}}</v-list>
       </v-list-item>
     </div>
 
@@ -27,21 +27,99 @@
             <v-btn  id="switch" @click="turnOnOff()">{{ isOn ? "Apagar" : "Encender" }}</v-btn>
           </v-row>
           <v-row>
-            <v-btn  id="increase-temp" @click="">{{ '-' }}</v-btn>
+            <v-btn  id="decrease-temp" @click="decreaseTemperature()">{{ '-' }}</v-btn>
             <v-card-text align="center">Temperatura</v-card-text>
-            <v-btn  id="decrease-temp" @click="">{{ '+' }}</v-btn>
+            <v-btn  id="increase-temp" @click="increaseTemperature()">{{ '+' }}</v-btn>
           </v-row>
           <v-row>
-            <v-btn  id="set-mode" @click="">{{ 'Cambiar Modo' }}</v-btn>
+            <v-btn  id="set-mode">
+              {{ 'Cambiar Modo' }}
+              <v-menu activator="parent">
+                <v-list>
+                  <v-list-item id="set-mode-heat" v-if="mode !== 'Calor'" @click="setMode('heat')">
+                    <v-list-item-title>{{ `Modo Calor` }}</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item id="set-mode-cool" v-if="mode !== 'Frio'" @click="setMode('cool')">
+                    <v-list-item-title>{{ `Modo Frio` }}</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item id="set-mode-fan" v-if="mode !== 'Ventilador'" @click="setMode('fan')">
+                    <v-list-item-title>{{ `Modo Ventilador` }}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-btn>
           </v-row>
           <v-row>
-            <v-btn  id="set-vswing" @click="">{{ 'Rotación Vertical' }}</v-btn>
+            <v-btn  id="set-v-swing">
+              {{ 'Rotación Vertical' }}
+              <v-menu activator="parent">
+                <v-list>
+                  <v-list-item id="set-v-swing-auto" v-if="mode !== 'Automático'" @click="setVerticalSwing('auto')">
+                    <v-list-item-title>{{ `Automático` }}</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item id="set-v-swing-22" v-if="mode !== '22º'" @click="setVerticalSwing('22')">
+                    <v-list-item-title>{{ `22º` }}</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item id="set-v-swing-45" v-if="mode !== '45º'" @click="setVerticalSwing('45')">
+                    <v-list-item-title>{{ `45º` }}</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item id="set-v-swing-67" v-if="mode !== '67º'" @click="setVerticalSwing('67')">
+                    <v-list-item-title>{{ `67º` }}</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item id="set-v-swing-90" v-if="mode !== '90º'" @click="setVerticalSwing('90')">
+                    <v-list-item-title>{{ `90º` }}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-btn>
           </v-row>
           <v-row>
-            <v-btn  id="set-hswing" @click="">{{ 'Rotación Horizontal' }}</v-btn>
+            <v-btn  id="set-h-swing">
+              {{ 'Rotación Horizontal' }}
+              <v-menu activator="parent">
+                <v-list>
+                  <v-list-item id="set-h-swing-auto" v-if="mode !== 'Automático'" @click="setHorizontalSwing('auto')">
+                    <v-list-item-title>{{ `Automático` }}</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item id="set-h-swing-22" v-if="mode !== '22º'" @click="setHorizontalSwing('22')">
+                    <v-list-item-title>{{ `22º` }}</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item id="set-h-swing-45" v-if="mode !== '45º'" @click="setHorizontalSwing('45')">
+                    <v-list-item-title>{{ `45º` }}</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item id="set-h-swing-67" v-if="mode !== '67º'" @click="setHorizontalSwing('67')">
+                    <v-list-item-title>{{ `67º` }}</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item id="set-h-swing-90" v-if="mode !== '90º'" @click="setHorizontalSwing('90')">
+                    <v-list-item-title>{{ `90º` }}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-btn>
           </v-row>
           <v-row>
-            <v-btn  id="set-fan-speed" @click="">{{ 'Velocidad' }}</v-btn>
+            <v-btn  id="set-fan-speed" @click="">
+              {{ 'Velocidad' }}
+              <v-menu activator="parent">
+                <v-list>
+                  <v-list-item id="set-fan-speed-auto" v-if="mode !== 'Automático'" @click="setFanSpeed('auto')">
+                    <v-list-item-title>{{ `Automático` }}</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item id="set-fan-speed-25" v-if="mode !== '25km/h'" @click="setFanSpeed('25')">
+                    <v-list-item-title>{{ `25km/h` }}</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item id="set-fan-speed-50" v-if="mode !== '50km/h'" @click="setFanSpeed('50')">
+                    <v-list-item-title>{{ `50km/h` }}</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item id="set-fan-speed-75" v-if="mode !== '75km/h'" @click="setFanSpeed('75')">
+                    <v-list-item-title>{{ `75km/h` }}</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item id="set-fan-speed-100" v-if="mode !== '100km/h'" @click="setFanSpeed('100')">
+                    <v-list-item-title>{{ `100km/h` }}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-btn>
           </v-row>
         </div>
       </div>
@@ -67,10 +145,11 @@ const props = defineProps(["id"])
 const device = ref( null)
 const deviceStore = useDeviceStore()
 const isLoading = ref(true)
+const status = computed( () => device.value.state.status === 'on' ? "Encendido" : "Apagado")
 const isOn = computed( () => device.value.state.status === 'on')
 const temperature = computed( () =>  device.value.state.temperature)
 const mode = computed( () => {
-  switch(device.value.state.mode){
+  switch(typeof(device.value.state.mode) === 'object' ? device.value.state.mode.mode : device.value.state.mode){
     case "cool": return "Frio"
     case "heat": return "Calor"
     case "fan": return "Ventilador"
@@ -91,7 +170,7 @@ const hSwing = computed( () => {
 const fanSpeed = computed ( () => {
   switch(device.value.state.fanSpeed){
     case "auto": return "Automático"
-    default: return `${device.state.fanSpeed}km/h`
+    default: return `${device.value.state.fanSpeed}km/h`
   }
 })
 const expand = ref(false)
@@ -105,11 +184,65 @@ async function turnOnOff(){
   }
 }
 
+async function setMode(mode){
+  try {
+    await execute("setMode", [mode])
+  } catch(error){
+    // Handle error
+  }
+}
+async function decreaseTemperature(){
+  if(temperature.value > 18){
+    try{
+      await execute("setTemperature", [temperature.value - 1])
+    } catch(error){
+      console.error(error)
+    }
+  } else{
+    // Handle error
+  }
+}
+
+async function increaseTemperature(){
+  if(temperature.value < 38){
+    try{
+      await execute("setTemperature", [temperature.value + 1])
+    } catch(error){
+      console.error(error)
+    }
+  } else{
+    // Handle error
+  }
+}
+
+async function setVerticalSwing(mode){
+  try{
+    await execute("setVerticalSwing", [mode])
+  } catch(error){
+    console.error(error)
+  }
+}
+
+async function setHorizontalSwing(mode){
+  try{
+    await execute("setHorizontalSwing", [mode])
+  } catch(error){
+    console.error(error)
+  }
+}
+
+async function setFanSpeed(speed){
+  try{
+    await execute("setFanSpeed", [speed])
+  } catch(error){
+    console.error(error)
+  }
+}
 async function execute(actionName, params){
   try{
     // Acá tenés que armar el objeto en función la action que estás mandando, ya se manda bien
 
-    let result = await deviceStore.execute(props.id, actionName, {params: params})
+    let result = await deviceStore.execute(props.id, actionName, params)
     if(result){
       device.value = await deviceStore.get(props.id)
     } else {
@@ -124,8 +257,12 @@ onMounted( async () => {
   try{
     device.value = await deviceStore.get(props.id)
     isLoading.value = false
-    setInterval(refreshState, 1000)
   } catch(error) {
+    console.log(error)
+  }
+  try{
+    setInterval(refreshState, 1000)
+  } catch(error){
     console.log(error)
   }
 })

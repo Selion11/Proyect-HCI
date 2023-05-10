@@ -78,7 +78,7 @@ class Type {
 }
 
 class Device {
-  constructor(id , name, type, state = {}, meta = {}) {
+  constructor(id="", name= "", type= {}, state= {}, meta= {}) {
     this.id = id
     this.name = name
     this.type = type

@@ -221,8 +221,20 @@
     } catch(error){
       throw error
     }
+    try{
+      setInterval(refreshState, 1000)
+    } catch(error){
+      console.log(error)
+    }
   })
 
+  async function refreshState(){
+    try{
+      devices.value = await devStore.getAll()
+    } catch(error){
+      throw error
+    }
+  }
 
   async function elemCreate (typeId,typeName){
     try {
