@@ -10,3 +10,9 @@
 <script setup>
 import RoutinesContainer from "@/components/RoutinesContainer.vue";
 </script>
+
+<style scoped>
+h1 {
+  text-align: center;
+}
+</style>

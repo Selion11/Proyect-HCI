@@ -32,7 +32,7 @@ class RoutinesApi {
 
 class Routine {
   constructor(name, actions, meta){
-    this.name
+    this.name = name
     this.actions = actions
     this.meta = meta
   }
