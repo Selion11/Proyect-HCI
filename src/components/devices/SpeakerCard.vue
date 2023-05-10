@@ -1,10 +1,12 @@
 <script setup>
-import { computed, defineProps, ref, onMounted } from 'vue'
+import { defineProps, ref, onMounted } from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
 
 const props = defineProps(['id'])
 
 const devStore = useDeviceStore()
+
+const play = ref(false)
 async function get(deviceId){
   try{
     return await devStore.get(deviceId)
@@ -13,10 +15,12 @@ async function get(deviceId){
   }
 }
 const isLoading = ref(false)
-
+const volume = ref(50)
 const speaker = ref(null)
 
 const expand = ref(false)
+
+const dialog = ref(false)
 
 const actions = ref([
   {
@@ -29,31 +33,38 @@ const actions = ref([
         minValue: 0,
         maxValue: 10
       }
-    ]
+    ],
+    icon: "mdi-volume-high"
   },
   {
     name: "Play",
-    params: []
+    params: [],
+    icon: "mdi-play"
   },
   {
     name: "Stop",
-    params: []
+    params: [],
+    icon: "mdi-stop"
   },
   {
     name: "Pause",
-    params: []
+    params: [],
+    icon: "mdi-pause"
   },
   {
     name: "Resume",
-    params: []
+    params: [],
+    icon: "mdi-play"
   },
   {
     name: "Next Song",
-    params: []
+    params: [],
+    icon: "mdi-skip-next"
   },
   {
     name: "Previous Song",
-    params: []
+    params: [],
+    icon: "mdi-skip-previous"
   },
   {
     name: "Set Genre",
@@ -71,11 +82,13 @@ const actions = ref([
           "rock"
         ]
       }
-    ]
+    ],
+    icon: "mdi-music-note"
   },
   {
     name: 'Get Playlist',
-    params: []
+    params: [],
+    icon: "mdi-playlist-music"
   }
 ])
 
@@ -87,7 +100,6 @@ onMounted(async () => {
     throw error
   }
 })
-
 </script>
 
 <template>
@@ -105,15 +117,43 @@ onMounted(async () => {
 
 
     <div class="subtitle">
-      <v-list-item density="compact" prepend-icon="mdi-battery" >
+      <v-list-item class="status" density="compact" prepend-icon="mdi-battery" >
         OFF
       </v-list-item>
+      <v-row class="music">
+         <v-btn class="mbtn" prepend-icon="mdi-skip-previous">Previous</v-btn>
+          <v-btn @click="play = !play" max-width="30px">
+            <v-icon v-if="play === false" icon="mdi-play"/>
+            <v-icon v-else icon="mdi-pause"/>
+          </v-btn>
+       <v-btn class="mbtn" prepend-icon="mdi-skip-next">Next</v-btn>
+      </v-row>
     </div>
 
     <v-expand-transition>
       <div v-if="expand">
         <div class="py-2">
-          <v-btn v-for="action in actions" id="actions">{{ action.name }}</v-btn>
+          <v-container>
+            <v-btn class="actions" prepend-icon="mdi-stop">Stop</v-btn>
+            <v-btn class="actions" prepend-icon="mdi-play">Resume</v-btn>
+            <v-btn class="actions" prepend-icon="mdi-music-note">Set Genre</v-btn>
+            <v-btn class="actions" prepend-icon="mdi-playlist-music">Get Playlist</v-btn>
+            <v-btn class="actions" prepend-icon="mdi-volume-high">
+              Set Volume
+              <v-dialog v-model="dialog" activator="parent" width="300px" height="auto">
+                <v-card>
+                  <v-card-text >
+                    <v-row>
+                    <v-icon icon="mdi-plus" @click="volume = volume+1"/>
+                    <v-slider max="100" min="0" step="1" v-model="volume"></v-slider>
+                      <v-icon icon="mdi-minus" @click="volume = volume-1"/>
+                    </v-row>
+                    Volume: {{volume}}
+                  </v-card-text>
+                </v-card>
+              </v-dialog>
+            </v-btn>
+          </v-container>
         </div>
 
       </div>
@@ -122,7 +162,7 @@ onMounted(async () => {
     <v-divider></v-divider>
 
     <v-card-actions>
-      <v-btn @click="expand = !expand">
+      <v-btn block @click="expand = !expand">
         {{ !expand ? 'All Actions' : 'Hide Actions' }}
       </v-btn>
     </v-card-actions>
@@ -131,9 +171,20 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-#actions {
+.actions {
   margin-right: 7px;
   margin-left: 7px;
+  margin-bottom: 4px;
+}
+.mbtn{
+  margin-right: 4px;
+  margin-left: 4px;
+}
+.music{
+  margin: 7px 5px;
+}
+.status{
+  margin-bottom: 4px;
 }
 v-card-title {
   text-align: center;

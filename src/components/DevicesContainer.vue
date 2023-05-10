@@ -97,7 +97,7 @@
         type: {
           id: typeId
         },
-        name: 'New ' + typeName + 'sae',
+        name: 'New ' + typeName + 'Chinga',
         meta: {}
       })
       devices.value = await devStore.getAll()
