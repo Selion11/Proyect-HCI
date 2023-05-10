@@ -1,6 +1,6 @@
 <template>
-  <v-card class="mx-auto" max-width="368">
-    <v-card-item>{{name}}</v-card-item>
+  <v-card v-if="!isLoading" class="mx-auto" max-width="368">
+    <v-card-item>{{device.name}}</v-card-item>
     <v-card-text>
       <v-icon icon="mdi-air-conditioner" size="55" color="error" class="me-1 pb-1"></v-icon>
     </v-card-text>
@@ -9,7 +9,7 @@
 
     <div class="subtitle">
       <v-list-item density="compact">
-        <v-list-item-subtitle>Status: {{stat}}</v-list-item-subtitle>
+        <v-list-item-subtitle>Status: {{device.status.temperature}}</v-list-item-subtitle>
       </v-list-item>
     </div>
 
