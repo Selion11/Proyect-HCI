@@ -20,12 +20,10 @@
                     placeholder="Text"
                     v-model="text"
                     label="Device Name"/>
-                  {{text}}
-                  {{device.id}}
                 </v-card-text>
                 <v-card-actions>
-                  <v-btn @click="dialogSpeaker = false" prepend-icon="mdi-close">Close</v-btn>
-                  <v-btn @click="elemCreate(device.id,text) && (dialogSpeaker = false)" prepend-icon="mdi-content-save-outline">Create</v-btn>
+                  <v-btn @click="(dialogSpeaker = false)" prepend-icon="mdi-close">Close</v-btn>
+                  <v-btn @click="elemCreate(device.id,text) && (dialogSpeaker = false) " prepend-icon="mdi-content-save-outline">Create</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -49,12 +47,10 @@
                     placeholder="Text"
                     v-model="text"
                     label="Device Name"/>
-                  {{text}}
-                  {{device.id}}
                 </v-card-text>
                 <v-card-actions>
-                  <v-btn @click="dialogAc = false" prepend-icon="mdi-close">Close</v-btn>
-                  <v-btn @click="elemCreate(device.id,text)" prepend-icon="mdi-content-save-outline">Create</v-btn>
+                  <v-btn @click="(dialogAc = false)" prepend-icon="mdi-close">Close</v-btn>
+                  <v-btn @click="elemCreate(device.id,text)&&(dialogAc = false) " prepend-icon="mdi-content-save-outline">Create</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -78,12 +74,10 @@
                     placeholder="Text"
                     v-model="text"
                     label="Device Name"/>
-                  {{text}}
-                  {{device.id}}
                 </v-card-text>
                 <v-card-actions>
-                  <v-btn @click="dialogFaucet = false" prepend-icon="mdi-close">Close</v-btn>
-                  <v-btn @click="elemCreate(device.id,text)" prepend-icon="mdi-content-save-outline">Create</v-btn>
+                  <v-btn @click="(dialogFaucet = false) " prepend-icon="mdi-close">Close</v-btn>
+                  <v-btn @click="elemCreate(device.id,text) && (dialogFaucet = false) " prepend-icon="mdi-content-save-outline">Create</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -107,12 +101,10 @@
                     placeholder="Text"
                     v-model="text"
                     label="Device Name"/>
-                  {{text}}
-                  {{device.id}}
                 </v-card-text>
                 <v-card-actions>
-                  <v-btn @click="dialogLamp = false" prepend-icon="mdi-close">Close</v-btn>
-                  <v-btn @click="elemCreate(device.id,text)" prepend-icon="mdi-content-save-outline">Create</v-btn>
+                  <v-btn @click="(dialogLamp = false) " prepend-icon="mdi-close">Close</v-btn>
+                  <v-btn @click="elemCreate(device.id,text) && (dialogLamp = false)" prepend-icon="mdi-content-save-outline">Create</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -136,12 +128,10 @@
                     placeholder="Text"
                     v-model="text"
                     label="Device Name"/>
-                  {{text}}
-                  {{device.id}}
                 </v-card-text>
                 <v-card-actions>
-                  <v-btn @click="dialogFridge = false" prepend-icon="mdi-close">Close</v-btn>
-                  <v-btn @click="elemCreate(device.id,text)" prepend-icon="mdi-content-save-outline">Create</v-btn>
+                  <v-btn @click="(dialogFridge = false)" prepend-icon="mdi-close">Close</v-btn>
+                  <v-btn @click="elemCreate(device.id,text) && (dialogFridge = false)" prepend-icon="mdi-content-save-outline">Create</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -150,6 +140,7 @@
       </v-container>
     </div>
     </v-container>
+
 </template>
 
 <script setup>
