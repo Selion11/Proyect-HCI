@@ -178,9 +178,9 @@ const expand = ref(false)
 async function turnOnOff(){
   let result
   if(isOn.value){
-    await execute("turnOff", [])
+    await execute("turnOff")
   } else {
-    await execute("turnOn", [])
+    await execute("turnOn")
   }
 }
 
@@ -238,18 +238,12 @@ async function setFanSpeed(speed){
     console.error(error)
   }
 }
-async function execute(actionName, params){
-  try{
-    // Acá tenés que armar el objeto en función la action que estás mandando, ya se manda bien
-
-    let result = await deviceStore.execute(props.id, actionName, params)
-    if(result){
-      ac.value = await deviceStore.get(props.id)
-    } else {
-      console.error(result)
-    }
-  } catch(error){
-    console.log(error)
+async function execute(actionName, params= []){
+  let result = await deviceStore.execute(props.id, actionName, params)
+  if(result){
+    ac.value = await deviceStore.get(props.id)
+  } else {
+    console.error(result)
   }
 }
 

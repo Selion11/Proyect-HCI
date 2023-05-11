@@ -47,18 +47,11 @@ const isLoading = ref(true)
 const expand = ref(false)
 
 async function execute(action){
-  try{
-    // Acá tenés que armar el objeto en función la action que estás mandando, ya se manda bien
-    const actionParam = action.param
-
-    let result = await deviceStore.execute(props.id, action.realName, {params: actionParam})
-    if(result){
-      lamp.value = await deviceStore.get(props.id)
-    } else {
-      console.error(result)
-    }
-  } catch(error){
-    console.log(error)
+  let result = await deviceStore.execute(props.id, action.realName, {params: actionParam})
+  if(result){
+    lamp.value = await deviceStore.get(props.id)
+  } else {
+    console.error(result)
   }
 }
 

@@ -1,27 +1,119 @@
 <script setup>
-import { defineProps, ref, onMounted } from 'vue'
+import { defineProps, ref, onMounted, computed } from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
 
 const props = defineProps(['id'])
 
 const deviceStore = useDeviceStore()
 
-const play = ref(false)
-async function get(deviceId){
-  try{
-    return await deviceStore.get(deviceId)
-  } catch(error){
-    throw error
-  }
-}
+const status = computed(() => speaker.value.state.status)
 
-const isLoading = ref(false)
-const volume = ref(50)
+const isLoading = ref(true)
+const volume = computed( () => speaker.value.state.volume)
 const speaker = ref({})
+
+const currentVolume = ref(0)
 
 const expand = ref(false)
 
 const dialog = ref(false)
+
+async function execute(actionName, params= []){
+  let result = await deviceStore.execute(props.id, actionName, params)
+  if(result){
+    speaker.value = await deviceStore.get(props.id)
+  }
+}
+
+onMounted(async () => {
+  try{
+    speaker.value = await deviceStore.get(props.id)
+    currentVolume.value = volume.value
+    isLoading.value = false
+  } catch(error){
+    throw error
+  }
+  try{
+    setInterval(refreshState, 1000)
+  } catch(error){
+    throw error
+  }
+})
+async function refreshState(){
+  try{
+    await execute("setVolume", [currentVolume.value])
+    speaker.value = await deviceStore.get(props.id)
+  } catch(error){
+    console.log(error)
+  }
+}
+async function playPause(){
+  if(status.value === "playing"){
+    try{
+      await execute("pause")
+    } catch(error){
+      console.log(error)
+    }
+  } else{
+    if(status.value === "stopped"){
+      try{
+        await execute("play")
+      } catch(error){
+        console.log(error)
+      }
+    } else{
+      try{
+        await execute("resume")
+      } catch(error){
+        console.log(error)
+      }
+    }
+  }
+}
+
+async function stop(){
+  try{
+    await execute("stop")
+  } catch(error){
+    console.log(error)
+  }
+}
+
+async function nextSong(){
+  try{
+    await execute("nextSong")
+    await execute("play")
+    await execute("resume")
+  } catch(error){
+    console.log(error)
+  }
+}
+
+async function previousSong(){
+  try{
+    await execute("previousSong")
+    await execute("play")
+    await execute("resume")
+  } catch(error){
+    console.log(error)
+  }
+}
+
+async function volumeUp(){
+  if(volume.value < 10){
+    currentVolume.value = currentVolume.value + 1
+  } else{
+    // Handle error
+  }
+}
+
+async function volumeDown(){
+  if(volume.value > 0){
+    currentVolume.value = currentVolume.value - 1
+  } else{
+    // Handle error
+  }
+}
 
 const actions = ref([
   {
@@ -93,33 +185,15 @@ const actions = ref([
   }
 ])
 
-onMounted(async () => {
-  try{
-    speaker.value = await get(props.id)
-    isLoading.value = true
-  } catch(error){
-    throw error
-  }
-  try{
-    setInterval(refreshState, 1000)
-  } catch(error){
-    throw error
-  }
-})
 
-async function refreshState(){
-  speaker.value = await deviceStore.get(props.id)
-}
 </script>
 
 <template>
-<v-container>
+<v-container v-if="!isLoading">
   <v-card class="mx-auto" max-width="368">
-    <div v-if="isLoading">
       <v-card-title>
         {{ speaker.name }}
       </v-card-title>
-    </div>
     <v-card-text class="centered">
       <v-icon icon="mdi-speaker" size="75" color="error" class="me-1 pb-1"></v-icon>
     </v-card-text>
@@ -127,16 +201,13 @@ async function refreshState(){
 
 
     <div class="subtitle">
-      <v-list-item class="status" density="compact" prepend-icon="mdi-battery" >
-        OFF
-      </v-list-item>
       <v-row class="music">
-         <v-btn width="flex" class="mbtn" prepend-icon="mdi-skip-previous"/>
-          <v-btn width="flex" @click="play = !play" max-width="30px">
-            <v-icon v-if="play === false" icon="mdi-play"/>
+         <v-btn width="flex" class="mbtn" prepend-icon="mdi-skip-previous" @click="previousSong()"/>
+          <v-btn width="flex" @click="playPause()" max-width="30px">
+            <v-icon v-if="status !== 'playing'" icon="mdi-play"/>
             <v-icon v-else icon="mdi-pause"/>
           </v-btn>
-       <v-btn width="flex" class="mbtn" prepend-icon="mdi-skip-next"/>
+       <v-btn width="flex" class="mbtn" prepend-icon="mdi-skip-next" @click="nextSong()"/>
       </v-row>
     </div>
 
@@ -145,10 +216,7 @@ async function refreshState(){
         <div class="py-2">
           <v-container>
             <v-row justify="center">
-              <v-btn class="actions" prepend-icon="mdi-stop">Stop</v-btn>
-            </v-row>
-            <v-row justify="center">
-              <v-btn class="actions" prepend-icon="mdi-play">Resume</v-btn>
+              <v-btn class="actions" prepend-icon="mdi-stop" @click="stop()">Stop</v-btn>
             </v-row>
             <v-row justify="center">
               <v-btn class="actions" prepend-icon="mdi-music-note">Set Genre</v-btn>
@@ -163,11 +231,11 @@ async function refreshState(){
                   <v-card>
                     <v-card-text >
                       <v-row>
-                      <v-icon icon="mdi-plus" @click="volume = volume+1"/>
-                      <v-slider max="100" min="0" step="1" v-model="volume"></v-slider>
-                        <v-icon icon="mdi-minus" @click="volume = volume-1"/>
+                        <v-icon icon="mdi-minus" @click="volumeDown()"/>
+                        <v-slider max="10" thumb-label min="0" step="1" v-model="currentVolume"/>
+                        <v-icon icon="mdi-plus" @click="volumeUp()"/>
                       </v-row>
-                      Volume: {{volume}}
+                      Volume: {{currentVolume}}
                     </v-card-text>
                   </v-card>
                 </v-dialog>
