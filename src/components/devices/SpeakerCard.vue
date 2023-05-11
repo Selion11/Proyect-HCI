@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, ref, onMounted, computed } from 'vue'
+import { defineProps, ref, onMounted, computed, mergeProps } from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
 
 const props = defineProps(['id'])
@@ -7,23 +7,50 @@ const props = defineProps(['id'])
 const deviceStore = useDeviceStore()
 
 const status = computed(() => speaker.value.state.status)
+const isStopped = computed( () => speaker.value.state.status === "stopped")
+const currentSong = computed( () => speaker.value.state.status !== "stopped" ? speaker.value.state.song.title : null)
+const songProgress = computed( () => {
+  if(speaker.value.state.status !== "stopped"){
+    return turnMinutesToSeconds(speaker.value.state.song.progress)*100 / turnMinutesToSeconds(speaker.value.state.song.duration)
+  } else{
+    return 0
+  }
+})
 
 const isLoading = ref(true)
 const volume = computed( () => speaker.value.state.volume)
 const speaker = ref({})
 
 const currentVolume = ref(0)
+const currentGenre = computed( () => {
+  switch(speaker.value.state.genre){
+    case "classic": return "Clásica"
+    default: return speaker.value.state.genre
+  }
+})
+const currentPlaylist = ref([])
 
 const expand = ref(false)
 
 const VOLdialog = ref(false)
-const GENdialiog = ref(false)
+const GENdialog = ref(false)
+const DELdialog = ref(false)
+const PLdialog = ref(false)
+const refreshInterval = ref(null)
+
+function turnMinutesToSeconds(time) {
+  const parts = time.split(':');
+  return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10)
+}
+
 
 async function execute(actionName, params= []){
   let result = await deviceStore.execute(props.id, actionName, params)
   if(result){
     speaker.value = await deviceStore.get(props.id)
+    return result
   }
+  return null
 }
 
 onMounted(async () => {
@@ -35,7 +62,7 @@ onMounted(async () => {
     throw error
   }
   try{
-    setInterval(refreshState, 1000)
+    refreshInterval.value = setInterval(refreshState, 1000)
   } catch(error){
     throw error
   }
@@ -69,6 +96,17 @@ async function playPause(){
         console.log(error)
       }
     }
+  }
+}
+
+async function getPlaylist(){
+  PLdialog.value = false
+  try{
+    currentPlaylist.value = await execute("getPlaylist")
+    PLdialog.value = true
+    console.log(currentGenre.value)
+  } catch(error){
+    console.log(error)
   }
 }
 
@@ -116,97 +154,69 @@ async function volumeDown(){
   }
 }
 
-const actions = ref([
-  {
-    name: "Set Volume",
-    params: [
-      {
-        name: "volume",
-        type: "number",
-        description: "volume level",
-        minValue: 0,
-        maxValue: 10
-      }
-    ],
-    icon: "mdi-volume-high"
-  },
-  {
-    name: "Play",
-    params: [],
-    icon: "mdi-play"
-  },
-  {
-    name: "Stop",
-    params: [],
-    icon: "mdi-stop"
-  },
-  {
-    name: "Pause",
-    params: [],
-    icon: "mdi-pause"
-  },
-  {
-    name: "Resume",
-    params: [],
-    icon: "mdi-play"
-  },
-  {
-    name: "Next Song",
-    params: [],
-    icon: "mdi-skip-next"
-  },
-  {
-    name: "Previous Song",
-    params: [],
-    icon: "mdi-skip-previous"
-  },
-  {
-    name: "Set Genre",
-    params: [
-      {
-        name: "genre",
-        type: "string",
-        description: "music genre",
-        supportedValues: [
-          "classical",
-          "country",
-          "dance",
-          "latina",
-          "pop",
-          "rock"
-        ]
-      }
-    ],
-    icon: "mdi-music-note"
-  },
-  {
-    name: 'Get Playlist',
-    params: [],
-    icon: "mdi-playlist-music"
+async function removeDevice(){
+  try{
+    isLoading.value = true
+    clearInterval(refreshInterval.value)
+    const result = await deviceStore.remove(props.id)
+    if(!result){
+      isLoading.value = false
+    }
+  } catch(error){
+    console.error(error)
   }
-])
-
-
+}
 </script>
 
 <template>
-<v-container v-if="!isLoading">
-  <v-card class="mx-auto" max-width="368">
-      <v-card-title>
-        <v-row justify="center">
+<v-container v-if="!isLoading" class="scaled">
+
+  <v-card class="mx-auto" max-width="350">
+    <v-menu>
+      <template v-slot:activator="{ props: menu }">
+        <v-tooltip location="top">
+          <template v-slot:activator="{ props: tooltip }">
+            <v-btn
+              icon="mdi-delete"
+              variant="text"
+              color="error"
+              class="close"
+              v-bind="mergeProps(menu, tooltip)"
+              @click="DELdialog = true"
+            />
+            <v-dialog v-model="DELdialog" width="auto" height="auto">
+              <v-card>
+                <v-card-title/>
+                <v-card-title>
+                  ¿Seguro que desea borrar el parlante {{speaker.name}}?
+                </v-card-title>
+                <v-card-actions>
+                  <v-row justify="center">
+                    <v-btn variant="text" @click="DELdialog = false">No</v-btn>
+                    <v-btn color="red" variant="text" @click="removeDevice()">Sí</v-btn>
+                  </v-row>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </template>
+          <span>Borrar Parlante</span>
+        </v-tooltip>
+      </template>
+    </v-menu>
+    <v-card-title/>
+    <v-card-title>
+      <v-row justify="center" class="text-capitalize">
         {{ speaker.name }}
-        </v-row>
-        <v-row justify="end">
-          <v-btn icon="mdi-delete" variant="text" color="error"/>
-        </v-row>
-      </v-card-title>
+      </v-row>
+    </v-card-title>
     <v-card-text class="centered">
       <v-icon icon="mdi-speaker" size="75" color="blue" />
     </v-card-text>
-
-
-
     <div class="subtitle">
+      <v-row justify="center" v-show="status !== 'stopped'">
+        <v-card-text class="centered">{{ currentSong }}</v-card-text>
+        <v-progress-linear rounded v-model="songProgress" class="music-bar"/>
+      </v-row>
       <v-row class="music" justify="center">
          <v-btn width="flex" class="mbtn" prepend-icon="mdi-skip-previous" @click="previousSong()"/>
           <v-btn width="flex" @click="playPause()" max-width="30px">
@@ -216,73 +226,94 @@ const actions = ref([
        <v-btn width="flex" class="mbtn" prepend-icon="mdi-skip-next" @click="nextSong()"/>
       </v-row>
     </div>
-
     <v-expand-transition>
       <div v-if="expand">
         <div class="py-2">
           <v-container>
-            <v-row justify="center">
-              <v-btn class="actions" prepend-icon="mdi-stop" @click="stop()">Stop</v-btn>
+            <v-row justify="center" v-show="status !== 'stopped'">
+              <v-btn class="actions"  prepend-icon="mdi-stop" @click="stop()">Detener</v-btn>
             </v-row>
             <v-row justify="center">
               <v-btn class="actions" prepend-icon="mdi-music-note">
                 Set Genre
-                <v-dialog v-model="GENdialiog" activator="parent" width="auto" height="auto">
+                <v-dialog v-model="GENdialog" activator="parent" width="auto" height="auto">
                   <v-card>
-                    <v-card-title>
-                      Elegi el genero de musica para el speaker {{speaker.name}}
+                    <v-icon icon="mdi-close" color="grey" class="close" @click="GENdialog = false"/>
+                    <v-card-title/>
+                    <v-card-title justify="center">
+                      Seleccione el género de música para el parlante {{speaker.name}}
                     </v-card-title>
                     <v-card-text>
-                      <v-list-item>
-                        <v-btn variant="outlined" color="blue">
-                         Classical
-                        </v-btn>
-                      </v-list-item>
-                      <v-list-item>
-                        <v-btn variant="outlined" color="blue">
-                          Country
-                        </v-btn>
-                      </v-list-item>
-                      <v-list-item>
-                        <v-btn variant="outlined" color="blue">
-                          Dance
-                        </v-btn>
-                      </v-list-item>
-                      <v-list-item>
-                        <v-btn variant="outlined" color="blue">
-                          Latina
-                        </v-btn>
-                      </v-list-item>
-                      <v-list-item>
-                        <v-btn variant="outlined" color="blue">
-                          Pop
-                        </v-btn>
-                      </v-list-item>
-                      <v-list-item>
-                        <v-btn variant="outlined" color="blue">
-                          Rock
-                        </v-btn>
-                      </v-list-item>
+                      <v-list>
+                        <v-row columns="2" justify="center" class="actions">
+                          <v-list-item>
+                            <v-btn variant="outlined" color="blue" class="actions">
+                             Clásica
+                            </v-btn>
+                            <v-btn variant="outlined" color="blue" class="actions">
+                              Country
+                            </v-btn>
+                            <v-btn variant="outlined" color="blue" class="actions">
+                              Dance
+                            </v-btn>
+                          </v-list-item>
+                        </v-row>
+                        <v-row columns="2" justify="center" class="actions">
+                          <v-list-item>
+                            <v-btn variant="outlined" color="blue" class="actions">
+                              Latina
+                            </v-btn>
+                            <v-btn variant="outlined" color="blue" class="actions">
+                              Pop
+                            </v-btn>
+                            <v-btn variant="outlined" color="blue" class="actions">
+                              Rock
+                            </v-btn>
+                          </v-list-item>
+                        </v-row>
+                      </v-list>
                     </v-card-text>
                   </v-card>
                 </v-dialog>
               </v-btn>
             </v-row>
             <v-row justify="center">
-              <v-btn class="actions" prepend-icon="mdi-playlist-music">Get Playlist</v-btn>
+              <v-btn class="actions" prepend-icon="mdi-playlist-music" @click="getPlaylist()">
+                Obtener Playlist
+                <v-dialog v-model="PLdialog" activator="parent" width="auto" height="auto">
+                  <v-card>
+                    <v-icon icon="mdi-close" color="grey" class="close" @click="PLdialog = false"/>
+                    <v-card-title/>
+                    <v-card-title class="text-capitalize">
+                      Playlist del género {{ currentGenre }}
+                    </v-card-title>
+                    <v-list v-for="song in currentPlaylist">
+                      <v-list-item-title>Canción</v-list-item-title>
+                      <v-list-item>{{ song.title }}</v-list-item>
+                      <v-list-item>Artista: {{ song.artist }}</v-list-item>
+                      <v-list-item>Álbum: {{ song.album }}</v-list-item>
+                      <v-list-item>Duración: {{ song.duration }}</v-list-item>
+                    </v-list>
+                  </v-card>
+                </v-dialog>
+              </v-btn>
+
             </v-row>
             <v-row justify="center">
               <v-btn class="actions" prepend-icon="mdi-volume-high">
-                Set Volume
+                Cambiar Volumen
                 <v-dialog v-model="VOLdialog" activator="parent" width="300px" height="auto">
                   <v-card>
+                    <v-icon icon="mdi-close" color="grey" class="close" @click="VOLdialog = false"/>
+                    <v-card-title/>
+                    <v-card-title/>
                     <v-card-text >
                       <v-row>
                         <v-icon icon="mdi-minus" @click="volumeDown()"/>
                         <v-slider max="10" thumb-label min="0" step="1" v-model="currentVolume"/>
                         <v-icon icon="mdi-plus" @click="volumeUp()"/>
                       </v-row>
-                      Volume: {{currentVolume}}
+                      Volumen: {{currentVolume}}
                     </v-card-text>
                   </v-card>
                 </v-dialog>
@@ -299,13 +330,13 @@ const actions = ref([
       <v-col cols="6">
       <v-row>
       <v-btn block prepend-icon="mdi-pencil" class="action">
-        Edit Device
+        Editar Parlante
       </v-btn>
       </v-row>
       </v-col>
       <v-col cols="6">
       <v-btn  @click="expand = !expand" block class="action">
-        {{ !expand ? 'All Actions' : 'Hide Actions' }}
+        {{ !expand ? 'Mostrar Acciones' : 'Ocultar Acciones' }}
       </v-btn>
       </v-col>
     </v-card-actions>
@@ -318,6 +349,15 @@ const actions = ref([
   text-align: center;
 }
 
+.scaled {
+  transform: scale(0.9);
+}
+
+.music-bar{
+  margin-right: 48px;
+  margin-left: 2px;
+  text-align: center;
+}
 
 .actions {
   margin-right: 7px;
@@ -335,6 +375,13 @@ const actions = ref([
 
 v-card-title {
   text-align: center;
+}
+
+.close{
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  margin: 0;
 }
 
 </style>
