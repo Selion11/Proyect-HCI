@@ -151,7 +151,7 @@
     }
   }
 
-  async function elemCreate (typeId,typeName) {
+  async function elemCreate (typeId,typeName){
     try {
       await devStore.add({
         type: {
@@ -161,7 +161,7 @@
         meta: {}
       })
       devices.value = await devStore.getAll()
-    } catch (error) {
+    } catch(error){
       console.error(error)
     }
   }
