@@ -201,7 +201,7 @@ const actions = ref([
         </v-row>
       </v-card-title>
     <v-card-text class="centered">
-      <v-icon icon="mdi-speaker" size="75" color="blue" class="me-1 pb-1"></v-icon>
+      <v-icon icon="mdi-speaker" size="75" color="blue" />
     </v-card-text>
 
 
@@ -233,7 +233,6 @@ const actions = ref([
                       Elegi el genero de musica para el speaker {{speaker.name}}
                     </v-card-title>
                     <v-card-text>
-                      <v-list></v-list>
                       <v-list-item>
                         <v-btn variant="outlined" color="blue">
                          Classical
@@ -291,7 +290,6 @@ const actions = ref([
             </v-row>
           </v-container>
         </div>
-
       </div>
     </v-expand-transition>
 
@@ -333,12 +331,7 @@ const actions = ref([
 .music{
   margin: 7px 5px;
 }
-.actions{
-}
 
-.actions{
-  margin-left: 8px;
-}
 
 v-card-title {
   text-align: center;

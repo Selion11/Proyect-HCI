@@ -28,8 +28,6 @@
       <v-icon v-else icon="mdi-air-conditioner" size="75" color="info" />
     </v-card-text>
 
-
-
     <div class="subtitle">
       <v-row justify="center">
         <v-list-item-subtitle>Status: {{  isOn ? temperature + "ºC" : "Apagado" }}</v-list-item-subtitle>
@@ -48,7 +46,7 @@
               <v-btn width="flex" block disabled append-icon="mdi-plus"/>
             </v-col>
           </v-row>
-          <v-row class="switch" justify="start">
+            <v-row class="switch" justify="start">
             <v-col cols="3">
             <v-switch v-model="isOn" width="flex"  @click="turnOnOff"/>
             </v-col>
@@ -60,92 +58,56 @@
       <div v-if="expand">
         <div class="py-2">
           <v-container>
-          <v-row>
+          <v-row justify="center">
             <v-btn class="actions" >
-              {{ 'Cambiar Modo' }}
+              Cambiar Modo
               <v-menu activator="parent">
                 <v-list>
-                  <v-list-item id="set-mode-heat" v-if="mode !== 'Calor'" @click="setMode('heat')">
-                    <v-list-item-title>{{ `Modo Calor` }}</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item id="set-mode-cool" v-if="mode !== 'Frio'" @click="setMode('cool')">
-                    <v-list-item-title>{{ `Modo Frio` }}</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item id="set-mode-fan" v-if="mode !== 'Ventilador'" @click="setMode('fan')">
-                    <v-list-item-title>{{ `Modo Ventilador` }}</v-list-item-title>
-                  </v-list-item>
+                  <v-list-item id="set-mode-heat" title="Modo Calor" v-if="mode !== 'Calor'" @click="setMode('heat')"/>
+                  <v-list-item id="set-mode-cool" title="Modo Frio" v-if="mode !== 'Frio'" @click="setMode('cool')"/>
+                  <v-list-item id="set-mode-fan" title="Modo Ventilador" v-if="mode !== 'Ventilador'" @click="setMode('fan')"/>
                 </v-list>
               </v-menu>
             </v-btn>
           </v-row>
-          <v-row>
-            <v-btn class="actions"  id="set-v-swing">
-              {{ 'Rotación Vertical' }}
+          <v-row justify="center">
+            <v-btn class="actions">
+              Rotación Vertical
               <v-menu activator="parent">
                 <v-list>
-                  <v-list-item id="set-v-swing-auto" v-if="mode !== 'Automático'" @click="setVerticalSwing('auto')">
-                    <v-list-item-title>{{ `Automático` }}</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item id="set-v-swing-22" v-if="mode !== '22º'" @click="setVerticalSwing('22')">
-                    <v-list-item-title>{{ `22º` }}</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item id="set-v-swing-45" v-if="mode !== '45º'" @click="setVerticalSwing('45')">
-                    <v-list-item-title>{{ `45º` }}</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item id="set-v-swing-67" v-if="mode !== '67º'" @click="setVerticalSwing('67')">
-                    <v-list-item-title>{{ `67º` }}</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item id="set-v-swing-90" v-if="mode !== '90º'" @click="setVerticalSwing('90')">
-                    <v-list-item-title>{{ `90º` }}</v-list-item-title>
-                  </v-list-item>
+                  <v-list-item title="Automático"  v-if="mode !== 'Automático'" @click="setVerticalSwing('auto')"/>
+                  <v-list-item id="set-v-swing-22" title="22º" v-if="mode !== '22º'" @click="setVerticalSwing('22')"/>
+                  <v-list-item id="set-v-swing-45" title="45º" v-if="mode !== '45º'" @click="setVerticalSwing('45')"/>
+                  <v-list-item id="set-v-swing-67" title="67º" v-if="mode !== '67º'" @click="setVerticalSwing('67')"/>
+                  <v-list-item id="set-v-swing-90" title="90º" v-if="mode !== '90º'" @click="setVerticalSwing('90')"/>
                 </v-list>
               </v-menu>
             </v-btn>
           </v-row>
-          <v-row>
+          <v-row justify="center">
             <v-btn class="actions" >
-              {{ 'Rotación Horizontal' }}
+              Rotación Horizontal
               <v-menu activator="parent">
                 <v-list>
-                  <v-list-item id="set-h-swing-auto" v-if="mode !== 'Automático'" @click="setHorizontalSwing('auto')">
-                    <v-list-item-title>{{ `Automático` }}</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item id="set-h-swing-22" v-if="mode !== '22º'" @click="setHorizontalSwing('22')">
-                    <v-list-item-title>{{ `22º` }}</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item id="set-h-swing-45" v-if="mode !== '45º'" @click="setHorizontalSwing('45')">
-                    <v-list-item-title>{{ `45º` }}</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item id="set-h-swing-67" v-if="mode !== '67º'" @click="setHorizontalSwing('67')">
-                    <v-list-item-title>{{ `67º` }}</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item id="set-h-swing-90" v-if="mode !== '90º'" @click="setHorizontalSwing('90')">
-                    <v-list-item-title>{{ `90º` }}</v-list-item-title>
-                  </v-list-item>
+                  <v-list-item id="set-h-swing-auto" title="Automático" v-if="mode !== 'Automático'" @click="setHorizontalSwing('auto')"/>
+                  <v-list-item id="set-h-swing-22" title="22º" v-if="mode !== '22º'" @click="setHorizontalSwing('22')"/>
+                  <v-list-item id="set-h-swing-45" title="45º" v-if="mode !== '45º'" @click="setHorizontalSwing('45')"/>
+                  <v-list-item id="set-h-swing-67" title="67º" v-if="mode !== '67º'" @click="setHorizontalSwing('67')"/>
+                  <v-list-item id="set-h-swing-90" title="90º" v-if="mode !== '90º'" @click="setHorizontalSwing('90')"/>
                 </v-list>
               </v-menu>
             </v-btn>
           </v-row>
-          <v-row>
-            <v-btn  class="actions" @click="">
-              {{ 'Velocidad' }}
+          <v-row justify="center">
+            <v-btn  class="actions">
+              Velocidad
               <v-menu activator="parent">
                 <v-list>
-                  <v-list-item id="set-fan-speed-auto" v-if="mode !== 'Automático'" @click="setFanSpeed('auto')">
-                    <v-list-item-title>{{ `Automático` }}</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item id="set-fan-speed-25" v-if="mode !== '25km/h'" @click="setFanSpeed('25')">
-                    <v-list-item-title>{{ `25km/h` }}</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item id="set-fan-speed-50" v-if="mode !== '50km/h'" @click="setFanSpeed('50')">
-                    <v-list-item-title>{{ `50km/h` }}</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item id="set-fan-speed-75" v-if="mode !== '75km/h'" @click="setFanSpeed('75')">
-                    <v-list-item-title>{{ `75km/h` }}</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item id="set-fan-speed-100" v-if="mode !== '100km/h'" @click="setFanSpeed('100')">
-                    <v-list-item-title>{{ `100km/h` }}</v-list-item-title>
-                  </v-list-item>
+                  <v-list-item title="Automático" v-if="mode !== 'Automático'" @click="setFanSpeed('auto')"/>
+                  <v-list-item title="25km/h" v-if="mode !== '25km/h'" @click="setFanSpeed('25')"/>
+                  <v-list-item title="50km/h" v-if="mode !== '50km/h'" @click="setFanSpeed('50')"/>
+                  <v-list-item title="75km/h" v-if="mode !== '75km/h'" @click="setFanSpeed('75')"/>
+                  <v-list-item title="100km/h" v-if="mode !== '100km/h'" @click="setFanSpeed('100')"/>
                 </v-list>
               </v-menu>
             </v-btn>

@@ -2,3 +2,15 @@
         <v-list-item>Oscilación Vertical: {{vSwing}}</v-list-item>
         <v-list-item>Oscilación Horizontal: {{hSwing}}</v-list-item>
         <v-list-item>Velocidad del Ventilador: {{fanSpeed}}</v-list-item>
+
+
+                                Unidad
+                                <v-menu activator="parent">
+                              <v-list-item title="ml" @click="disDia = false"/>
+                              <v-list-item title="cl" @click="disDia = false"/>
+                              <v-list-item title="dl" @click="disDia = false"/>
+                              <v-list-item title="l"  @click="disDia = false"/>
+                              <v-list-item title="dal" @click="disDia = false"/>
+                              <v-list-item title="hl" @click="disDia = false"/>
+                              <v-list-item title="kl" @click="disDia = false"/>
+                            </v-menu>
