@@ -5,8 +5,8 @@
       <DevicesContainer/>
     </v-container>
     <v-divider/>
-
   </div>
+
 </template>
 
 <script setup>

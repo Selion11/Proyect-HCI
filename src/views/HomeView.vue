@@ -32,12 +32,13 @@
           </v-card>
         </v-col>
     </v-row>
-
   </div>
+
 </template>
 
 
 <script setup>
+const drawer = ref(false)
 import { ref } from 'vue'
 const routineItems = ref([
                   {
@@ -124,4 +125,6 @@ const deviceItems = ref([
   h1 {
     padding-left: 10px;
   }
+
+
 </style>

@@ -38,7 +38,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
-import { Device } from "@/api/device"
 
 const props = defineProps(["id"])
 const lamp = ref({})
@@ -120,5 +119,6 @@ const actions = ref( [
   margin-left: 7px;
   margin-bottom: 7px;
 }
+
 
 </style>

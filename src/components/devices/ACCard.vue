@@ -1,38 +1,67 @@
+<style scoped>
+.actions{
+  margin-right: 8px;
+  margin-left: 7px;
+  margin-bottom: 7px;
+}
+.centered{
+  text-align: center;
+}
+.switch{
+  margin-left: 7px;
+}
+
+</style>
 <template>
-  <v-card v-if="!isLoading" class="mx-auto" max-width="368">
-    <v-card-item>{{ ac.name }}</v-card-item>
-    <v-card-text>
-      <v-icon icon="mdi-air-conditioner" size="55" color="error" class="me-1 pb-1"></v-icon>
+  <v-container v-if="!isLoading">
+  <v-card  class="mx-auto" max-width="368">
+    <v-card-title>
+      <v-row justify="center">
+        {{ ac.name }}
+      </v-row>
+      <v-row justify="end">
+        <v-btn icon="mdi-delete" variant="text" color="error"/>
+      </v-row>
+    </v-card-title>
+    <v-card-text class="centered">
+      <v-icon v-if="!isOn" icon="mdi-air-conditioner" size="75" color="error"/>
+      <v-icon v-else icon="mdi-air-conditioner" size="75" color="info" />
     </v-card-text>
 
 
 
     <div class="subtitle">
-      <v-list-item density="compact">
-        <v-list-item-subtitle>Status:</v-list-item-subtitle>
-        <v-list>Estado: {{status}}</v-list>
-        <v-list>Temperatura: {{ `${temperature}ºC`}}</v-list>
-        <v-list>Modo: {{mode}}</v-list>
-        <v-list>Oscilación Vertical: {{vSwing}}</v-list>
-        <v-list>Oscilación Horizontal: {{hSwing}}</v-list>
-        <v-list>Velocidad del Ventilador: {{fanSpeed}}</v-list>
-      </v-list-item>
+      <v-row justify="center">
+        <v-list-item-subtitle>Status: {{  isOn ? temperature + "ºC" : "Apagado" }}</v-list-item-subtitle>
+      </v-row>
+          <v-row justify="center">
+            <v-col cols="6" v-if="isOn">
+            <v-btn width="flex" block @click="decreaseTemperature()" append-icon="mdi-minus"/>
+            </v-col>
+            <v-col cols="6" v-else>
+              <v-btn width="flex" block disabled append-icon="mdi-minus"/>
+            </v-col>
+            <v-col cols="6" v-if="isOn">
+            <v-btn width="flex" block  @click="increaseTemperature()" append-icon="mdi-plus"/>
+            </v-col>
+            <v-col cols="6" v-else>
+              <v-btn width="flex" block disabled append-icon="mdi-plus"/>
+            </v-col>
+          </v-row>
+          <v-row class="switch" justify="start">
+            <v-col cols="3">
+            <v-switch v-model="isOn" width="flex"  @click="turnOnOff"/>
+            </v-col>
+          </v-row>
     </div>
 
 
     <v-expand-transition>
       <div v-if="expand">
         <div class="py-2">
-          <v-row class="py-2">
-            <v-btn  id="switch" @click="turnOnOff()">{{ isOn ? "Apagar" : "Encender" }}</v-btn>
-          </v-row>
+          <v-container>
           <v-row>
-            <v-btn  id="decrease-temp" @click="decreaseTemperature()">{{ '-' }}</v-btn>
-            <v-card-text align="center">Temperatura</v-card-text>
-            <v-btn  id="increase-temp" @click="increaseTemperature()">{{ '+' }}</v-btn>
-          </v-row>
-          <v-row>
-            <v-btn  id="set-mode">
+            <v-btn class="actions" >
               {{ 'Cambiar Modo' }}
               <v-menu activator="parent">
                 <v-list>
@@ -50,7 +79,7 @@
             </v-btn>
           </v-row>
           <v-row>
-            <v-btn  id="set-v-swing">
+            <v-btn class="actions"  id="set-v-swing">
               {{ 'Rotación Vertical' }}
               <v-menu activator="parent">
                 <v-list>
@@ -74,7 +103,7 @@
             </v-btn>
           </v-row>
           <v-row>
-            <v-btn  id="set-h-swing">
+            <v-btn class="actions" >
               {{ 'Rotación Horizontal' }}
               <v-menu activator="parent">
                 <v-list>
@@ -98,7 +127,7 @@
             </v-btn>
           </v-row>
           <v-row>
-            <v-btn  id="set-fan-speed" @click="">
+            <v-btn  class="actions" @click="">
               {{ 'Velocidad' }}
               <v-menu activator="parent">
                 <v-list>
@@ -121,6 +150,7 @@
               </v-menu>
             </v-btn>
           </v-row>
+          </v-container>
         </div>
       </div>
     </v-expand-transition>
@@ -128,18 +158,26 @@
     <v-divider></v-divider>
 
     <v-card-actions>
-      <v-btn @click="expand = !expand">
-        {{ !expand ? 'All Actions' : 'Hide Actions' }}
-      </v-btn>
+      <v-col cols="6">
+        <v-row>
+          <v-btn block prepend-icon="mdi-pencil" class="action">
+            Edit Device
+          </v-btn>
+        </v-row>
+      </v-col>
+      <v-col cols="6">
+        <v-btn  @click="expand = !expand" block class="action">
+          {{ !expand ? 'All Actions' : 'Hide Actions' }}
+        </v-btn>
+      </v-col>
     </v-card-actions>
   </v-card>
+  </v-container>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
-import { Device } from "@/api/device"
-import { ACState } from "@/api/ac"
 
 const props = defineProps(["id"])
 const ac = ref( {})
@@ -176,7 +214,6 @@ const fanSpeed = computed ( () => {
 const expand = ref(false)
 
 async function turnOnOff(){
-  let result
   if(isOn.value){
     await execute("turnOff")
   } else {
@@ -355,11 +392,3 @@ const actions = ref( {
 })
 </script>
 
-<style scoped>
-#acts{
-  margin-right: 7px;
-  margin-left: 7px;
-  margin-bottom: 7px;
-}
-
-</style>

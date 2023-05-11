@@ -1,7 +1,7 @@
 <template>
 
   <v-container v-for="device in devicesTypes" :key="device.id">
-    <h2>{{ device.name }}</h2>
+    <h2>{{ device.frontName }}</h2>
     <div v-if="!isLoading">
       <v-container v-if="device.name === 'Speaker'">
         <v-row >
@@ -9,26 +9,6 @@
             <SpeakerCard :id="item.id"/>
           </v-col>
         </v-row>
-        <v-container>
-          <v-btn prepend-icon="mdi-plus" dark color="primary" >
-            Add
-            <v-dialog v-model="dialogSpeaker" activator="parent" width="800" height="800">
-              <v-card>
-                <v-card-text>
-                  <v-text-field
-                    type="text"
-                    placeholder="Text"
-                    v-model="text"
-                    label="Device Name"/>
-                </v-card-text>
-                <v-card-actions>
-                  <v-btn @click="(dialogSpeaker = false)" prepend-icon="mdi-close">Close</v-btn>
-                  <v-btn @click="elemCreate(device.id,text) && (dialogSpeaker = false) " prepend-icon="mdi-content-save-outline">Create</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-btn>
-        </v-container>
       </v-container>
       <v-container v-if="device.name === 'Ac'">
         <v-row >
@@ -36,26 +16,6 @@
             <ACCard :id="item.id"/>
           </v-col>
         </v-row>
-        <v-container>
-          <v-btn prepend-icon="mdi-plus" dark color="primary" >
-            Add
-            <v-dialog v-model="dialogAc" activator="parent" width="800" height="800">
-              <v-card>
-                <v-card-text>
-                  <v-text-field
-                    type="text"
-                    placeholder="Text"
-                    v-model="text"
-                    label="Device Name"/>
-                </v-card-text>
-                <v-card-actions>
-                  <v-btn @click="(dialogAc = false)" prepend-icon="mdi-close">Close</v-btn>
-                  <v-btn @click="elemCreate(device.id,text)&&(dialogAc = false) " prepend-icon="mdi-content-save-outline">Create</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-btn>
-        </v-container>
       </v-container>
       <v-container v-if="device.name === 'Faucet'">
         <v-row >
@@ -63,26 +23,6 @@
             <FaucetCard :id="item.id"/>
           </v-col>
         </v-row>
-        <v-container>
-          <v-btn prepend-icon="mdi-plus" dark color="primary" >
-            Add
-            <v-dialog v-model="dialogFaucet" activator="parent" width="800" height="800">
-              <v-card>
-                <v-card-text>
-                  <v-text-field
-                    type="text"
-                    placeholder="Text"
-                    v-model="text"
-                    label="Device Name"/>
-                </v-card-text>
-                <v-card-actions>
-                  <v-btn @click="(dialogFaucet = false) " prepend-icon="mdi-close">Close</v-btn>
-                  <v-btn @click="elemCreate(device.id,text) && (dialogFaucet = false) " prepend-icon="mdi-content-save-outline">Create</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-btn>
-        </v-container>
       </v-container>
       <v-container v-if="device.name === 'Lamp'" >
         <v-row >
@@ -90,56 +30,36 @@
             <LampCard :id="item.id"/>
           </v-col>
         </v-row>
-        <v-container>
-          <v-btn prepend-icon="mdi-plus" dark color="primary" >
-            Add
-            <v-dialog v-model="dialogLamp" activator="parent" width="800" height="800">
-              <v-card>
-                <v-card-text>
-                  <v-text-field
-                    type="text"
-                    placeholder="Text"
-                    v-model="text"
-                    label="Device Name"/>
-                </v-card-text>
-                <v-card-actions>
-                  <v-btn @click="(dialogLamp = false) " prepend-icon="mdi-close">Close</v-btn>
-                  <v-btn @click="elemCreate(device.id,text) && (dialogLamp = false)" prepend-icon="mdi-content-save-outline">Create</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-btn>
-        </v-container>
       </v-container>
-      <v-container v-if="device.name === 'Refrigerator'" >
+      <v-container v-if="device.name === 'Fridge'" >
         <v-row >
           <v-col cols="auto"  v-for="item in asyncRefrigerator" :key="item.id">
             <RefrigeratorCard :id="item.id"/>
           </v-col>
         </v-row>
-        <v-container>
-          <v-btn prepend-icon="mdi-plus" dark color="primary" >
-            Add
-            <v-dialog v-model="dialogFridge" activator="parent" width="800" height="800">
-              <v-card>
-                <v-card-text>
-                  <v-text-field
-                    type="text"
-                    placeholder="Text"
-                    v-model="text"
-                    label="Device Name"/>
-                </v-card-text>
-                <v-card-actions>
-                  <v-btn @click="(dialogFridge = false)" prepend-icon="mdi-close">Close</v-btn>
-                  <v-btn @click="elemCreate(device.id,text) && (dialogFridge = false)" prepend-icon="mdi-content-save-outline">Create</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-btn>
-        </v-container>
       </v-container>
     </div>
-    </v-container>
+  </v-container>
+  <v-container>
+  <v-btn id="add-btn" variant="outlined" color="blue">
+    <v-icon icon="mdi-plus"/>
+    <v-dialog v-model="popUp" activator="parent" width="800" height="800">
+      <v-card>
+        <v-card-text>
+          <v-text-field type="text" placeholder="Text" v-model="text" label="Nombre Del Dispositivo" variant="outlined"/>
+            <v-list>
+                <v-list-item v-for="dev in devicesTypes">
+                    <v-btn rounded="lg" variant="outlined" color="blue" prepend-icon="mdi-content-save-outline" @click="elemCreate(dev.id,text)" > Crear {{dev.singular}}</v-btn>
+                </v-list-item>
+            </v-list>
+        </v-card-text>
+          <v-card-actions>
+            <v-btn @click="popUp = false" block  prepend-icon="mdi-close">Close</v-btn>
+          </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-btn>
+  </v-container>
 
 </template>
 
@@ -160,14 +80,8 @@
       console.error(error)
     }
   }
-  const dialogSpeaker = ref(false)
-  const dialogFaucet = ref(false)
-  const dialogAc = ref(false)
-  const dialogLamp = ref(false)
-  const dialogFridge = ref(false)
-
+  const popUp = ref(false)
   const text = ref()
-
   const devices = ref([])
 
   const asyncSpeakers = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[0].id))
@@ -181,30 +95,35 @@
   const devicesTypes = ref([
     {
       frontName: "Parlantes",
+      singular:"Parlante" ,
       name: "Speaker",
       id: "c89b94e8581855bc",
       store: asyncSpeakers
     },
     {
-      frontName: "Aspersores",
+      frontName: "Grifos",
+      singular:"Grifo" ,
       name: "Faucet",
       id: "dbrlsh7o5sn8ur4i",
       store: asyncFaucet
     },
     {
       frontName: "Lámparas",
+      singular:"Lámpara" ,
       name: "Lamp",
       id: "go46xmbqeomjrsjr",
       store: asyncLamp
     },
     {
       frontName: "Aires Acondicionados",
+      singular: "Aire Acondicionado",
       name: "Ac",
       id: "li6cbv5sdlatti0j",
       store: asyncAc
     },
     {
       frontName: "Heladeras",
+      singular: "Heladera",
       name: "Fridge",
       id:"rnizejqr2di0okho",
       store: asyncRefrigerator
@@ -249,6 +168,15 @@
 </script>
 
 <style scoped>
-
+#add-btn {
+  align-self: end;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  transition: transform 0.3s;
+  width: 56px;
+  height: 56px;
+  border-radius:50%;
+}
 </style>
 
