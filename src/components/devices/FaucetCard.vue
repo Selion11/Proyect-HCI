@@ -49,15 +49,15 @@
         <v-card-subtitle v-else>Apagado</v-card-subtitle>
       </v-row>
       <v-row class="actions" justify="start">
-        <v-btn v-if="!isOn" width="flex"  @click="turnOnOff()">Encender</v-btn>
-        <v-btn v-else width="flex"  @click="turnOnOff()">Apagar</v-btn>
+        <v-btn v-if="!isOn" width="flex" class="actions" @click="turnOnOff()">Encender</v-btn>
+        <v-btn v-else width="flex" class="actions" @click="turnOnOff()">Apagar</v-btn>
         <div class="text-center">
           <v-btn
             v-if="!isOn"
             color="indigo"
             v-bind="props"
             @click="dispenseMenu = true"
-
+            class="actions"
           >
             Dispensar
             <v-menu
@@ -72,12 +72,11 @@
                       class="mx-auto"
                       max-width="344"
                     >
-                      <v-form
-                        @submit.prevent="rules()"
-                      >
+                      <v-form @submit.prevent="rules()">
                         <v-text-field
                           v-model="text"
-                          :rules="[ ()=> (text.value >= 0) ? true : errorMessage]"
+                          :rules="[ ()=> text >= 0 && text <= 100 ? true : errorMessage]"
+                          :error-message="errorMessage"
                           label="Cantidad"
                           type="number"
                           hint="Inserte la cantidad de liquido"
@@ -87,7 +86,6 @@
                         <v-row justify="center">
                           <v-btn
                             color="blue"
-
                             class="actions"
                           >
                             {{ unit ? unit : "Unidades" }}
@@ -104,12 +102,12 @@
                             </v-menu>
                           </v-btn>
                           <v-btn
-                            :disabled="!rules()"
+                            :disabled="rules()"
                             block
                             color="success"
                             variant="text"
                             class="action"
-                            @click="dispense()"
+                            @click="dispense() && (dispenseMenu = false)"
                           >
                             Aceptar
                           </v-btn>
@@ -121,24 +119,25 @@
               </v-card>
             </v-menu>
           </v-btn>
-          <v-btn v-else disabled color="indigo" v-bind="props">Dispensar</v-btn>
+          <v-btn v-else disabled class="actions" color="indigo" v-bind="props">Dispensar</v-btn>
         </div>
       </v-row>
     </div>
 
     <v-card-actions>
       <v-row justify="center">
-        <v-btn block prepend-icon="mdi-pencil" class="actions">
-          Editar Dispositivo
+        <v-btn block  prepend-icon="mdi-pencil" class="actions">
+          Editar Grifo
           <v-dialog v-model="editDia" activator="parent">
             <v-card>
-              <v-card-title class="centered">Cambie el nombre de su dispositivo</v-card-title>
+              <v-card-title class="centered">Cambie el nombre de su grifo</v-card-title>
               <v-card-text>
-                <v-text-field type="text" placeholder="Nuevo nombre" variant="outlined"/>
+                <v-text-field v-model="newName" type="text" placeholder="Nuevo nombre" variant="outlined"/>
               </v-card-text>
               <v-card-actions>
                 <v-col cols="6">
-                  <v-btn block prepend-icon="mdi-content-save-outline" @click="">Cambiar nombre</v-btn>
+                  <v-btn block v-if="newName !== ''" prepend-icon="mdi-content-save-outline" @click="editDevice()">Cambiar nombre</v-btn>
+                  <v-btn block v-else disabled prepend-icon="mdi-content-save-outline">Cambiar nombre</v-btn>
                 </v-col>
                 <v-col cols="6">
                   <v-btn block prepend-icon="mdi-close" @click="editDia = false">Cerrar</v-btn>
@@ -155,18 +154,21 @@
 
 <script setup>
 //:error-messages="errorMessage"
-import {ref, onMounted, mergeProps, computed} from 'vue'
+import {ref, onMounted, mergeProps, computed, defineEmits} from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
 
 const props = defineProps(["id"])
+const emits = defineEmits(["to-snackbar"])
 const faucet = ref({})
 const deviceStore = useDeviceStore()
+
+const newName = ref('')
 const isLoading = ref(true)
 const unitAct = ref(false)
 const isOn = computed( () => faucet.value.state.status !== 'closed')
 const isDispensing = ref(false)
 const text = ref("0")
-const unit = ref(null)
+const unit = ref('')
 const quantity = ref(0)
 const refreshInterval = ref(null)
 const dispenseMenu = ref(false)
@@ -182,12 +184,33 @@ async function dispense(){
     quantity.value = Number(text.value)
     text.value = ""
     dispenseMenu.value = false
+    isDispensing.value = true
   } catch(error){
     console.log(error)
   }
 }
 function rules(){
-  return (numberRule() && unit) || (text.value === '') ? true : errorMessage.value
+  return !numberRule() || text.value === '' || unit.value === ''
+}
+
+async function editDevice(){
+  const editedDevice = {
+    name: newName.value,
+    meta: faucet.value.meta
+  }
+  const deviceId = faucet.value.id.toString()
+  try{
+    const result = await deviceStore.modify(deviceId, editedDevice)
+    if(result) {
+      newName.value = ''
+      editDia.value = false
+      emits("to-snackbar", "Nombre modificado.")
+    } else{
+      emits("to-snackbar", "El nombre ingresado ya existe.")
+    }
+  } catch(error){
+    emits("to-snackbar", "El nombre ingresado ya existe.")
+  }
 }
 
 async function execute(actionName, params= []){
@@ -222,8 +245,11 @@ async function turnOnOff(){
     if(isOn.value){
       await execute("close")
       isDispensing.value = false
+      unit.value = ''
+      text.value = '0'
     } else{
       await execute("open")
+      isDispensing.value = false
     }
   } catch(error){
     console.log(error)

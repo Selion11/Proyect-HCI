@@ -165,16 +165,12 @@ async function previousSong(){
 async function volumeUp(){
   if(volume.value < 10){
     currentVolume.value = currentVolume.value + 1
-  } else{
-    // Handle error
   }
 }
 
 async function volumeDown(){
   if(volume.value > 0){
     currentVolume.value = currentVolume.value - 1
-  } else{
-    // Handle error
   }
 }
 
