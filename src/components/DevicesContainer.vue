@@ -6,7 +6,7 @@
       <v-container v-if="device.name === 'Speaker'">
         <v-row >
           <v-col cols="auto" v-for="item in asyncSpeakers" :key="item.id">
-            <SpeakerCard :id="item.id"/>
+            <SpeakerCard @to-snackbar="toSnackbar" :id="item.id"/>
           </v-col>
         </v-row>
       </v-container>

@@ -1,12 +1,17 @@
 <script setup>
-import { defineProps, ref, onMounted, computed, mergeProps } from 'vue'
+import {defineProps, ref, onMounted, computed, mergeProps, defineEmits} from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
 
 const props = defineProps(['id'])
+const emits = defineEmits(["to-snackbar"])
 const editDia = ref(false)
 const deviceStore = useDeviceStore()
 const listDia = ref(false)
-const status = computed(() => speaker.value.state.status)
+const status = computed(() => {
+  if(speaker.value.state.status !== undefined){
+    return speaker.value.state.status
+  }
+})
 const isStopped = computed( () => speaker.value.state.status === "stopped")
 const currentSong = computed( () => speaker.value.state.status !== "stopped" ? speaker.value.state.song.title : null)
 const songProgress = computed( () => {
@@ -16,6 +21,7 @@ const songProgress = computed( () => {
     return 0
   }
 })
+const newName = ref('')
 
 const isLoading = ref(true)
 const volume = computed( () => speaker.value.state.volume)
@@ -43,6 +49,25 @@ function turnMinutesToSeconds(time) {
   return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10)
 }
 
+async function editDevice(){
+  const editedDevice = {
+    name: newName.value,
+    meta: speaker.value.meta
+  }
+  const deviceId = speaker.value.id.toString()
+  try{
+    const result = await deviceStore.modify(deviceId, editedDevice)
+    if(result) {
+      newName.value = ''
+      editDia.value = false
+      emits("to-snackbar", "Nombre modificado.")
+    } else{
+      emits("to-snackbar", "El nombre ingresado ya existe.")
+    }
+  } catch(error){
+    emits("to-snackbar", "El nombre ingresado ya existe.")
+  }
+}
 
 async function execute(actionName, params= []){
   let result = await deviceStore.execute(props.id, actionName, params)
@@ -171,6 +196,7 @@ async function setGenre(genre){
     await execute("setGenre", [genre])
     await execute("stop")
     GENdialog.value = false
+    emits('to-snackbar', `El género ha sido cambiado a ${currentGenre.value}`)
   } catch(error){
     console.log(error)
   }
@@ -289,35 +315,32 @@ async function setGenre(genre){
               <v-btn class="actions" prepend-icon="mdi-playlist-music" @click="getPlaylist()">
                 Obtener Playlist
                 <v-dialog v-model="PLdialog" activator="parent" width="auto" height="auto">
-                  <v-card>
+                  <v-card class="mx-auto">
                     <v-icon icon="mdi-close" color="grey" class="close" @click="PLdialog = false"/>
                     <v-card-title class="centered">
                       Playlist del género {{ currentGenre }}
                     </v-card-title>
-                    <v-list v-for="song in currentPlaylist">
-                      <v-row justify="center">
-                          <v-card class="song" width="600px">
+                    <v-container width="100%">
+                    <v-col v-for="song in currentPlaylist" :key="song.title" cols="auto" width="80%">
+                        <v-card class="song" height="100%">
                           <v-card-title class="centered">
                             <v-icon icon="mdi-music-note"/>
                             {{song.title}}
                           </v-card-title>
-                            <v-card-subtitle>
-                              <v-icon icon="mdi-account"/>
-                              {{song.artist}}
-                            </v-card-subtitle>
+                          <v-card-subtitle>
+                            <v-icon icon="mdi-account"/>
+                            {{song.artist}}
+                          </v-card-subtitle>
                           <v-card-text>
-                            <v-row justify="center">
-                              <v-icon icon="mdi-album"/>
-                                  {{song.album}}
-                            </v-row>
-                            <v-row justify="center">
-                              <v-icon icon="mdi-waveform"/>
-                              {{song.duration}}
-                            </v-row>
+                            <v-icon icon="mdi-album"/>
+                            {{song.album}}
+                            <br>
+                            <v-icon icon="mdi-waveform"/>
+                            {{song.duration}}
                           </v-card-text>
                         </v-card>
-                      </v-row>
-                    </v-list>
+                    </v-col>
+                    </v-container>
                   </v-card>
                 </v-dialog>
               </v-btn>
@@ -352,18 +375,18 @@ async function setGenre(genre){
 
     <v-card-actions>
       <v-col cols="6">
-      <v-row>
-      <v-btn block  prepend-icon="mdi-pencil" class="action">
-        Editar Parlante
+      <v-btn block  prepend-icon="mdi-pencil" class="actions">
+        Editar <br> Parlante
         <v-dialog v-model="editDia" activator="parent">
           <v-card>
-            <v-card-title class="centered">Cambie el nombre de su dispositivo</v-card-title>
+            <v-card-title class="centered">Cambie el nombre de su parlante</v-card-title>
             <v-card-text>
-              <v-text-field type="text" placeholder="Nuevo nombre" variant="outlined"/>
+              <v-text-field v-model="newName" type="text" placeholder="Nuevo nombre" variant="outlined"/>
             </v-card-text>
             <v-card-actions>
               <v-col cols="6">
-                <v-btn block prepend-icon="mdi-content-save-outline" @click="">Cambiar nombre</v-btn>
+                <v-btn block v-if="newName !== ''" prepend-icon="mdi-content-save-outline" @click="editDevice()">Cambiar nombre</v-btn>
+                <v-btn block v-else disabled prepend-icon="mdi-content-save-outline">Cambiar nombre</v-btn>
               </v-col>
               <v-col cols="6">
                 <v-btn block prepend-icon="mdi-close" @click="editDia = false">Cerrar</v-btn>
@@ -372,17 +395,16 @@ async function setGenre(genre){
           </v-card>
         </v-dialog>
       </v-btn>
-      </v-row>
       </v-col>
-      <v-col cols="6" v-if="expand === false" >
-      <v-btn block prepend-icon="mdi-plus" @click="expand = !expand" class="action">
-        Mas Acciones
-      </v-btn>
-      </v-col>
-      <v-col cols="6" v-else>
-        <v-btn block prepend-icon="mdi-minus" @click="expand = !expand" class="action">
-          Menos Acciones
-        </v-btn>
+      <v-col cols="6">
+        <v-row>
+          <v-btn v-if="!expand" @click="expand = !expand" block class="actions">
+            Más <br> Acciones
+          </v-btn>
+          <v-btn v-else-if="expand" @click="expand = !expand" block class="actions">
+            Ocultar <br> Acciones
+          </v-btn>
+        </v-row>
       </v-col>
     </v-card-actions>
   </v-card>
@@ -392,10 +414,6 @@ async function setGenre(genre){
 <style scoped>
 .centered{
   text-align: center;
-}
-
-.scaled {
-  transform: scale(0.9);
 }
 
 .music-bar{
@@ -428,6 +446,11 @@ v-card-title {
   top: 5px;
   right: 5px;
   margin: 0;
+}
+
+.playlist{
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .song{

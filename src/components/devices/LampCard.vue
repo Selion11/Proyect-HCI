@@ -127,7 +127,7 @@
               Editar <br> Lámpara
               <v-dialog v-model="editDia" activator="parent">
                 <v-card>
-                  <v-card-title class="centered">Cambie el nombre de su dispositivo</v-card-title>
+                  <v-card-title class="centered">Cambie el nombre de su lámpara</v-card-title>
                   <v-card-text>
                     <v-text-field v-model="newName" type="text" placeholder="Nuevo nombre" variant="outlined"/>
                   </v-card-text>
@@ -148,13 +148,13 @@
         <v-col cols="6">
           <v-row>
             <v-btn v-if="isOn && !expand" @click="expand = !expand" block class="actions">
-              Mostrar <br> Acciones
+              Más <br> Acciones
             </v-btn>
             <v-btn v-else-if="isOn && expand" @click="expand = !expand" block class="actions">
               Ocultar <br> Acciones
             </v-btn>
             <v-btn v-else disabled  block class="actions">
-              Mostrar <br> Acciones
+              Más <br> Acciones
             </v-btn>
           </v-row>
         </v-col>
@@ -200,10 +200,14 @@ async function editDevice(){
   }
   const deviceId = lamp.value.id.toString()
   try{
-    lamp.value = await deviceStore.modify(deviceId, editedDevice)
-    newName.value = ''
-    editDia.value = false
-    emits("to-snackbar", "Nombre modificado.")
+    const result = await deviceStore.modify(deviceId, editedDevice)
+    if(result) {
+      newName.value = ''
+      editDia.value = false
+      emits("to-snackbar", "Nombre modificado.")
+    } else{
+      emits("to-snackbar", "El nombre ingresado ya existe.")
+    }
   } catch(error){
     emits("to-snackbar", "El nombre ingresado ya existe.")
   }
