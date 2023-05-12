@@ -174,7 +174,7 @@ const DELdialog = ref(false)
 const editDia = ref(false)
 const errorMessage = computed( () => !isNaN(Number(text.value)) && text.value > 0 ? "" : !isNaN(Number(text.value)) && text.value <= 0 ? 'Debe ingresar un número mayor a cero' : 'Debe ingresar un numero')
 function numberRule(){
-  return !isNaN(Number(text.value)) && text.value > 0
+  return !isNaN(Number(text.value)) && text.value > 0 && text.value <= 100
 }
 async function dispense(){
   try{

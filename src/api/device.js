@@ -52,8 +52,8 @@ class DevicesApi {
   }
 
   // Updates an existing device
-  static async modify(device){
-    return await Api.put(DevicesApi.getURL(device.id), device)
+  static async modify(id, device){
+    return await Api.put(DevicesApi.getURL(id), device)
   }
 
   // Executes action in a specific device

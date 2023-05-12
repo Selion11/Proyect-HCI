@@ -39,8 +39,8 @@ export const useDeviceStore = defineStore('devices', () =>{
     await getAll()
     return Object.assign(new Device(), device)
   }
-  async function modify(device) {
-    const result = await DevicesApi.modify(device)
+  async function modify(id, device) {
+    const result = await DevicesApi.modify(id, device)
     await getAll()
 
     // result = { "result": [boolean, boolean, ..., boolean] }

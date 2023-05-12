@@ -27,7 +27,7 @@
       <v-container v-if="device.name === 'Lamp'" >
         <v-row >
           <v-col cols="auto"  v-for="item in asyncLamp" :key="item.id">
-            <LampCard :id="item.id"/>
+            <LampCard @to-snackbar="toSnackbar" :id="item.id"/>
           </v-col>
         </v-row>
       </v-container>
@@ -41,26 +41,26 @@
     </div>
   </v-container>
   <v-container>
-  <v-btn id="add-btn" variant="outlined" color="blue">
-    <v-icon icon="mdi-plus"/>
-    <v-dialog v-model="popUp" activator="parent" width="800" height="800">
-      <v-card>
-        <v-card-text>
-          <v-text-field type="text" placeholder="Text" v-model="text" label="Nombre Del Dispositivo" variant="outlined"/>
-            <v-list>
-                <v-list-item v-for="dev in devicesTypes">
-                    <v-btn rounded="lg" variant="outlined" color="blue" prepend-icon="mdi-content-save-outline"
-                           @click="elemCreate(dev.id,text) && (snackBar = true)">
-                      Crear {{dev.singular}}</v-btn>
-                </v-list-item>
-            </v-list>
-        </v-card-text>
-          <v-card-actions>
-            <v-btn @click="popUp = false" block  prepend-icon="mdi-close">Close</v-btn>
-          </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-btn>
+    <v-btn id="add-btn" variant="outlined" color="blue">
+      <v-icon icon="mdi-plus"/>
+      <v-dialog v-model="popUp" activator="parent" width="800" height="800">
+        <v-card>
+          <v-card-text>
+            <v-text-field type="text" placeholder="Text" v-model="text" label="Nombre Del Dispositivo" variant="outlined"/>
+              <v-list>
+                  <v-list-item v-for="dev in devicesTypes">
+                      <v-btn rounded="lg" variant="outlined" color="blue" prepend-icon="mdi-content-save-outline"
+                             @click="elemCreate(dev.id,text) && (snackBar = true)">
+                        Crear {{dev.singular}}</v-btn>
+                  </v-list-item>
+              </v-list>
+          </v-card-text>
+            <v-card-actions>
+              <v-btn @click="popUp = false" block  prepend-icon="mdi-close">Close</v-btn>
+            </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-btn>
     <v-snackbar
       v-model="snackBar"
       multi-line
@@ -91,7 +91,7 @@
   import LampCard from "@/components/devices/LampCard.vue"
   import RefrigeratorCard from "@/components/devices/RefrigeratorCard.vue"
 
-  const snackBarTxt = ref()
+  const snackBarTxt = ref('')
   const snackBar = ref(false)
   const devStore = useDeviceStore()
   async function getAllByType(deviceId){
@@ -168,7 +168,7 @@
     try{
       devices.value = await devStore.getAll()
     } catch(error){
-      throw error
+      console.error(error)
     }
   }
 
@@ -181,11 +181,17 @@
         name: typeName,
         meta: {}
       })
-      snackBarTxt.value = "YES"
+      snackBarTxt.value = "Dispositivo " + typeName + " añadido correctamente."
+      snackBar.value = true
       devices.value = await devStore.getAll()
     } catch (error) {
       snackBarTxt.value = "Dispositivo " + typeName + " ya existe!"
+      snackBar.value = true
     }
+  }
+  function toSnackbar(message){
+    snackBarTxt.value = message
+    snackBar.value = true
   }
 </script>
 
