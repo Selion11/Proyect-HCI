@@ -1,5 +1,5 @@
 // Utilities
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { defineStore } from 'pinia'
 import { DevicesApi, Device, Log, Event} from '@/api/device'
 import { SpeakerState } from '@/api/speaker'
@@ -37,7 +37,7 @@ export const useDeviceStore = defineStore('devices', () =>{
   async function add(device) {
     const result = await DevicesApi.add(device)
     await getAll()
-    return Object.assign(new Device(), device)
+    return Object.assign(new Device(), result)
   }
   async function modify(id, device) {
     const result = await DevicesApi.modify(id, device)

@@ -34,7 +34,7 @@
     </v-menu>
     <v-card-title/>
     <v-card-title>
-      <v-row justify="center" class="text-capitalize">
+      <v-row justify="center">
         {{ faucet.name }}
       </v-row>
     </v-card-title>
@@ -165,7 +165,7 @@ const deviceStore = useDeviceStore()
 const newName = ref('')
 const isLoading = ref(true)
 const unitAct = ref(false)
-const isOn = computed( () => faucet.value.state.status !== 'closed')
+const isOn = computed( () => faucet.value["state"].status !== 'closed')
 const isDispensing = ref(false)
 const text = ref("0")
 const unit = ref('')
@@ -196,9 +196,9 @@ function rules(){
 async function editDevice(){
   const editedDevice = {
     name: newName.value,
-    meta: faucet.value.meta
+    meta: faucet.value["meta"]
   }
-  const deviceId = faucet.value.id.toString()
+  const deviceId = faucet.value["id"].toString()
   try{
     const result = await deviceStore.modify(deviceId, editedDevice)
     if(result) {
@@ -268,44 +268,6 @@ async function removeDevice(){
     console.error(error)
   }
 }
-
-const disDia = ref(false)
-const actions = ref([
-    {
-      name: "Open",
-      params: []
-    },
-    {
-      name: "Close",
-      params: []
-    },
-    {
-      name: "Dispense",
-      params: [
-        {
-          name: "quantity",
-          type: "number",
-          description: "quantity",
-          minValue: 1,
-          maxValue: 100
-        },
-        {
-          name: "unit",
-          type: "string",
-          description: "unit",
-          supportedValues: [
-            "ml",
-            "cl",
-            "dl",
-            "l",
-            "dal",
-            "hl",
-            "kl"
-          ]
-        }
-      ],
-    }
-])
 </script>
 
 <style scoped>

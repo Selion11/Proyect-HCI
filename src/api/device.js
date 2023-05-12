@@ -1,6 +1,5 @@
 import { Api } from "./api.js"
 
-// Falta implementar GET /devices/logs/limit/{limit}/offset/{offset
 class DevicesApi {
   static getURL(slug){
     return `${Api.baseURL}/devices${slug ? `/${slug}` : ""}`
@@ -67,16 +66,6 @@ class DevicesApi {
   }
 }
 
-class Type {
-  constructor(id, name, powerUsage){
-    if(id){
-      this.id = id
-    }
-    this.name = name
-    this.powerUsage = powerUsage
-  }
-}
-
 class Device {
   constructor(id="", name= "", type= {}, state= {}, meta= {}) {
     this.id = id
@@ -108,4 +97,4 @@ class Event{
   }
 }
 
-export { DevicesApi, Type, Device, Log, Event }
+export { DevicesApi, Device, Log, Event }

@@ -6,17 +6,16 @@ const props = defineProps(['id'])
 const emits = defineEmits(["to-snackbar"])
 const editDia = ref(false)
 const deviceStore = useDeviceStore()
-const listDia = ref(false)
 const status = computed(() => {
-  if(speaker.value.state.status !== undefined){
-    return speaker.value.state.status
+  if(speaker.value["state"].status !== undefined){
+    return speaker.value["state"].status
   }
 })
-const isStopped = computed( () => speaker.value.state.status === "stopped")
-const currentSong = computed( () => speaker.value.state.status !== "stopped" ? speaker.value.state.song.title : null)
+const isStopped = computed( () => speaker.value["state"].status === "stopped")
+const currentSong = computed( () => speaker.value["state"].status !== "stopped" ? speaker.value["state"].song.title : null)
 const songProgress = computed( () => {
-  if(speaker.value.state.status !== "stopped"){
-    return turnMinutesToSeconds(speaker.value.state.song.progress)*100 / turnMinutesToSeconds(speaker.value.state.song.duration)
+  if(speaker.value["state"].status !== "stopped"){
+    return turnMinutesToSeconds(speaker.value["state"].song.progress)*100 / turnMinutesToSeconds(speaker.value[2].song.duration)
   } else{
     return 0
   }
@@ -24,14 +23,14 @@ const songProgress = computed( () => {
 const newName = ref('')
 
 const isLoading = ref(true)
-const volume = computed( () => speaker.value.state.volume)
+const volume = computed( () => speaker.value["state"].volume)
 const speaker = ref({})
 
 const currentVolume = ref(0)
 const currentGenre = computed( () => {
-  switch(speaker.value.state.genre){
+  switch(speaker.value["state"].genre){
     case "classic": return "Clásica"
-    default: return speaker.value.state.genre
+    default: return speaker.value["state"].genre
   }
 })
 const currentPlaylist = ref([])
@@ -52,9 +51,9 @@ function turnMinutesToSeconds(time) {
 async function editDevice(){
   const editedDevice = {
     name: newName.value,
-    meta: speaker.value.meta
+    meta: speaker.value["meta"]
   }
-  const deviceId = speaker.value.id.toString()
+  const deviceId = speaker.value["id"].toString()
   try{
     const result = await deviceStore.modify(deviceId, editedDevice)
     if(result) {
@@ -260,7 +259,7 @@ async function setGenre(genre){
       <div v-if="expand">
         <div class="py-2">
           <v-container>
-            <v-row justify="center" v-show="status !== 'stopped'">
+            <v-row justify="center" v-show="!isStopped">
               <v-btn class="actions"  prepend-icon="mdi-stop" @click="stop()">Detener</v-btn>
             </v-row>
             <v-row justify="center">
@@ -442,11 +441,6 @@ v-card-title {
   top: 5px;
   right: 5px;
   margin: 0;
-}
-
-.playlist{
-  margin-left: 20px;
-  margin-right: 20px;
 }
 
 .song{

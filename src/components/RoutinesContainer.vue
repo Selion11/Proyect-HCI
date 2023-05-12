@@ -69,11 +69,11 @@ const routineName = ref('')
 const devices = ref([])
 let selectedDeviceStore = ref([])
 
-const asyncSpeakers = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[0].id))
-const asyncFaucet = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[1].id))
-const asyncLamp = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[2].id))
-const asyncAc = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[3].id))
-const asyncFridge = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[4].id))
+const asyncSpeakers = computed(() => devices.value.filter((device) => device["type"].id === devicesTypes.value[0].id))
+const asyncFaucet = computed(() => devices.value.filter((device) => device["type"].id === devicesTypes.value[1].id))
+const asyncLamp = computed(() => devices.value.filter((device) => device["type"].id === devicesTypes.value[2].id))
+const asyncAc = computed(() => devices.value.filter((device) => device["type"].id === devicesTypes.value[3].id))
+const asyncFridge = computed(() => devices.value.filter((device) => device["type"].id === devicesTypes.value[4].id))
 
 const devicesTypes = ref([
   {
@@ -128,7 +128,7 @@ async function createRoutine(){
 
 onMounted(async ()=>{
   try {
-    devices.value=await deviceStore.getAll()
+    devices.value = await deviceStore.getAll()
   }catch (error){
     throw error
   }

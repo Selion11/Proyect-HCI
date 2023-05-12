@@ -196,9 +196,9 @@ async function execute(actionName, params = []){
 async function editDevice(){
   const editedDevice = {
     name: newName.value,
-    meta: lamp.value.meta
+    meta: lamp.value["meta"]
   }
-  const deviceId = lamp.value.id.toString()
+  const deviceId = lamp.value["id"].toString()
   try{
     const result = await deviceStore.modify(deviceId, editedDevice)
     if(result) {
@@ -234,7 +234,7 @@ async function turnOnOff(){
 
 async function setColor(){
   try{
-    if(currentColor.value.toUpperCase().substring(1) !== lamp.value.state.color.toUpperCase()) {
+    if(currentColor.value.toUpperCase().substring(1) !== lamp.value["state"].color.toUpperCase()) {
       await execute("setColor", [currentColor.value.toUpperCase().substring(1)])
     }
   } catch(error){
@@ -244,7 +244,7 @@ async function setColor(){
 
 async function setBrightness(){
   try{
-    if(currentBrightness.value !== lamp.value.state.brightness) {
+    if(currentBrightness.value !== lamp.value["state"].brightness) {
       await execute("setBrightness", [currentBrightness.value])
     }
   } catch(error){
@@ -271,9 +271,9 @@ async function setBrightnessDown(){
 onMounted( async () => {
   try{
     lamp.value = await deviceStore.get(props.id)
-    isOn.value = lamp.value.state.status === 'on'
-    currentBrightness.value = lamp.value.state.brightness
-    currentColor.value = '#' + lamp.value.state.color.toLowerCase()
+    isOn.value = lamp.value["state"].status === 'on'
+    currentBrightness.value = lamp.value["state"].brightness
+    currentColor.value = '#' + lamp.value["state"].color.toLowerCase()
     isLoading.value = false
     refreshInterval.value = setInterval(refreshState, 1000)
   } catch(error) {

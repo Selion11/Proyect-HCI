@@ -13,14 +13,14 @@
       <v-container v-if="device.name === 'Ac'">
         <v-row >
           <v-col cols="auto"  v-for="item in asyncAc" :key="item.id">
-            <ACCard :id="item.id"/>
+            <ACCard @to-snackbar="toSnackbar" :id="item.id"/>
           </v-col>
         </v-row>
       </v-container>
       <v-container v-if="device.name === 'Faucet'">
         <v-row >
           <v-col cols="auto"  v-for="item in asyncFaucet" :key="item.id">
-            <FaucetCard :id="item.id"/>
+            <FaucetCard @to-snackbar="toSnackbar" :id="item.id"/>
           </v-col>
         </v-row>
       </v-container>
@@ -94,22 +94,15 @@
   const snackBarTxt = ref('')
   const snackBar = ref(false)
   const devStore = useDeviceStore()
-  async function getAllByType(deviceId){
-    try{
-      return await devStore.getAllByType(deviceId)
-    } catch(error){
-      console.error(error)
-    }
-  }
+
   const popUp = ref(false)
   const text = ref()
   const devices = ref([])
-
-  const asyncSpeakers = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[0].id))
-  const asyncFaucet = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[1].id))
-  const asyncLamp = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[2].id))
-  const asyncAc = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[3].id))
-  const asyncRefrigerator = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[4].id))
+  const asyncSpeakers = computed(() => devices.value.filter((device) => device["type"].id === devicesTypes.value[0].id))
+  const asyncFaucet = computed(() => devices.value.filter((device) => device["type"].id === devicesTypes.value[1].id))
+  const asyncLamp = computed(() => devices.value.filter((device) => device["type"].id === devicesTypes.value[2].id))
+  const asyncAc = computed(() => devices.value.filter((device) => device["type"].id === devicesTypes.value[3].id))
+  const asyncRefrigerator = computed(() => devices.value.filter((device) => device["type"].id === devicesTypes.value[4].id))
 
   const isLoading = ref(true)
 
