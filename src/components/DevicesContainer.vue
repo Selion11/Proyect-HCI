@@ -49,7 +49,9 @@
           <v-text-field type="text" placeholder="Text" v-model="text" label="Nombre Del Dispositivo" variant="outlined"/>
             <v-list>
                 <v-list-item v-for="dev in devicesTypes">
-                    <v-btn rounded="lg" variant="outlined" color="blue" prepend-icon="mdi-content-save-outline" @click="elemCreate(dev.id,text)" > Crear {{dev.singular}}</v-btn>
+                    <v-btn rounded="lg" variant="outlined" color="blue" prepend-icon="mdi-content-save-outline"
+                           @click="elemCreate(dev.id,text) && (snackBar = true)">
+                      Crear {{dev.singular}}</v-btn>
                 </v-list-item>
             </v-list>
         </v-card-text>
@@ -59,6 +61,23 @@
       </v-card>
     </v-dialog>
   </v-btn>
+    <v-snackbar
+      v-model="snackBar"
+      multi-line
+      :timeout="2000"
+    >
+      {{ snackBarTxt }}
+
+      <template v-slot:actions>
+        <v-btn
+          color="red"
+          variant="text"
+          @click="snackBar = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 
 </template>
@@ -72,6 +91,8 @@
   import LampCard from "@/components/devices/LampCard.vue"
   import RefrigeratorCard from "@/components/devices/RefrigeratorCard.vue"
 
+  const snackBarTxt = ref()
+  const snackBar = ref(false)
   const devStore = useDeviceStore()
   async function getAllByType(deviceId){
     try{
@@ -160,9 +181,10 @@
         name: typeName,
         meta: {}
       })
+      snackBarTxt.value = "YES"
       devices.value = await devStore.getAll()
     } catch (error) {
-      console.error(error)
+      snackBarTxt.value = "Dispositivo " + typeName + " ya existe!"
     }
   }
 </script>

@@ -3,7 +3,9 @@ import { defineProps, ref, onMounted, computed, mergeProps } from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
 
 const props = defineProps(['id'])
-
+let snackBarTxt = ref()
+const timeout = ref(1000)
+const snackBar = ref(false)
 const deviceStore = useDeviceStore()
 
 const status = computed(() => speaker.value.state.status)
@@ -179,7 +181,6 @@ async function setGenre(genre){
 
 <template>
 <v-container v-if="!isLoading" class="scaled">
-
   <v-card class="mx-auto" max-width="350">
     <v-menu>
       <template v-slot:activator="{ props: menu }">

@@ -77,8 +77,7 @@
                       >
                         <v-text-field
                           v-model="text"
-                          :rules="[ ()=> text.value >= 0 ? true : errorMessage]"
-                          :error-messages="errorMessage"
+                          :rules="[ ()=> (text.value >= 0) ? true : errorMessage]"
                           label="Cantidad"
                           type="number"
                           hint="Inserte la cantidad de liquido"
@@ -90,18 +89,17 @@
                             color="blue"
 
                             class="actions"
-                            @click=""
                           >
                             {{ unit ? unit : "Unidades" }}
-                            <v-menu activator="parent" :close-on-content-click="false">
+                            <v-menu v-model="unitAct" activator="parent" :close-on-content-click="false">
                               <v-list :close-on-content-click="true" >
-                                <v-list-item :close-on-content-click="true" justify="center" title="ml" @click="unit = 'ml'"/>
-                                <v-list-item :close-on-content-click="true" justify="center" title="cl" @click="unit = 'cl'"/>
-                                <v-list-item :close-on-content-click="true" justify="center" title="dl" @click="unit = 'dl'"/>
-                                <v-list-item :close-on-content-click="true" justify="center" title="l" @click="unit = 'l'"/>
-                                <v-list-item :close-on-content-click="true" justify="center" title="dal" @click="unit = 'dal'"/>
-                                <v-list-item :close-on-content-click="true" justify="center" title="hl" @click="unit = 'hl'"/>
-                                <v-list-item :close-on-content-click="true" justify="center" title="kl" @click="unit = 'kl'"/>
+                                <v-list-item justify="center" title="ml" @click="(unit = 'ml') && (unitAct = false)"/>
+                                <v-list-item justify="center" title="cl" @click="(unit = 'cl') && (unitAct = false)"/>
+                                <v-list-item justify="center" title="dl" @click="(unit = 'dl' )&& (unitAct = false)"/>
+                                <v-list-item justify="center" title="l" @click=" (unit = 'l') && (unitAct = false)"/>
+                                <v-list-item justify="center" title="dal" @click=" (unit = 'dal') && (unitAct = false)"/>
+                                <v-list-item justify="center" title="hl" @click="(unit = 'hl') && (unitAct = false)"/>
+                                <v-list-item justify="center" title="kl" @click="(unit = 'kl') && (unitAct = false)"/>
                               </v-list>
                             </v-menu>
                           </v-btn>
@@ -140,6 +138,7 @@
 </template>
 
 <script setup>
+//:error-messages="errorMessage"
 import {ref, onMounted, mergeProps, computed} from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
 
@@ -147,10 +146,10 @@ const props = defineProps(["id"])
 const faucet = ref({})
 const deviceStore = useDeviceStore()
 const isLoading = ref(true)
-const expand = ref(false)
+const unitAct = ref(false)
 const isOn = computed( () => faucet.value.state.status !== 'closed')
 const isDispensing = ref(false)
-const text = ref("")
+const text = ref("0")
 const unit = ref(null)
 const quantity = ref(0)
 const refreshInterval = ref(null)
@@ -172,7 +171,7 @@ async function dispense(){
   }
 }
 function rules(){
-  return numberRule() && unit ? true : errorMessage.value
+  return (numberRule() && unit) || (text.value === '') ? true : errorMessage.value
 }
 
 async function execute(actionName, params= []){
@@ -285,7 +284,4 @@ const actions = ref([
   margin: 0;
 }
 
-.switch{
-  margin-left: 7px;
-}
 </style>
