@@ -104,7 +104,6 @@ async function getPlaylist(){
   try{
     currentPlaylist.value = await execute("getPlaylist")
     PLdialog.value = true
-    console.log(currentGenre.value)
   } catch(error){
     console.log(error)
   }
@@ -164,6 +163,16 @@ async function removeDevice(){
     }
   } catch(error){
     console.error(error)
+  }
+}
+
+async function setGenre(genre){
+  try{
+    await execute("setGenre", [genre])
+    await execute("stop")
+    GENdialog.value = false
+  } catch(error){
+    console.log(error)
   }
 }
 </script>
@@ -235,7 +244,7 @@ async function removeDevice(){
             </v-row>
             <v-row justify="center">
               <v-btn class="actions" prepend-icon="mdi-music-note">
-                Set Genre
+                Cambiar Género
                 <v-dialog v-model="GENdialog" activator="parent" width="auto" height="auto">
                   <v-card>
                     <v-icon icon="mdi-close" color="grey" class="close" @click="GENdialog = false"/>
@@ -247,26 +256,26 @@ async function removeDevice(){
                       <v-list>
                         <v-row columns="2" justify="center" class="actions">
                           <v-list-item>
-                            <v-btn variant="outlined" color="blue" class="actions">
+                            <v-btn variant="outlined" color="blue" class="actions" @click="setGenre('classic')">
                              Clásica
                             </v-btn>
-                            <v-btn variant="outlined" color="blue" class="actions">
+                            <v-btn variant="outlined" color="blue" class="actions" @click="setGenre('country')">
                               Country
                             </v-btn>
-                            <v-btn variant="outlined" color="blue" class="actions">
+                            <v-btn variant="outlined" color="blue" class="actions" @click="setGenre('dance')">
                               Dance
                             </v-btn>
                           </v-list-item>
                         </v-row>
                         <v-row columns="2" justify="center" class="actions">
                           <v-list-item>
-                            <v-btn variant="outlined" color="blue" class="actions">
+                            <v-btn variant="outlined" color="blue" class="actions" @click="setGenre('latina')">
                               Latina
                             </v-btn>
-                            <v-btn variant="outlined" color="blue" class="actions">
+                            <v-btn variant="outlined" color="blue" class="actions" @click="setGenre('pop')">
                               Pop
                             </v-btn>
-                            <v-btn variant="outlined" color="blue" class="actions">
+                            <v-btn variant="outlined" color="blue" class="actions" @click="setGenre('rock')">
                               Rock
                             </v-btn>
                           </v-list-item>
