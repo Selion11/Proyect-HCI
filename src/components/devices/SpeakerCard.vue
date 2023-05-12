@@ -5,7 +5,7 @@ import { useDeviceStore } from "@/store/deviceStore"
 const props = defineProps(['id'])
 const editDia = ref(false)
 const deviceStore = useDeviceStore()
-
+const listDia = ref(false)
 const status = computed(() => speaker.value.state.status)
 const isStopped = computed( () => speaker.value.state.status === "stopped")
 const currentSong = computed( () => speaker.value.state.status !== "stopped" ? speaker.value.state.song.title : null)
@@ -291,16 +291,32 @@ async function setGenre(genre){
                 <v-dialog v-model="PLdialog" activator="parent" width="auto" height="auto">
                   <v-card>
                     <v-icon icon="mdi-close" color="grey" class="close" @click="PLdialog = false"/>
-                    <v-card-title/>
-                    <v-card-title class="text-capitalize">
+                    <v-card-title class="centered">
                       Playlist del género {{ currentGenre }}
                     </v-card-title>
                     <v-list v-for="song in currentPlaylist">
-                      <v-list-item-title>Canción</v-list-item-title>
-                      <v-list-item>{{ song.title }}</v-list-item>
-                      <v-list-item>Artista: {{ song.artist }}</v-list-item>
-                      <v-list-item>Álbum: {{ song.album }}</v-list-item>
-                      <v-list-item>Duración: {{ song.duration }}</v-list-item>
+                      <v-row justify="center">
+                          <v-card class="song" width="600px">
+                          <v-card-title class="centered">
+                            <v-icon icon="mdi-music-note"/>
+                            {{song.title}}
+                          </v-card-title>
+                            <v-card-subtitle>
+                              <v-icon icon="mdi-account"/>
+                              {{song.artist}}
+                            </v-card-subtitle>
+                          <v-card-text>
+                            <v-row justify="center">
+                              <v-icon icon="mdi-album"/>
+                                  {{song.album}}
+                            </v-row>
+                            <v-row justify="center">
+                              <v-icon icon="mdi-waveform"/>
+                              {{song.duration}}
+                            </v-row>
+                          </v-card-text>
+                        </v-card>
+                      </v-row>
                     </v-list>
                   </v-card>
                 </v-dialog>
@@ -337,7 +353,7 @@ async function setGenre(genre){
     <v-card-actions>
       <v-col cols="6">
       <v-row>
-      <v-btn block prepend-icon="mdi-pencil" class="action">
+      <v-btn block  prepend-icon="mdi-pencil" class="action">
         Editar Parlante
         <v-dialog v-model="editDia" activator="parent">
           <v-card>
@@ -358,10 +374,15 @@ async function setGenre(genre){
       </v-btn>
       </v-row>
       </v-col>
-      <v-col cols="6">
-      <v-btn  @click="expand = !expand" block class="action">
-        {{ !expand ? 'Mostrar Acciones' : 'Ocultar Acciones' }}
+      <v-col cols="6" v-if="expand === false" >
+      <v-btn block prepend-icon="mdi-plus" @click="expand = !expand" class="action">
+        Mas Acciones
       </v-btn>
+      </v-col>
+      <v-col cols="6" v-else>
+        <v-btn block prepend-icon="mdi-minus" @click="expand = !expand" class="action">
+          Menos Acciones
+        </v-btn>
       </v-col>
     </v-card-actions>
   </v-card>
@@ -407,6 +428,12 @@ v-card-title {
   top: 5px;
   right: 5px;
   margin: 0;
+}
+
+.song{
+  text-align: center;
+  margin-bottom: 6px;
+  margin-top: 6px;
 }
 
 </style>
