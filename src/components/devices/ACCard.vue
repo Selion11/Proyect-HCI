@@ -30,19 +30,22 @@
 
     <div class="subtitle">
       <v-row justify="center">
-        <v-list-item-subtitle>Status: {{  isOn ? temperature + "ºC" : "Apagado" }}</v-list-item-subtitle>
+        <v-list-item-subtitle>Status: {{  isOn ? "Encendido" : "Apagado" }}</v-list-item-subtitle>
       </v-row>
           <v-row justify="center">
-            <v-col cols="6" v-if="isOn">
+            <v-col cols="64" v-if="isOn">
             <v-btn width="flex" block @click="decreaseTemperature()" append-icon="mdi-minus"/>
             </v-col>
-            <v-col cols="6" v-else>
+            <v-col cols="4" v-else>
               <v-btn width="flex" block disabled append-icon="mdi-minus"/>
             </v-col>
-            <v-col cols="6" v-if="isOn">
+            <v-col cols="4">
+              <v-btn variant="outlined" disabled> {{temperature}} ºC</v-btn>
+            </v-col>
+            <v-col cols="4" v-if="isOn">
             <v-btn width="flex" block  @click="increaseTemperature()" append-icon="mdi-plus"/>
             </v-col>
-            <v-col cols="6" v-else>
+            <v-col cols="64" v-else>
               <v-btn width="flex" block disabled append-icon="mdi-plus"/>
             </v-col>
           </v-row>
