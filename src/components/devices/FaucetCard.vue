@@ -1,12 +1,41 @@
 <template>
   <v-container v-if="!isLoading">
   <v-card class="mx-auto" max-width="368">
+    <v-menu>
+      <template v-slot:activator="{ props: menu }">
+        <v-tooltip location="top">
+          <template v-slot:activator="{ props: tooltip }">
+            <v-btn
+              icon="mdi-delete"
+              variant="text"
+              color="error"
+              class="close"
+              v-bind="mergeProps(menu, tooltip)"
+              @click="DELdialog = true"
+            />
+            <v-dialog v-model="DELdialog" width="auto" height="auto">
+              <v-card>
+                <v-card-title/>
+                <v-card-title>
+                  ¿Seguro que desea borrar el grifo {{faucet.name}}?
+                </v-card-title>
+                <v-card-actions>
+                  <v-row justify="center">
+                    <v-btn variant="text" @click="DELdialog = false">No</v-btn>
+                    <v-btn color="red" variant="text" @click="removeDevice()">Sí</v-btn>
+                  </v-row>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </template>
+          <span>Borrar Grifo</span>
+        </v-tooltip>
+      </template>
+    </v-menu>
+    <v-card-title/>
     <v-card-title>
-      <v-row justify="center">
+      <v-row justify="center" class="text-capitalize">
         {{ faucet.name }}
-      </v-row>
-      <v-row justify="end">
-        <v-btn icon="mdi-delete" variant="text" color="error"/>
       </v-row>
     </v-card-title>
     <v-card-text class="centered">
@@ -15,88 +44,103 @@
     </v-card-text>
     <div class="subtitle">
       <v-row justify="center">
-        <v-card-subtitle v-if="isOn"> Unidades: {{unit}}</v-card-subtitle>
+        <v-card-subtitle v-if="isDispensing && isOn"> Dispensando {{ quantity }}{{unit}}</v-card-subtitle>
+        <v-card-subtitle v-else-if="isOn">Dispensando...</v-card-subtitle>
         <v-card-subtitle v-else>Apagado</v-card-subtitle>
       </v-row>
-      <v-row class="switch" justify="start">
-        <v-col cols="3">
-          <v-switch v-model="isOn" width="flex"  @click="isOn = !isOn"/>
-        </v-col>
+      <v-row class="actions" justify="start">
+        <v-btn v-if="!isOn" width="flex"  @click="turnOnOff()">Encender</v-btn>
+        <v-btn v-else width="flex"  @click="turnOnOff()">Apagar</v-btn>
+        <div class="text-center">
+          <v-btn
+            v-if="!isOn"
+            color="indigo"
+            v-bind="props"
+            @click="dispenseMenu = true"
+
+          >
+            Dispensar
+            <v-menu
+              :close-on-content-click="false"
+              location="end"
+              activator="parent"
+            >
+              <v-card min-width="50">
+                <v-list>
+                  <v-list-item>
+                    <v-responsive
+                      class="mx-auto"
+                      max-width="344"
+                    >
+                      <v-form
+                        @submit.prevent="rules()"
+                      >
+                        <v-text-field
+                          v-model="text"
+                          :rules="[ ()=> text.value >= 0 ? true : errorMessage]"
+                          :error-messages="errorMessage"
+                          label="Cantidad"
+                          type="number"
+                          hint="Inserte la cantidad de liquido"
+                          class="actions"
+                        ></v-text-field>
+                        <v-card-title/>
+                        <v-row justify="center">
+                          <v-btn
+                            color="blue"
+
+                            class="actions"
+                            @click=""
+                          >
+                            {{ unit ? unit : "Unidades" }}
+                            <v-menu activator="parent" :close-on-content-click="false">
+                              <v-list :close-on-content-click="true" >
+                                <v-list-item :close-on-content-click="true" justify="center" title="ml" @click="unit = 'ml'"/>
+                                <v-list-item :close-on-content-click="true" justify="center" title="cl" @click="unit = 'cl'"/>
+                                <v-list-item :close-on-content-click="true" justify="center" title="dl" @click="unit = 'dl'"/>
+                                <v-list-item :close-on-content-click="true" justify="center" title="l" @click="unit = 'l'"/>
+                                <v-list-item :close-on-content-click="true" justify="center" title="dal" @click="unit = 'dal'"/>
+                                <v-list-item :close-on-content-click="true" justify="center" title="hl" @click="unit = 'hl'"/>
+                                <v-list-item :close-on-content-click="true" justify="center" title="kl" @click="unit = 'kl'"/>
+                              </v-list>
+                            </v-menu>
+                          </v-btn>
+                          <v-btn
+                            :disabled="!rules()"
+                            block
+                            color="success"
+                            variant="text"
+                            class="action"
+                            @click="dispense()"
+                          >
+                            Aceptar
+                          </v-btn>
+                        </v-row>
+                      </v-form>
+                    </v-responsive>
+                  </v-list-item>
+                </v-list>
+              </v-card>
+            </v-menu>
+          </v-btn>
+          <v-btn v-else disabled color="indigo" v-bind="props">Dispensar</v-btn>
+        </div>
       </v-row>
     </div>
 
-    <v-expand-transition>
-      <div v-if="expand">
-        <div class="py-2">
-          <v-row justify="center">
-            <v-btn class="actions">
-            Dispensar
-            <v-dialog activator="parent" v-model="disDia" width="500px" height="auto">
-              <v-card>
-                <v-card-text>
-                  <v-row justify="center">
-                      <v-col cols="12">
-                        <v-text-field hint="Min:0 ~ Max:100" type="text" placeholder="Text" v-model="text" label="Cantidad a dispensar" variant="outlined"/>
-                      </v-col>
-                    </v-row>
-                  <v-row justify="center">
-                    <v-col cols="12">
-                      <v-btn block class="actions" @click="disDia = false">
-                        OK
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-                </v-card-text>
-              </v-card>
-            </v-dialog>
-          </v-btn>
-          </v-row>
-          <v-row justify="center">
-            <v-btn  class="actions">
-              Unidad
-              <v-menu activator="parent">
-                <v-list>
-                  <v-list-item title="ml" @click="unit = 'ml'"/>
-                  <v-list-item title="cl" @click="unit = 'cl'"/>
-                  <v-list-item title="dl" @click="unit = 'dl'"/>
-                  <v-list-item title="l" @click="unit = 'l'"/>
-                  <v-list-item title="dal" @click="unit = 'dal'"/>
-                  <v-list-item title="hl" @click="unit = 'hl'"/>
-                  <v-list-item title="kl" @click="unit = 'kl'"/>
-                </v-list>
-              </v-menu>
-            </v-btn>
-          </v-row>
-        </div>
-      </div>
-    </v-expand-transition>
-
-
-    <v-divider></v-divider>
-
     <v-card-actions>
-      <v-col cols="6">
-        <v-row>
-          <v-btn block prepend-icon="mdi-pencil" class="actions">
-            Edit Device
-          </v-btn>
-        </v-row>
-      </v-col>
-      <v-col cols="6">
-        <v-btn v-if="isOn" @click="expand = !expand" block class="actions">
-          {{ !expand ? 'All Actions' : 'Hide Actions' }}
+      <v-row justify="center">
+        <v-btn block prepend-icon="mdi-pencil" class="actions">
+          Editar Dispositivo
         </v-btn>
-        <v-btn disabled v-else>
-          All Actions
-        </v-btn>
-      </v-col>
+      </v-row>
     </v-card-actions>
   </v-card>
   </v-container>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import {ref, onMounted, mergeProps, computed} from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
 
 const props = defineProps(["id"])
@@ -104,12 +148,35 @@ const faucet = ref({})
 const deviceStore = useDeviceStore()
 const isLoading = ref(true)
 const expand = ref(false)
-const isOn = ref(false)
-const text = ref()
-const unit = ref()
+const isOn = computed( () => faucet.value.state.status !== 'closed')
+const isDispensing = ref(false)
+const text = ref("")
+const unit = ref(null)
+const quantity = ref(0)
+const refreshInterval = ref(null)
+const dispenseMenu = ref(false)
+const DELdialog = ref(false)
+const form = ref(false)
+const errorMessage = computed( () => !isNaN(Number(text.value)) && text.value > 0 ? "" : !isNaN(Number(text.value)) && text.value <= 0 ? 'Debe ingresar un número mayor a cero' : 'Debe ingresar un numero')
+function numberRule(){
+  return !isNaN(Number(text.value)) && text.value > 0
+}
+async function dispense(){
+  try{
+    await execute("dispense", [Number(text.value), unit.value])
+    quantity.value = Number(text.value)
+    text.value = ""
+    dispenseMenu.value = false
+  } catch(error){
+    console.log(error)
+  }
+}
+function rules(){
+  return numberRule() && unit ? true : errorMessage.value
+}
 
-async function execute(action){
-  let result = await deviceStore.execute(props.id, action.realName, {params: actionParam})
+async function execute(actionName, params= []){
+  let result = await deviceStore.execute(props.id, actionName, params)
   if(result){
     faucet.value = await deviceStore.get(props.id)
   } else {
@@ -133,6 +200,32 @@ onMounted( async () => {
 
 async function refreshState(){
   faucet.value = await deviceStore.get(props.id)
+}
+
+async function turnOnOff(){
+  try{
+    if(isOn.value){
+      await execute("close")
+      isDispensing.value = false
+    } else{
+      await execute("open")
+    }
+  } catch(error){
+    console.log(error)
+  }
+}
+
+async function removeDevice(){
+  try{
+    isLoading.value = true
+    clearInterval(refreshInterval.value)
+    const result = await deviceStore.remove(props.id)
+    if(!result){
+      isLoading.value = false
+    }
+  } catch(error){
+    console.error(error)
+  }
 }
 
 const disDia = ref(false)
@@ -184,6 +277,14 @@ const actions = ref([
 .centered{
   text-align: center;
 }
+
+.close{
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  margin: 0;
+}
+
 .switch{
   margin-left: 7px;
 }

@@ -365,6 +365,7 @@ async function setGenre(genre){
 .music-bar{
   margin-right: 48px;
   margin-left: 2px;
+  margin-bottom: 12px;
   text-align: center;
 }
 
