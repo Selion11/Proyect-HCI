@@ -3,9 +3,7 @@ import { defineProps, ref, onMounted, computed, mergeProps } from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
 
 const props = defineProps(['id'])
-let snackBarTxt = ref()
-const timeout = ref(1000)
-const snackBar = ref(false)
+const editDia = ref(false)
 const deviceStore = useDeviceStore()
 
 const status = computed(() => speaker.value.state.status)
@@ -341,6 +339,22 @@ async function setGenre(genre){
       <v-row>
       <v-btn block prepend-icon="mdi-pencil" class="action">
         Editar Parlante
+        <v-dialog v-model="editDia" activator="parent">
+          <v-card>
+            <v-card-title class="centered">Cambie el nombre de su dispositivo</v-card-title>
+            <v-card-text>
+              <v-text-field type="text" placeholder="Nuevo nombre" variant="outlined"/>
+            </v-card-text>
+            <v-card-actions>
+              <v-col cols="6">
+                <v-btn block prepend-icon="mdi-content-save-outline" @click="">Cambiar nombre</v-btn>
+              </v-col>
+              <v-col cols="6">
+                <v-btn block prepend-icon="mdi-close" @click="editDia = false">Cerrar</v-btn>
+              </v-col>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-btn>
       </v-row>
       </v-col>
