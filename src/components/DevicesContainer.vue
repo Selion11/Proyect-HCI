@@ -97,7 +97,7 @@
 
   const popUp = ref(false)
   const text = ref()
-  const devices = ref([])
+  const devices = computed( () => devStore.devices )
   const asyncSpeakers = computed(() => devices.value.filter((device) => device["type"].id === devicesTypes.value[0].id))
   const asyncFaucet = computed(() => devices.value.filter((device) => device["type"].id === devicesTypes.value[1].id))
   const asyncLamp = computed(() => devices.value.filter((device) => device["type"].id === devicesTypes.value[2].id))
@@ -145,7 +145,7 @@
 
   onMounted(  async () => {
     try {
-      devices.value = await devStore.getAll()
+      await devStore.getAll()
       isLoading.value = false
     } catch(error){
       throw error
@@ -159,7 +159,7 @@
 
   async function refreshState(){
     try{
-      devices.value = await devStore.getAll()
+      await devStore.getAll()
     } catch(error){
       console.error(error)
     }
@@ -176,7 +176,6 @@
       })
       snackBarTxt.value = "Dispositivo " + typeName + " añadido correctamente."
       snackBar.value = true
-      devices.value = await devStore.getAll()
     } catch (error) {
       snackBarTxt.value = "Dispositivo " + typeName + " ya existe!"
       snackBar.value = true

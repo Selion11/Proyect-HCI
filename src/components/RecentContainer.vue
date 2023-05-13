@@ -11,16 +11,16 @@ import FaucetCard from "@/components/devices/FaucetCard.vue";
             progress="primary"
             hide-delimiters show-arrows="hover">
               <v-carousel-item cover>
-                <FaucetCard :id="'30f9776999d1f417'"/>
+
               </v-carousel-item>
 
               <v-carousel-item
       cover
-    >  <FaucetCard :id="'30f9776999d1f417'"/> </v-carousel-item>
+    >
 
               <v-carousel-item
       cover
-    >  <FaucetCard :id="'30f9776999d1f417'"/> </v-carousel-item>
+    >  </v-carousel-item>
           </v-carousel>
 
 

@@ -21,8 +21,8 @@ class DevicesApi {
   }
 
   // Retrieve events for all devices
-  static async getAllEvents(){
-    return await Api.get(DevicesApi.getURL(`events`))
+  static getAllEvents(){
+    return new EventSource(DevicesApi.getURL(`events`))
   }
 
   // Retrieve logs for all devices
@@ -31,8 +31,8 @@ class DevicesApi {
   }
 
   // Retrieve events for a specific device
-  static async getEvent(id){
-    return await Api.get(DevicesApi.getURL(`${id}/events`))
+  static getDeviceEvents(id){
+    return new EventSource(DevicesApi.getURL(`${id}/events`))
   }
 
   // Retrieve state of a specific device

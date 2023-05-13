@@ -1,12 +1,7 @@
 // Utilities
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { defineStore } from 'pinia'
-import { DevicesApi, Device, Log, Event} from '@/api/device'
-import { SpeakerState } from '@/api/speaker'
-import { ACState } from "@/api/ac"
-import { FaucetState } from "@/api/faucet"
-import { LampState } from "@/api/lamp"
-import { RefrigeratorState } from "@/api/refrigerator"
+import { DevicesApi, Device, Log } from '@/api/device'
 
 // Every store goes here, it can be divided by device type and a general store for
 // grouping available products of the API
@@ -30,30 +25,27 @@ export const useDeviceStore = defineStore('devices', () =>{
 
   async function get(id) {
     const result = await DevicesApi.get(id);
-    await getAll()
     return Object.assign(new Device(), result)
   }
 
   async function add(device) {
-    const result = await DevicesApi.add(device)
-    await getAll()
-    return Object.assign(new Device(), result)
+    let result = await DevicesApi.add(device)
+    result = Object.assign(new Device(), result)
+    devices.value.push(result)
+    return result
   }
   async function modify(id, device) {
-    const result = await DevicesApi.modify(id, device)
-    await getAll()
-
-    // result = { "result": [boolean, boolean, ..., boolean] }
-    // El orden de los booleanos es el orden de los dispositivos en la rutina
+    let result = await DevicesApi.modify(id, device)
+    result = Object.assign(new Device(), result)
+    devices.value.map( (device) => device.id === result.id ? result : device)
     return result
   }
 
   async function execute(id, actionName, parameters) {
+    // result = { "result": boolean }
     const result = await DevicesApi.execute(id, actionName, parameters)
-    await getAll()
-
-    // result = { "result": [boolean, boolean, ..., boolean] }
-    // El orden de los booleanos es el orden de los dispositivos en la rutina
+    const toUpdate = await get(id)
+    devices.value.map( (device) => device.id === toUpdate.id ? toUpdate : device)
     return result
   }
 
@@ -71,51 +63,30 @@ export const useDeviceStore = defineStore('devices', () =>{
     return result
   }
 
-  async function getAllEvents(){
-    // CREEEO que la API está rota porque devuelve algo que ni siquiera es un JSON cuando
-    //ejecuto este evento
-    try {
-      let result = await DevicesApi.getAllEvents()
-      if (result) {
-        result = result.map((event) => Object.assign(new Event(), event))
-        events.value = result
-        return result
-      } else
-        events.value = []
-      return []
-    } catch(error){
-      return []
-    }
+  function getAllEvents(){
+    return DevicesApi.getAllEvents()
   }
 
-  async function getEvent(id){
-    const result = await DevicesApi.getEvent(id)
-    await getAll()
-    return Object.assign(new Event(), result)
+  function getDeviceEvents(id){
+    return DevicesApi.getDeviceEvents(id)
   }
 
   async function getState(id){
-    const result = await DevicesApi.getState(id)
-    let aux = await DevicesApi.get(id)
-    await getAll()
-    aux = Object.assign(new Device(), aux)
-    switch(aux.type.name){
-      case "speaker": return Object.assign(new SpeakerState(), result)
-      case "ac": return Object.assign(new ACState(), result)
-      case "lamp": return Object.assign(new LampState(), result)
-      case "faucet": return Object.assign(new FaucetState(), result)
-      case "refrigerator": return Object.assign(new RefrigeratorState(), result)
-    }
+    return await DevicesApi.getState(id)
   }
 
   async function remove(id) {
     const result = await DevicesApi.remove(id)
-    await getAll()
-
-    // result = { "result": [boolean, boolean, ..., boolean] }
-    // El orden de los booleanos es el orden de los dispositivos en la rutina
+    // result = { "result": boolean }
+    if(result){
+      devices.valiue = devices.value.filter( (device) => device.id !== id)
+    }
     return result
   }
 
-  return { getAll, getAllByType, get, add, execute, modify, getLog, getLogs, getAllEvents, getEvent, getState, remove, devices, events }
+  onMounted( () => {
+    setInterval(getAll, 10000)
+  })
+
+  return { getAll, getAllByType, get, add, execute, modify, getLog, getLogs, getAllEvents, getDeviceEvents, getState, remove, devices, events }
 })
