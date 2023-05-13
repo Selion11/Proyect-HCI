@@ -5,8 +5,8 @@ import FaucetCard from "@/components/devices/FaucetCard.vue";
 <template>
   <v-row justify="start">
     <v-col cols="6">
-      <v-card height="400px" >
-        <v-card-title>Recent Devices</v-card-title>
+      <v-card class="spacing" height="400px" >
+        <v-card-title class="centered">Recent Devices</v-card-title>
           <v-carousel
             progress="primary"
             hide-delimiters show-arrows="hover">
@@ -25,14 +25,23 @@ import FaucetCard from "@/components/devices/FaucetCard.vue";
 
 
       </v-card>
-
-      <v-btn href="/devices">
+      <v-row justify="center">
+      <v-btn variant="outlined" color="info" class="centered" href="/devices">
         Ver todos los dispositivos!
       </v-btn>
+      </v-row>
     </v-col>
   </v-row>
 </template>
 
 <style scoped>
+.spacing{
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.centered{
+  text-align: center;
+}
 
 </style>
