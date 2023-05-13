@@ -12,10 +12,10 @@ const status = computed(() => {
   }
 })
 const isStopped = computed( () => speaker.value["state"].status === "stopped")
-const currentSong = computed( () => speaker.value["state"].status !== "stopped" ? speaker.value["state"].song.title : null)
+const currentSong = computed( () => !isStopped.value ? speaker.value["state"].song.title : null)
 const songProgress = computed( () => {
-  if(speaker.value["state"].status !== "stopped"){
-    return turnMinutesToSeconds(speaker.value["state"].song.progress)*100 / turnMinutesToSeconds(speaker.value[2].song.duration)
+  if(!isStopped.value){
+    return turnMinutesToSeconds(speaker.value["state"].song.progress)*100 / turnMinutesToSeconds(speaker.value["state"].song.duration)
   } else{
     return 0
   }

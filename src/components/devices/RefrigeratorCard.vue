@@ -57,6 +57,7 @@
             <v-card-subtitle>Modo: {{ currentMode }} </v-card-subtitle>
           </v-col>
         </v-row>
+        <v-card-title/>
       </div>
       <v-expand-transition>
         <div v-if="expand">
@@ -133,9 +134,8 @@
           </v-btn>
         </v-row>
         <v-col cols="6">
-          <v-btn  @click="expand = !expand" block class="action">
-            {{ !expand ? 'All Actions' : 'Hide Actions' }}
-          </v-btn>
+          <v-btn v-if="!expand" @click="expand = !expand" block class="action">Más<br>Acciones</v-btn>
+          <v-btn v-else @click="expand = !expand" block class="action">Ocultar<br>Acciones</v-btn>
         </v-col>
       </v-card-actions>
     </v-card>
@@ -274,7 +274,6 @@ onMounted( async () => {
     refrigerator.value = await deviceStore.get(props.id)
     currentFridgeTemp.value = refrigerator.value["state"].temperature
     currentFreezerTemp.value = refrigerator.value["state"].freezerTemperature
-    currentMode.value = refrigerator.value["state"].mode
     isLoading.value = false
   } catch(error) {
     console.log(error)
