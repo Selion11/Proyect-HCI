@@ -1,15 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js js">
 
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8">
   <link rel="icon" href="/favicon.ico" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Welcome to Vuetify 3</title>
+  <script>
+    // Si JavaScript está habilitado, agregamos la clase 'js' a la etiqueta HTML
+    document.documentElement.classList.remove("no-js");
+    document.documentElement.classList.add("js");
+  </script>
 </head>
 
 <body>
   <div id="app"></div>
+  <noscript>
+    <div class="no-js-alert">
+      <h1>JavaScript está deshabilitado</h1>
+      <p>Por favor habilite JavaScript en su navegador para visualizar correctamente esta página.</p>
+    </div>
+  </noscript>
+  <script src="/dist/js/app.js"></script>
   <script type="module" src="/src/main.js"></script>
 </body>
 
