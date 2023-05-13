@@ -1,43 +1,16 @@
 <template>
   <div>
-    <v-row align="center" class="full-screen">
-        <v-col cols="6" class="align-top">
-          <v-card>
-            <h1>Recent Devices</h1>
-            <v-container>
-              <v-row justify="center" align="center">
-                <v-col v-for="(item, index) in deviceItems" :key="index" cols="auto">
-                  <v-card>
-                    <v-card-title>{{ item.title }}</v-card-title>
-                    <v-card-text>{{ item.text }}</v-card-text>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card>
-        </v-col>
-        <v-col cols="6" class="align-top">
-          <v-card>
-            <h1>Recent Routines</h1>
-            <v-container>
-              <v-row justify="center" align="center">
-                <v-col v-for="(item, index) in routineItems" :key="index" cols="6">
-                  <v-card>
-                    <v-card-title>{{ item.title }}</v-card-title>
-                    <v-card-text>{{ item.text }}</v-card-text>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card>
-        </v-col>
-    </v-row>
+    <v-container>
+    <RecentContainer/>
+    </v-container>
   </div>
 
 </template>
 
 
 <script setup>
+import RecentContainer from "@/components/RecentContainer.vue";
+
 const drawer = ref(false)
 import { ref } from 'vue'
 const routineItems = ref([
@@ -111,17 +84,6 @@ const deviceItems = ref([
 </script>
 
 <style>
-  .full-screen {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  .align-top {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding-top: 20px;
-  }
   h1 {
     padding-left: 10px;
   }

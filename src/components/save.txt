@@ -14,3 +14,36 @@
                               <v-list-item title="hl" @click="disDia = false"/>
                               <v-list-item title="kl" @click="disDia = false"/>
                             </v-menu>
+
+    <v-row align="center" class="full-screen">
+        <v-col cols="6" class="align-top">
+          <v-card>
+            <h1>Recent Devices</h1>
+            <v-container>
+              <v-row justify="center" align="center">
+                <v-col v-for="(item, index) in deviceItems" :key="index" cols="auto">
+                  <v-card>
+                    <v-card-title>{{ item.title }}</v-card-title>
+                    <v-card-text>{{ item.text }}</v-card-text>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
+        </v-col>
+        <v-col cols="6" class="align-top">
+          <v-card>
+            <h1>Recent Routines</h1>
+            <v-container>
+              <v-row justify="center" align="center">
+                <v-col v-for="(item, index) in routineItems" :key="index" cols="6">
+                  <v-card>
+                    <v-card-title>{{ item.title }}</v-card-title>
+                    <v-card-text>{{ item.text }}</v-card-text>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
+        </v-col>
+    </v-row>
