@@ -31,25 +31,25 @@ const devicesTypes = ref({
 <template>
   <v-row justify="start">
     <v-col cols="6">
-      <v-card class="spacing" height="400px">
+      <v-card class="overflow-auto spacing" height="400px">
         <v-card-title class="centered">Recent Devices</v-card-title>
-          <v-carousel progress="primary" hide-delimiters show-arrows="hover" v-for="deviceID in mostRecentDevices.reverse()">
-              <v-carousel-item v-if="devices.filter((device) => device.id === deviceID)[0].type.id === devicesTypes.faucet.id" cover>
+          <v-list  progress="primary" hide-delimiters show-arrows="hover" v-for="deviceID in mostRecentDevices.reverse()">
+              <v-list-item v-if="devices.filter((device) => device.id === deviceID)[0].type.id === devicesTypes.faucet.id" cover>
                 <FaucetCard :id="deviceID"/>
-              </v-carousel-item>
-              <v-carousel-item v-else-if="devices.filter((device) => device.id === deviceID)[0].type.id === devicesTypes.speaker.id" cover>
+              </v-list-item>
+              <v-list-item v-else-if="devices.filter((device) => device.id === deviceID)[0].type.id === devicesTypes.speaker.id" cover>
                 <SpeakerCard :id="deviceID"/>
-              </v-carousel-item>
-              <v-carousel-item v-else-if="devices.filter((device) => device.id === deviceID)[0].type.id === devicesTypes.lamp.id" cover>
+              </v-list-item>
+              <v-list-item v-else-if="devices.filter((device) => device.id === deviceID)[0].type.id === devicesTypes.lamp.id" cover>
                 <LampCard :id="deviceID"/>
-              </v-carousel-item>
-            <v-carousel-item v-else-if="devices.filter((device) => device.id === deviceID)[0].type.id === devicesTypes.ac.id" cover>
+              </v-list-item>
+            <v-list-item v-else-if="devices.filter((device) => device.id === deviceID)[0].type.id === devicesTypes.ac.id" cover>
               <ACCard :id="deviceID"/>
-            </v-carousel-item>
-            <v-carousel-item v-else>
+            </v-list-item>
+            <v-list-item v-else>
               <SpeakerCard :id="deviceID" />
-            </v-carousel-item>
-          </v-carousel>
+            </v-list-item>
+          </v-list>
       </v-card>
       <v-row justify="center">
         <RouterLink to="/devices">

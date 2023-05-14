@@ -1,6 +1,11 @@
 <template>
   <v-card>
+
     <v-toolbar color="light-blue-darken-1">
+
+        <RouterLink to="/">
+          <v-icon size="57" class="links" color="white" icon="mdi-home-automation"/>
+        </RouterLink>
       <v-tabs
         color="orange-lighten-2"
         align-tabs="center"
@@ -8,6 +13,8 @@
         v-model="selectedTab"
         class="mx-auto"
       >
+
+
         <RouterLink to="/" class="links">
           <v-tab :key="1" :value="1">
             Página Principal
