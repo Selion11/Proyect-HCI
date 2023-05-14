@@ -40,8 +40,10 @@ export const useDeviceStore = defineStore('devices', () =>{
   }
 
   async function get(id) {
-    const result = await DevicesApi.get(id);
-    return Object.assign(new Device(), result)
+    let result = await DevicesApi.get(id)
+    result = Object.assign(new Device(), result)
+    devices.value.map( (device) => device["id"] === result.id ? result : device)
+    return result
   }
 
   async function add(device) {

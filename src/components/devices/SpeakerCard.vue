@@ -48,12 +48,7 @@ const volume = computed( () => speaker.value["state"].volume)
 const speaker = computed( () => deviceStore.devices.filter( (device) => device.id === props.id)[0])
 
 const currentVolume = ref(0)
-const currentGenre = computed( () => {
-  switch(speaker.value["state"].genre){
-    case "classic": return "Clásica"
-    default: return speaker.value["state"].genre
-  }
-})
+const currentGenre = ref('')
 const currentPlaylist = ref([])
 
 const expand = ref(false)
@@ -65,6 +60,14 @@ const PLdialog = ref(false)
 const refreshInterval = ref(0)
 const songProgressInterval = ref(0)
 const speakerEvents = ref(null)
+const getGenre = (device) => {
+  switch (device["state"].genre) {
+    case "classical":
+      return "Clásica"
+    default:
+      return device["state"].genre[0].toUpperCase() + device["state"].genre.substring(1)
+  }
+}
 
 function turnMinutesToSeconds(time) {
   const parts = time.split(':');
@@ -116,6 +119,7 @@ onMounted(async () => {
       }
     }
     currentVolume.value = volume.value
+    currentGenre.value = getGenre(speaker.value)
     if(!isStopped.value){
       currentSongProgress.value = turnMinutesToSeconds(speaker.value["state"].song.progress)
     }
@@ -135,7 +139,9 @@ function refreshSongProgress(){
 
 async function refreshState(){
   try{
-    await execute("setVolume", [currentVolume.value])
+    if(speaker.value["state"].volume !== currentVolume.value) {
+      await execute("setVolume", [currentVolume.value])
+    }
   } catch(error){
     console.log(error)
   }
@@ -236,6 +242,8 @@ async function setGenre(genre){
   try{
     await execute("setGenre", [genre])
     await stop()
+    const result = await deviceStore.get(props.id)
+    currentGenre.value =  getGenre(result)
     GENdialog.value = false
     emits('to-snackbar', `El género ha sido cambiado a ${currentGenre.value}`)
   } catch(error){
@@ -322,7 +330,7 @@ async function setGenre(genre){
                       <v-list>
                         <v-row columns="2" justify="center" class="actions">
                           <v-list-item>
-                            <v-btn variant="outlined" color="blue" class="actions" @click="setGenre('classic')">
+                            <v-btn variant="outlined" color="blue" class="actions" @click="setGenre('classical')">
                              Clásica
                             </v-btn>
                             <v-btn variant="outlined" color="blue" class="actions" @click="setGenre('country')">
