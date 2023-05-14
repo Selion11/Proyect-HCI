@@ -148,7 +148,7 @@ import { useDeviceStore } from "@/store/deviceStore"
 
 const props = defineProps(["id"])
 const emits = defineEmits(["to-snackbar"])
-const refrigerator = ref({})
+const refrigerator = computed( () => deviceStore.devices.filter((device) => device.id === props.id)[0])
 const deviceStore = useDeviceStore()
 const isLoading = ref(true)
 const intervalId = ref(0)
@@ -175,10 +175,7 @@ const DELdialog = ref(false)
 const newName = ref('')
 
 async function execute(actionName, params= []){
-  let result = await deviceStore.execute(props.id, actionName, params)
-  if(result){
-    refrigerator.value = await deviceStore.get(props.id)
-  } else {
+  if(! await deviceStore.execute(props.id, actionName, params)){
     console.error(result)
   }
 }
@@ -199,7 +196,6 @@ async function removeDevice(){
 async function setMode(mode){
   try{
     await execute("setMode", [mode])
-    await refreshState()
   } catch(error){
     console.error(error)
   }
@@ -254,7 +250,6 @@ async function editDevice(){
     name: newName.value,
     meta: refrigerator.value["meta"]
   }
-  const deviceId = refrigerator.value["id"].toString()
   try{
     const result = await deviceStore.modify(deviceId, editedDevice)
     if(result) {
@@ -265,13 +260,17 @@ async function editDevice(){
       emits("to-snackbar", "El nombre ingresado ya existe.")
     }
   } catch(error){
-    emits("to-snackbar", "El nombre ingresado ya existe.")
+    if(error.code === 1){
+      emits("to-snackbar", "No debe ingresar caracteres especiales!")
+    }
+    else{
+      emits("to-snackbar", `Dispositivo ${typeName} ya existe!`)
+    }
   }
 }
 
 onMounted( async () => {
   try{
-    refrigerator.value = await deviceStore.get(props.id)
     currentFridgeTemp.value = refrigerator.value["state"].temperature
     currentFreezerTemp.value = refrigerator.value["state"].freezerTemperature
     isLoading.value = false
@@ -279,7 +278,7 @@ onMounted( async () => {
     console.log(error)
   }
   try{
-    intervalId.value = setInterval(refreshState, 1000)
+    intervalId.value = setInterval(refreshState, 5000)
   } catch(error){
     console.log(error)
   }
@@ -288,7 +287,6 @@ onMounted( async () => {
 async function refreshState(){
   await setFreezerTemperature()
   await setTemperature()
-  refrigerator.value = await deviceStore.get(props.id)
 }
 </script>
 

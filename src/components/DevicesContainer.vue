@@ -46,7 +46,14 @@
       <v-dialog v-model="popUp" activator="parent" width="800" height="800">
         <v-card>
           <v-card-text>
-            <v-text-field type="text" placeholder="Text" v-model="text" label="Nombre Del Dispositivo" variant="outlined"/>
+            <v-text-field
+              type="text"
+              placeholder="Text"
+              v-model="text"
+              label="Nombre Del Dispositivo"
+              hint="Ingrese solo letras, espacios y números (A-Z, a-z, 0-9)"
+              variant="outlined"
+            />
               <v-list>
                   <v-list-item v-for="dev in devicesTypes">
                       <v-btn rounded="lg" variant="outlined" color="blue" prepend-icon="mdi-content-save-outline"
@@ -174,14 +181,19 @@
         name: typeName,
         meta: {}
       })
-      if(typeName === undefined){
-        snackBarTxt.value = "Porfavor ingrese un nombre para el dispositivo"
+      if(typeName === undefined || typeName === ''){
+        snackBarTxt.value = "Por favor ingrese un nombre para el dispositivo"
       }else{
       snackBarTxt.value = "Dispositivo " + typeName + " añadido correctamente."
       }
       snackBar.value = true
     } catch (error) {
-      snackBarTxt.value = "Dispositivo " + typeName + " ya existe!"
+      if(error.code === 1){
+        snackBarTxt.value = "No debe ingresar caracteres especiales!"
+      }
+      else{
+        snackBarTxt.value = "Dispositivo " + typeName + " ya existe!"
+      }
       snackBar.value = true
     }
   }

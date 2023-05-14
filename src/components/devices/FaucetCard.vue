@@ -214,7 +214,12 @@ async function editDevice(){
       emits("to-snackbar", "El nombre ingresado ya existe.")
     }
   } catch(error){
-    emits("to-snackbar", "El nombre ingresado ya existe.")
+    if(error.code === 1){
+      emits("to-snackbar", "No debe ingresar caracteres especiales!")
+    }
+    else{
+      emits("to-snackbar", `Dispositivo ${newName.value} ya existe!`)
+    }
   }
 }
 
