@@ -1,6 +1,6 @@
 <template>
   <v-card-subtitle v-if="routines.length <= 0">Actualmente no hay ninguna rutina agregada. Para hacerlo, utilice el botón de "Agregar Rutina"</v-card-subtitle>
-  <v-btn class="addRoutine" prepend-icon="mdi-plus" @click="showRoutine = true" >Agregar Rutina</v-btn>
+  <v-btn class="addRoutine" prepend-icon="mdi-plus" @click="showRoutine = true" >Agregar<br>Rutina</v-btn>
   <v-dialog v-model="showRoutine" max-width="600" >
     <v-card>
       <v-card-text>

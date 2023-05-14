@@ -41,29 +41,30 @@
     </div>
   </v-container>
   <v-container>
-    <v-btn id="add-btn" variant="outlined" color="blue">
-      <v-icon icon="mdi-plus"/>
+    <v-btn id="add-btn" class="addDevice" prepend-icon="mdi-plus">
+      Añadir<br>Dispositivo
       <v-dialog v-model="popUp" activator="parent" width="800" height="800">
         <v-card>
           <v-card-text>
             <v-text-field
               type="text"
-              placeholder="Text"
               v-model="text"
               label="Nombre Del Dispositivo"
               hint="Ingrese solo letras, espacios y números (A-Z, a-z, 0-9)"
               variant="outlined"
             />
-              <v-list>
-                  <v-list-item v-for="dev in devicesTypes">
-                      <v-btn rounded="lg" variant="outlined" color="blue" prepend-icon="mdi-content-save-outline"
-                             @click="elemCreate(dev.id,text) && (snackBar = true)">
-                        Crear {{dev.singular}}</v-btn>
-                  </v-list-item>
-              </v-list>
+            <v-container class="actions">
+              <v-row v-for="dev in devicesTypes" class="actions" justify="center">
+                  <v-btn rounded="lg" variant="outlined" color="blue"
+                           class="actions"
+                           @click="elemCreate(dev.id,text) && (snackBar = true)">
+                      Crear {{dev.singular}}
+                  </v-btn>
+              </v-row>
+            </v-container>
           </v-card-text>
             <v-card-actions>
-              <v-btn @click="popUp = false" block  prepend-icon="mdi-close">Close</v-btn>
+              <v-btn @click="(popUp = false) && (text = '')" block  prepend-icon="mdi-close">Close</v-btn>
             </v-card-actions>
         </v-card>
       </v-dialog>
@@ -184,9 +185,10 @@
       if(typeName === undefined || typeName === ''){
         snackBarTxt.value = "Por favor ingrese un nombre para el dispositivo"
       }else{
-      snackBarTxt.value = "Dispositivo " + typeName + " añadido correctamente."
+        snackBarTxt.value = "Dispositivo " + typeName + " añadido correctamente."
       }
       snackBar.value = true
+      popUp.value = false
     } catch (error) {
       if(error.code === 1){
         snackBarTxt.value = "No debe ingresar caracteres especiales!"
@@ -204,15 +206,26 @@
 </script>
 
 <style scoped>
+
+.addDevice{
+  background-color: #3c8aff;
+  color: white;
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+}
+
+.actions {
+  margin-right: 7px;
+  margin-left: 7px;
+  margin-bottom: 4px;
+}
+
 #add-btn {
   align-self: end;
-  position: fixed;
   bottom: 20px;
   right: 20px;
   transition: transform 0.3s;
-  width: 56px;
-  height: 56px;
-  border-radius:50%;
 }
 </style>
 
