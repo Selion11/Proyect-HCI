@@ -9,7 +9,6 @@ import {de} from "vuetify/locale";
 export const useDeviceStore = defineStore('devices', () =>{
   // State - ref
   const devices = ref([])
-  const events = ref([])
   const mostRecentDevices = ref([])
   let oldestIdx = 0
 
@@ -126,5 +125,5 @@ export const useDeviceStore = defineStore('devices', () =>{
     setInterval(getAll, 10000)
   })
 
-  return { getAll, getAllByType, get, add, execute, modify, getLog, getLogs, getAllEvents, getDeviceEvents, getState, remove, devices, events }
+  return { getAll, getAllByType, get, add, execute, modify, getLog, getLogs, getAllEvents, getDeviceEvents, getState, remove, devices, updateState }
 })

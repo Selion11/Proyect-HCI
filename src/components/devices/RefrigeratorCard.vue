@@ -183,9 +183,9 @@ async function execute(actionName, params= []){
 async function removeDevice(){
   try{
     isLoading.value = true
-    clearInterval(intervalId.value)
     const result = await deviceStore.remove(props.id)
     if(!result){
+      clearInterval(intervalId.value)
       isLoading.value = false
     }
   } catch(error){

@@ -2,29 +2,50 @@
 import {defineProps, ref, onMounted, computed, mergeProps, defineEmits} from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
 
+class SpeakerState {
+  constructor(status, volume, genre, songStatus, meta){
+    this.status = status
+    this.volume = volume
+    this.genre = genre
+    // SongStatus - NOT Song!!
+    this.song = songStatus
+    this.meta = meta
+  }
+}
+
+class Song {
+  constructor(title, artist, album, duration, progress = 0){
+    this.title = title
+    this.artist = artist
+    this.album = album
+    this.duration = duration
+    this.progress = progress
+  }
+}
+
+
 const props = defineProps(['id'])
 const emits = defineEmits(["to-snackbar"])
 const editDia = ref(false)
 const deviceStore = useDeviceStore()
-const status = computed(() => {
-  if(speaker.value["state"].status !== undefined){
-    return speaker.value["state"].status
-  }
-})
+const status = computed(() => speaker.value["state"].status)
 const isStopped = computed( () => speaker.value["state"].status === "stopped")
 const currentSong = computed( () => !isStopped.value ? speaker.value["state"].song.title : null)
 const songProgress = computed( () => {
   if(!isStopped.value){
-    return turnMinutesToSeconds(speaker.value["state"].song.progress)*100 / turnMinutesToSeconds(speaker.value["state"].song.duration)
+    return currentSongProgress.value*100 / turnMinutesToSeconds(speaker.value["state"].song.duration)
   } else{
     return 0
   }
 })
+
+const currentSongProgress = ref(0)
+
 const newName = ref('')
 
 const isLoading = ref(true)
 const volume = computed( () => speaker.value["state"].volume)
-const speaker = ref({})
+const speaker = computed( () => deviceStore.devices.filter( (device) => device.id === props.id)[0])
 
 const currentVolume = ref(0)
 const currentGenre = computed( () => {
@@ -41,7 +62,9 @@ const VOLdialog = ref(false)
 const GENdialog = ref(false)
 const DELdialog = ref(false)
 const PLdialog = ref(false)
-const refreshInterval = ref(null)
+const refreshInterval = ref(0)
+const songProgressInterval = ref(0)
+const speakerEvents = ref(null)
 
 function turnMinutesToSeconds(time) {
   const parts = time.split(':');
@@ -53,9 +76,8 @@ async function editDevice(){
     name: newName.value,
     meta: speaker.value["meta"]
   }
-  const deviceId = speaker.value["id"].toString()
   try{
-    const result = await deviceStore.modify(deviceId, editedDevice)
+    const result = await deviceStore.modify(speaker.value["id"], editedDevice)
     if(result) {
       newName.value = ''
       editDia.value = false
@@ -74,9 +96,8 @@ async function editDevice(){
 }
 
 async function execute(actionName, params= []){
-  let result = await deviceStore.execute(props.id, actionName, params)
+  const result = await deviceStore.execute(props.id, actionName, params)
   if(result){
-    speaker.value = await deviceStore.get(props.id)
     return result
   }
   return null
@@ -84,22 +105,37 @@ async function execute(actionName, params= []){
 
 onMounted(async () => {
   try{
-    speaker.value = await deviceStore.get(props.id)
+    speakerEvents.value = deviceStore.getDeviceEvents(props.id)
+    speakerEvents.value.onmessage = async (event) => {
+      const data = JSON.parse(event.data)
+      if(data.event === 'songChanged'){
+        const songProgress = new Song(data.args["newSong"].title, data.args["newSong"].artist, data.args["newSong"].album, data.args["newSong"].duration)
+        currentSongProgress.value = turnMinutesToSeconds(songProgress.progress)
+        const speakerState = new SpeakerState(speaker.value["state"].status, currentVolume.value, speaker.value["state"].genre, songProgress,{})
+        deviceStore.updateState(props.id, speakerState)
+      }
+    }
     currentVolume.value = volume.value
+    if(!isStopped.value){
+      currentSongProgress.value = turnMinutesToSeconds(speaker.value["state"].song.progress)
+    }
+    refreshInterval.value = setInterval(refreshState, 7000)
+    songProgressInterval.value = setInterval(refreshSongProgress, 1000)
     isLoading.value = false
-  } catch(error){
-    throw error
-  }
-  try{
-    refreshInterval.value = setInterval(refreshState, 1000)
-  } catch(error){
-    throw error
+  } catch(error) {
+    console.log(error)
   }
 })
+
+function refreshSongProgress(){
+  if(speaker.value["state"].status === 'playing'){
+    currentSongProgress.value = currentSongProgress.value + 1
+  }
+}
+
 async function refreshState(){
   try{
     await execute("setVolume", [currentVolume.value])
-    speaker.value = await deviceStore.get(props.id)
   } catch(error){
     console.log(error)
   }
@@ -141,6 +177,7 @@ async function getPlaylist(){
 async function stop(){
   try{
     await execute("stop")
+    currentSongProgress.value = 0
   } catch(error){
     console.log(error)
   }
@@ -151,6 +188,7 @@ async function nextSong(){
     await execute("nextSong")
     await execute("play")
     await execute("resume")
+    currentSongProgress.value = 0
   } catch(error){
     console.log(error)
   }
@@ -161,6 +199,7 @@ async function previousSong(){
     await execute("previousSong")
     await execute("play")
     await execute("resume")
+    currentSongProgress.value = 0
   } catch(error){
     console.log(error)
   }
@@ -181,9 +220,10 @@ async function volumeDown(){
 async function removeDevice(){
   try{
     isLoading.value = true
-    clearInterval(refreshInterval.value)
     const result = await deviceStore.remove(props.id)
     if(!result){
+      clearInterval(refreshInterval.value)
+      clearInterval(songProgressInterval.value)
       isLoading.value = false
     }
   } catch(error){
@@ -194,7 +234,7 @@ async function removeDevice(){
 async function setGenre(genre){
   try{
     await execute("setGenre", [genre])
-    await execute("stop")
+    await stop()
     GENdialog.value = false
     emits('to-snackbar', `El género ha sido cambiado a ${currentGenre.value}`)
   } catch(error){

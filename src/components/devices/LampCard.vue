@@ -296,9 +296,9 @@ async function refreshState(){
 async function removeDevice(){
   try{
     isLoading.value = true
-    clearInterval(refreshInterval.value)
     const result = await deviceStore.remove(props.id)
     if(!result){
+      clearInterval(refreshInterval.value)
       isLoading.value = false
     }
   } catch(error){
