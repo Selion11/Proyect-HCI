@@ -174,29 +174,30 @@
   }
 
   async function elemCreate (typeId,typeName) {
-    try {
-      await devStore.add({
-        type: {
-          id: typeId
-        },
-        name: typeName,
-        meta: {}
-      })
-      if(typeName === undefined || typeName === ''){
-        snackBarTxt.value = "Por favor ingrese un nombre para el dispositivo"
-      }else{
-        snackBarTxt.value = "Dispositivo " + typeName + " añadido correctamente."
-      }
+    if (typeName === undefined || typeName === '') {
+      snackBarTxt.value = "Por favor ingrese un nombre para el dispositivo"
       snackBar.value = true
-      popUp.value = false
-    } catch (error) {
-      if(error.code === 1){
-        snackBarTxt.value = "No debe ingresar caracteres especiales!"
+    } else {
+      try {
+        const result = await devStore.add({
+          type: {
+            id: typeId
+          },
+          name: typeName,
+          meta: {}
+        })
+        snackBarTxt.value = `Dispositivo ${result.name} añadido correctamente.`
+        snackBar.value = true
+        popUp.value = false
+        text.value = ''
+      } catch (error){
+        if (error.code === 1) {
+          snackBarTxt.value = "No debe ingresar caracteres especiales ni comenzar el nombre con números"
+        } else {
+          snackBarTxt.value = "Dispositivo " + typeName + " ya existe!"
+        }
+        snackBar.value = true
       }
-      else{
-        snackBarTxt.value = "Dispositivo " + typeName + " ya existe!"
-      }
-      snackBar.value = true
     }
   }
   function toSnackbar(message){

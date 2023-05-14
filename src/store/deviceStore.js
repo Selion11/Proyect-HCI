@@ -2,7 +2,6 @@
 import { ref, onMounted } from "vue";
 import { defineStore } from 'pinia'
 import { DevicesApi, Device, Log } from '@/api/device'
-import {de} from "vuetify/locale";
 
 // Every store goes here, it can be divided by device type and a general store for
 // grouping available products of the API
@@ -10,29 +9,19 @@ export const useDeviceStore = defineStore('devices', () =>{
   // State - ref
   const devices = ref([])
   const mostRecentDevices = ref([])
-  let oldestIdx = 0
 
 
-  async function addRecent(deviceID){
-    mostRecentDevices[oldestIdx] = get(deviceID)
-    if(oldestIdx === 4){
-      oldestIdx = 0
-    }else
-      oldestIdx += 1
+  function addRecent(deviceID){
+    mostRecentDevices.value.push(deviceID)
+    if(mostRecentDevices.value.length > 5){
+      mostRecentDevices.value = mostRecentDevices.value.slice(-5)
+    }
   }
 
-  async function removeFromRecent(deviceID){
-    let i = 0
-    while(i < 5){
-      if(mostRecentDevices[i] === deviceID){
-        let j = i
-        for(j;j < 4;j++){
-          mostRecentDevices[j] = mostRecentDevices[j+1]
-        }
-        mostRecentDevices[4] = null
-        i = 5
-      }
-      i += 1
+  function removeFromRecent(deviceID){
+    const indexToRemove = mostRecentDevices.value.indexOf(deviceID)
+    if(indexToRemove !== -1){
+      mostRecentDevices.value.splice(indexToRemove, 1)
     }
   }
 
@@ -59,12 +48,14 @@ export const useDeviceStore = defineStore('devices', () =>{
     let result = await DevicesApi.add(device)
     result = Object.assign(new Device(), result)
     devices.value.push(result)
+    addRecent(result.id)
     return result
   }
   async function modify(id, device) {
     let result = await DevicesApi.modify(id, device)
     result = Object.assign(new Device(), result)
     devices.value.map( (device) => device["id"] === result.id ? result : device)
+    await addRecent(result.id)
     return result
   }
 
@@ -74,6 +65,7 @@ export const useDeviceStore = defineStore('devices', () =>{
     if(result) {
       const toUpdate = await get(id)
       devices.value.map((device) => device["id"] === toUpdate.id ? toUpdate : device)
+      await addRecent(id)
     }
     return result
   }
@@ -109,6 +101,7 @@ export const useDeviceStore = defineStore('devices', () =>{
     // result = { "result": boolean }
     if(result){
       devices.valiue = devices.value.filter( (device) => device["id"] !== id)
+      removeFromRecent(id)
     }
     return result
   }
@@ -125,5 +118,5 @@ export const useDeviceStore = defineStore('devices', () =>{
     setInterval(getAll, 10000)
   })
 
-  return { getAll, getAllByType, get, add, execute, modify, getLog, getLogs, getAllEvents, getDeviceEvents, getState, remove, devices, updateState }
+  return { getAll, getAllByType, get, add, execute, modify, getLog, getLogs, getAllEvents, getDeviceEvents, getState, remove, devices, updateState, mostRecentDevices }
 })

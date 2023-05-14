@@ -1,34 +1,53 @@
 <script setup>
 import FaucetCard from "@/components/devices/FaucetCard.vue";
 import {useDeviceStore} from "@/store/deviceStore";
-import {computed} from "vue";
+import {computed, ref} from "vue";
 import SpeakerCard from "@/components/devices/SpeakerCard.vue";
 import LampCard from "@/components/devices/LampCard.vue";
 import ACCard from "@/components/devices/ACCard.vue";
 const devStore = useDeviceStore()
-const recents = computed(() => devStore.mostRecentDevices)
+const devices = computed( () => devStore.devices)
+const mostRecentDevices = computed(() => devStore.mostRecentDevices)
+console.log(mostRecentDevices.value)
+
+const devicesTypes = ref({
+  speaker: {
+    id: "c89b94e8581855bc"
+  },
+  faucet: {
+    id: "dbrlsh7o5sn8ur4i"
+  },
+  lamp: {
+    id: "go46xmbqeomjrsjr"
+  },
+  ac: {
+    id: "li6cbv5sdlatti0j"
+  },
+  refrigerator: {
+    id: "rnizejqr2di0okho"
+  }})
 </script>
 
 <template>
   <v-row justify="start">
     <v-col cols="6">
-      <v-card class="spacing" height="400px" >
+      <v-card class="spacing" height="400px">
         <v-card-title class="centered">Recent Devices</v-card-title>
-          <v-carousel progress="primary" hide-delimiters show-arrows="hover" v-for="dev in recents">
-              <v-carousel-item v-if="dev.type.id.toString() === 'dbrlsh7o5sn8ur4i'" cover>
-                <FaucetCard :id="dev.id"/>
+          <v-carousel progress="primary" hide-delimiters show-arrows="hover" v-for="deviceID in mostRecentDevices.reverse()">
+              <v-carousel-item v-if="devices.filter((device) => device.id === deviceID)[0].type.id === devicesTypes.faucet.id" cover>
+                <FaucetCard :id="deviceID"/>
               </v-carousel-item>
-              <v-carousel-item v-else-if="dev.type.name === 'speaker'" cover>
-                <SpeakerCard :id="dev.id"/>
+              <v-carousel-item v-else-if="devices.filter((device) => device.id === deviceID)[0].type.id === devicesTypes.speaker.id" cover>
+                <SpeakerCard :id="deviceID"/>
               </v-carousel-item>
-              <v-carousel-item v-else-if="dev.type.name === 'lamp'" cover>
-                <LampCard :id="dev.id"/>
+              <v-carousel-item v-else-if="devices.filter((device) => device.id === deviceID)[0].type.id === devicesTypes.lamp.id" cover>
+                <LampCard :id="deviceID"/>
               </v-carousel-item>
-            <v-carousel-item v-else-if="dev.type.name === 'ac'" cover>
-              <ACCard :id="dev.id"/>
+            <v-carousel-item v-else-if="devices.filter((device) => device.id === deviceID)[0].type.id === devicesTypes.ac.id" cover>
+              <ACCard :id="deviceID"/>
             </v-carousel-item>
             <v-carousel-item v-else>
-              <SpeakerCard :id="dev.id" />
+              <SpeakerCard :id="deviceID" />
             </v-carousel-item>
           </v-carousel>
       </v-card>

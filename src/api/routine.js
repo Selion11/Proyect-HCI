@@ -38,7 +38,7 @@ class Routine {
   }
 }
 class RoutineActions{
-  constructor(deviceId, actionName, params, meta){
+  constructor(deviceId, actionName, params= [], meta){
     this.device = { id: deviceId }
     this.actionName = actionName
     this.params = params
