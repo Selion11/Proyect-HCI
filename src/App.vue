@@ -43,12 +43,16 @@
 
 <script setup>
   import { RouterView, RouterLink } from 'vue-router'
-  import { ref, watchEffect } from 'vue'
+  import { ref, watchEffect, onMounted } from 'vue'
 
   // Logic to link the tab selected to its corresponding path (preserves state after reload)
   const selectedTabKey = ref("selectedTab")
-  const selectedTab = ref(parseInt(localStorage.getItem(selectedTabKey.toString())) || 0 )
-  watchEffect(() => { localStorage.setItem(selectedTabKey.toString(), selectedTab.value.toString()) })
+  const selectedTab = ref(0)
+  watchEffect(() => { localStorage.setItem(selectedTabKey.value, selectedTab.value.toString()) })
+
+  onMounted( () => {
+    selectedTab.value = parseInt(localStorage.getItem(selectedTabKey.value)) || 0
+  })
 
 </script>
 

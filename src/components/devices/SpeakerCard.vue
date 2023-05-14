@@ -60,12 +60,14 @@ const PLdialog = ref(false)
 const refreshInterval = ref(0)
 const songProgressInterval = ref(0)
 const speakerEvents = ref(null)
-const getGenre = (device) => {
-  switch (device["state"].genre) {
-    case "classical":
-      return "Clásica"
-    default:
-      return device["state"].genre[0].toUpperCase() + device["state"].genre.substring(1)
+const getGenre = (genre) => {
+  switch (genre) {
+    case "classical": return "Clásica"
+    case "latina": return "Latina"
+    case "pop": return "Pop"
+    case "rock": return "Rock"
+    case "dance": return "Dance"
+    case "country": return "Country"
   }
 }
 
@@ -119,7 +121,7 @@ onMounted(async () => {
       }
     }
     currentVolume.value = volume.value
-    currentGenre.value = getGenre(speaker.value)
+    currentGenre.value = getGenre(speaker.value["state"].genre)
     if(!isStopped.value){
       currentSongProgress.value = turnMinutesToSeconds(speaker.value["state"].song.progress)
     }
@@ -243,7 +245,7 @@ async function setGenre(genre){
     await execute("setGenre", [genre])
     await stop()
     const result = await deviceStore.get(props.id)
-    currentGenre.value =  getGenre(result)
+    currentGenre.value =  getGenre(result["state"].genre)
     GENdialog.value = false
     emits('to-snackbar', `El género ha sido cambiado a ${currentGenre.value}`)
   } catch(error){

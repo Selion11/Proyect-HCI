@@ -1,5 +1,5 @@
 // Utilities
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watchEffect } from "vue";
 import { defineStore } from 'pinia'
 import { DevicesApi, Device, Log } from '@/api/device'
 
@@ -12,10 +12,14 @@ export const useDeviceStore = defineStore('devices', () =>{
 
 
   function addRecent(deviceID){
+    if(mostRecentDevices.value.indexOf(deviceID) !== -1){
+      removeFromRecent(deviceID)
+    }
     mostRecentDevices.value.push(deviceID)
     if(mostRecentDevices.value.length > 5){
       mostRecentDevices.value = mostRecentDevices.value.slice(-5)
     }
+    localStorage.setItem("mostRecentDevices", JSON.stringify(mostRecentDevices.value))
   }
 
   function removeFromRecent(deviceID){
@@ -23,6 +27,7 @@ export const useDeviceStore = defineStore('devices', () =>{
     if(indexToRemove !== -1){
       mostRecentDevices.value.splice(indexToRemove, 1)
     }
+    localStorage.setItem("mostRecentDevices", JSON.stringify(mostRecentDevices.value))
   }
 
   async function getAll(controller = null) {
@@ -117,7 +122,8 @@ export const useDeviceStore = defineStore('devices', () =>{
   }
 
   onMounted( () => {
-    setInterval(getAll, 10000)
+    setInterval(getAll, 15000)
+    mostRecentDevices.value = JSON.parse(localStorage.getItem("mostRecentDevices")) || []
   })
 
   return { getAll, getAllByType, get, add, execute, modify, getLog, getLogs, getAllEvents, getDeviceEvents, getState, remove, devices, updateState, mostRecentDevices }
