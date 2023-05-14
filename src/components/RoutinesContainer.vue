@@ -217,8 +217,45 @@
       <v-row>
         <v-col v-for="routine in routines" cols="4" >
           <v-card class="routineCard" >
-            <v-card-text>
-              <v-card-title >{{routine.name}}</v-card-title>
+            <v-menu>
+              <template v-slot:activator="{ props: menu }">
+                <v-tooltip location="top">
+                  <template v-slot:activator="{ props: tooltip }">
+                    <v-btn
+                      icon="mdi-delete"
+                      variant="text"
+                      color="error"
+                      class="close"
+                      v-bind="mergeProps(menu, tooltip)"
+                      @click="DELdialog = true"
+                    />
+                    <v-dialog v-model="DELdialog" width="auto" height="auto">
+                      <v-card>
+                        <v-card-title/>
+                        <v-card-title>
+                          ¿Seguro que desea borrar la rutina {{routine.name}}?
+                        </v-card-title>
+                        <v-card-actions>
+                          <v-row justify="center">
+                            <v-btn variant="text" @click="DELdialog = false">No</v-btn>
+                            <v-btn color="red" variant="text" @click="routineStore.remove(routine.id) && (DELdialog = false)">Sí</v-btn>
+                          </v-row>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
+                  </template>
+                  <span>Borrar Rutina</span>
+                </v-tooltip>
+              </template>
+            </v-menu>
+            <v-card-title/>
+
+              <v-row>
+                <v-col cols="6">
+                  <v-card-title >{{routine.name}}</v-card-title>
+                </v-col>
+              </v-row>
+              <v-card-text>
               <v-list>
                 <v-list-subheader>Dispositivos</v-list-subheader>
                 <v-list-item class="routineDevices" v-for="action in routine.actions">
@@ -230,7 +267,7 @@
               </v-list>
             </v-card-text>
             <v-card-actions class="container">
-              <v-btn width="200" height="50" rounded="rounded" class="startRoutine" @click="executeRoutine(routine.id)">Iniciar Rutina </v-btn>
+              <v-btn width="200" height="50" variant="outlined" rounded="rounded" class="startRoutine" @click="executeRoutine(routine.id)">Iniciar Rutina </v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -243,16 +280,19 @@
 import { UseRoutineStore } from "@/store/routineStore.js"
 import { useDeviceStore } from "@/store/deviceStore.js"
 import { Routine, RoutineActions, RoutineMeta } from "@/api/routine";
-import {computed, onMounted, ref, toRaw} from "vue";
+import {computed, mergeProps, onMounted, ref} from "vue";
 
-
+const DELdialog = ref(false)
 const routineStore = UseRoutineStore()
-const routines = computed( () => routineStore.routines)
+const routines = ref( () => routineStore.routines)
 const deviceStore = useDeviceStore()
 const devices = computed( () => deviceStore.devices)
 
 const showRoutine = ref(false)
 const setupDevices = ref(false)
+
+const snackBarTxt = ref('')
+const snackBar = ref(false)
 
 const routineName = ref('')
 let storeSelected = ref([])
@@ -366,9 +406,11 @@ function getActions(typeId){
 }
 
 async function executeRoutine(id){
+  snackBar.value = true
+  snackBarTxt.value = "Ejecutando rutina"
   try {
     await routineStore.execute(id)
-    devices.value = await deviceStore.getAll()
+    await deviceStore.getAll()
   }catch (error) {
     console.log(error)
   }
@@ -447,6 +489,7 @@ async function refreshState(){
 }
 .startRoutine{
   background-color: #3c8aff;
+  color: white;
   margin: 5px 15px 15px;
 }
 .routineCard{
@@ -458,6 +501,13 @@ async function refreshState(){
   position: fixed;
   bottom: 16px;
   right: 16px;
+}
+
+.close{
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  margin: 0;
 }
 
 </style>
