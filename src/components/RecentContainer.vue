@@ -5,9 +5,14 @@ import {computed, ref} from "vue";
 import SpeakerCard from "@/components/devices/SpeakerCard.vue";
 import LampCard from "@/components/devices/LampCard.vue";
 import ACCard from "@/components/devices/ACCard.vue";
+import {UseRoutineStore} from "@/store/routineStore"
+import RoutinesView from "@/views/RoutinesView.vue";
+import RoutinesContainer from "@/components/RoutinesContainer.vue";
 const devStore = useDeviceStore()
+const routStore = UseRoutineStore()
 const devices = computed( () => devStore.devices)
 const mostRecentDevices = computed(() => devStore.mostRecentDevices)
+const mostRecentRoutines = computed(() => routStore.mostRecentRoutines)
 
 const devicesTypes = ref({
   speaker: {
@@ -31,7 +36,7 @@ const devicesTypes = ref({
   <v-row justify="start">
     <v-col cols="6">
       <v-card class="overflow-auto spacing" height="400px">
-        <v-card-title class="centered">Recent Devices</v-card-title>
+        <v-card-title class="centered">Dispositivos Recientes</v-card-title>
           <v-list  progress="primary" hide-delimiters show-arrows="hover" v-for="deviceID in mostRecentDevices.reverse()">
               <v-list-item v-if="devices.filter((device) => device.id === deviceID)[0].type.id === devicesTypes.faucet.id" cover>
                 <FaucetCard :id="deviceID"/>
@@ -58,6 +63,18 @@ const devicesTypes = ref({
         </RouterLink>
       </v-row>
     </v-col>
+    <v-row justify="end">
+    <v-col cols="6">
+      <v-card class="overflow-auto spacing" height="400px">
+        <v-card-title class="centered">Rutinas Recientes</v-card-title>
+        <v-list  progress="primary" hide-delimiters show-arrows="hover" v-for="routineID in mostRecentRoutines.reverse()">
+          <v-list-item cover>
+
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-col>
+    </v-row>
   </v-row>
 </template>
 
