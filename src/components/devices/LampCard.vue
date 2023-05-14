@@ -164,13 +164,16 @@
 </template>
 
 <script setup>
-import {ref, onMounted, mergeProps, defineEmits } from 'vue'
+import {ref, onMounted, mergeProps, defineEmits, computed } from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
 
 const props = defineProps(["id"])
 const emits = defineEmits(["to-snackbar"])
+
 const DELdialog = ref(null)
-const lamp = ref({})
+
+const lamp = computed( () => deviceStore.devices.filter( (device) => device.id === props.id)[0])
+
 const deviceStore = useDeviceStore()
 const isLoading = ref(true)
 const expand = ref(false)
@@ -187,7 +190,7 @@ const newName = ref('')
 async function execute(actionName, params = []){
   let result = await deviceStore.execute(props.id, actionName, params)
   if(result){
-    lamp.value = await deviceStore.get(props.id)
+    await deviceStore.get(props.id)
   } else {
     console.error(result)
   }
@@ -198,9 +201,8 @@ async function editDevice(){
     name: newName.value,
     meta: lamp.value["meta"]
   }
-  const deviceId = lamp.value["id"].toString()
   try{
-    const result = await deviceStore.modify(deviceId, editedDevice)
+    const result = await deviceStore.modify(lamp.value["id"], editedDevice)
     if(result) {
       newName.value = ''
       editDia.value = false
@@ -255,27 +257,23 @@ async function setBrightness(){
 async function setBrightnessUp(){
   if(currentBrightness.value < 100){
     currentBrightness.value = currentBrightness.value + 1
-  } else{
-    // Handle error
   }
 }
 
 async function setBrightnessDown(){
   if(currentBrightness.value > 0){
     currentBrightness.value = currentBrightness.value - 1
-  } else{
-    // Handle error
   }
 }
 
 onMounted( async () => {
   try{
-    lamp.value = await deviceStore.get(props.id)
+    await deviceStore.get(props.id)
     isOn.value = lamp.value["state"].status === 'on'
     currentBrightness.value = lamp.value["state"].brightness
     currentColor.value = '#' + lamp.value["state"].color.toLowerCase()
     isLoading.value = false
-    refreshInterval.value = setInterval(refreshState, 1000)
+    refreshInterval.value = setInterval(refreshState, 5000)
   } catch(error) {
     console.log(error)
   }
@@ -283,7 +281,6 @@ onMounted( async () => {
 
 async function refreshState(){
   try{
-    lamp.value = await deviceStore.get(props.id)
     await setColor()
     await setBrightness()
   } catch(error){

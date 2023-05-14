@@ -33,9 +33,11 @@ const recents = computed(() => devStore.mostRecentDevices)
           </v-carousel>
       </v-card>
       <v-row justify="center">
-      <v-btn variant="outlined" color="info" class="centered" href="/devices">
-        Ver todos los dispositivos!
-      </v-btn>
+        <RouterLink to="/devices">
+          <v-btn variant="outlined" color="info" class="centered">
+            Ver todos los dispositivos!
+          </v-btn>
+        </RouterLink>
       </v-row>
     </v-col>
   </v-row>

@@ -10,8 +10,7 @@ export const useDeviceStore = defineStore('devices', () =>{
   // State - ref
   const devices = ref([])
   const events = ref([])
-  const mostRecentDevices = ref([get("ebb6c6cd0a731ef0"),get("9b9366826c884cd2"),get("99b4735993aa2cf7"),get("375370df3aedc9bd"),
-                                                          get("30f9776999d1f417")])
+  const mostRecentDevices = ref([])
   let oldestIdx = 0
 
 
@@ -66,15 +65,17 @@ export const useDeviceStore = defineStore('devices', () =>{
   async function modify(id, device) {
     let result = await DevicesApi.modify(id, device)
     result = Object.assign(new Device(), result)
-    devices.value.map( (device) => device.id === result.id ? result : device)
+    devices.value.map( (device) => device["id"] === result.id ? result : device)
     return result
   }
 
   async function execute(id, actionName, parameters) {
     // result = { "result": boolean }
     const result = await DevicesApi.execute(id, actionName, parameters)
-    const toUpdate = await get(id)
-    devices.value.map( (device) => device.id === toUpdate.id ? toUpdate : device)
+    if(result) {
+      const toUpdate = await get(id)
+      devices.value.map((device) => device["id"] === toUpdate.id ? toUpdate : device)
+    }
     return result
   }
 
@@ -108,14 +109,14 @@ export const useDeviceStore = defineStore('devices', () =>{
     const result = await DevicesApi.remove(id)
     // result = { "result": boolean }
     if(result){
-      devices.valiue = devices.value.filter( (device) => device.id !== id)
+      devices.valiue = devices.value.filter( (device) => device["id"] !== id)
     }
     return result
   }
 
   function updateState(id, state){
     devices.value.map((device) => {
-      if(device.id === id){
+      if(device["id"] === id){
         device.state = state
       }
     })

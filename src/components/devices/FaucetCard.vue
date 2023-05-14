@@ -231,7 +231,8 @@ onMounted( async () => {
     faucetEvents.value.onmessage = async (event) => {
       const data = JSON.parse(event.data)
       if(data.event === 'statusChanged'){
-        deviceStore.updateState(props.id, data.args.newStatus)
+        const faucetState = new FaucetState(data.args["newStatus"])
+        deviceStore.updateState(props.id, faucetState)
       }
     }
     isLoading.value = false
