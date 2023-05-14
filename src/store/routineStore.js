@@ -18,10 +18,13 @@ export const UseRoutineStore = defineStore('routine', () => {
   }
 
   function removeFromRecent(routineID){
-    const indexToRemove = mostRecentRoutines.value.indexOf(routineID)
-    if(indexToRemove !== -1){
-      mostRecentRoutines.value.splice(indexToRemove, 1)
-    }
+    const result = []
+    mostRecentRoutines.value.forEach( (id) => {
+      if(id !== routineID){
+        result.push(id)
+      }
+    })
+    mostRecentRoutines.value = result
     localStorage.setItem("mostRecentRoutines", JSON.stringify(mostRecentRoutines.value))
   }
 

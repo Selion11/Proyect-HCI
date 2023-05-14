@@ -48,7 +48,7 @@
           <v-card-subtitle v-else-if="isOn">Dispensando...</v-card-subtitle>
           <v-card-subtitle v-else>Apagado</v-card-subtitle>
         </v-row>
-        <v-row class="actions" justify="start">
+        <v-row class="actions" justify="center">
           <v-btn v-if="!isOn" width="flex" class="actions" @click="turnOnOff()">Encender</v-btn>
           <v-btn v-else width="flex" class="actions" @click="turnOnOff()">Apagar</v-btn>
           <div class="text-center">

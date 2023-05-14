@@ -23,10 +23,13 @@ export const useDeviceStore = defineStore('devices', () =>{
   }
 
   function removeFromRecent(deviceID){
-    const indexToRemove = mostRecentDevices.value.indexOf(deviceID)
-    if(indexToRemove !== -1){
-      mostRecentDevices.value.splice(indexToRemove, 1)
-    }
+    const result = []
+    mostRecentDevices.value.forEach( (id) => {
+      if(id !== deviceID){
+        result.push(id)
+      }
+    })
+    mostRecentDevices.value = result
     localStorage.setItem("mostRecentDevices", JSON.stringify(mostRecentDevices.value))
   }
 
@@ -38,9 +41,9 @@ export const useDeviceStore = defineStore('devices', () =>{
   }
 
   async function getAllByType(deviceTypeId) {
-    let result = await DevicesApi.getAllByType(deviceTypeId);
-    result.map((device) => Object.assign(new Device(), device))
+    let result = await DevicesApi.getAllByType(deviceTypeId)
     await getAll()
+    result.map((device) => Object.assign(new Device(), device))
     return result
   }
 
@@ -62,7 +65,7 @@ export const useDeviceStore = defineStore('devices', () =>{
     let result = await DevicesApi.modify(id, device)
     result = Object.assign(new Device(), result)
     devices.value.map( (device) => device["id"] === result.id ? result : device)
-    await addRecent(result.id)
+    addRecent(result.id)
     return result
   }
 
@@ -72,7 +75,7 @@ export const useDeviceStore = defineStore('devices', () =>{
     if(result) {
       const toUpdate = await get(id)
       devices.value.map((device) => device["id"] === toUpdate.id ? toUpdate : device)
-      await addRecent(id)
+      addRecent(id)
     }
     return result
   }
@@ -121,7 +124,8 @@ export const useDeviceStore = defineStore('devices', () =>{
     })
   }
 
-  onMounted( () => {
+  onMounted( async () => {
+    await getAll()
     setInterval(getAll, 15000)
     mostRecentDevices.value = JSON.parse(localStorage.getItem("mostRecentDevices")) || []
   })

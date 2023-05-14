@@ -1,7 +1,7 @@
 <script setup>
 import FaucetCard from "@/components/devices/FaucetCard.vue";
-import {useDeviceStore} from "@/store/deviceStore";
-import {computed, ref} from "vue";
+import { useDeviceStore } from "@/store/deviceStore";
+import { computed, ref } from "vue";
 import SpeakerCard from "@/components/devices/SpeakerCard.vue";
 import LampCard from "@/components/devices/LampCard.vue";
 import ACCard from "@/components/devices/ACCard.vue";
@@ -33,11 +33,13 @@ const devicesTypes = ref({
 </script>
 
 <template>
-  <v-row justify="start">
-    <v-col cols="6">
+  <v-row>
+  <v-col cols="6" justify="center">
+    <v-container fluid>
       <v-card class="overflow-auto spacing" height="400px">
         <v-card-title class="centered">Dispositivos Recientes</v-card-title>
-          <v-list  progress="primary" hide-delimiters show-arrows="hover" v-for="deviceID in mostRecentDevices.reverse()">
+          <v-list  progress="primary" hide-delimiters show-arrows="hover" v-for="deviceID in mostRecentDevices.reverse()" :id="deviceID
+">
               <v-list-item v-if="devices.filter((device) => device.id === deviceID)[0].type.id === devicesTypes.faucet.id" cover>
                 <FaucetCard :id="deviceID"/>
               </v-list-item>
@@ -62,9 +64,10 @@ const devicesTypes = ref({
           </v-btn>
         </RouterLink>
       </v-row>
-    </v-col>
-    <v-row justify="end">
-    <v-col cols="6">
+    </v-container>
+  </v-col>
+  <v-col cols="6" justify="center">
+    <v-container fluid>
       <v-card class="overflow-auto spacing" height="400px">
         <v-card-title class="centered">Rutinas Recientes</v-card-title>
         <v-list  progress="primary" hide-delimiters show-arrows="hover" v-for="routineID in mostRecentRoutines.reverse()">
@@ -73,8 +76,8 @@ const devicesTypes = ref({
           </v-list-item>
         </v-list>
       </v-card>
-    </v-col>
-    </v-row>
+    </v-container>
+  </v-col>
   </v-row>
 </template>
 
