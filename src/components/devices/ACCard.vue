@@ -311,8 +311,9 @@ async function removeDevice(){
     isLoading.value = true
     const result = await deviceStore.remove(props.id)
     if(!result){
-      clearInterval(refreshInterval.value)
       isLoading.value = false
+    } else{
+      clearInterval(refreshInterval.value)
     }
   } catch(error){
     emits("to-snackbar", "Ocurrió un error intentado eliminar el dispositivo")

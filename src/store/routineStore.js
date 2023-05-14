@@ -52,5 +52,5 @@ export const UseRoutineStore = defineStore('routine', () => {
     return await RoutinesApi.execute(id)
   }
 
-  return {getAll, get, add, execute, modify, remove}
+  return { getAll, get, add, execute, modify, remove, routines }
 })

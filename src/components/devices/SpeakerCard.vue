@@ -222,9 +222,10 @@ async function removeDevice(){
     isLoading.value = true
     const result = await deviceStore.remove(props.id)
     if(!result){
+      isLoading.value = false
+    } else{
       clearInterval(refreshInterval.value)
       clearInterval(songProgressInterval.value)
-      isLoading.value = false
     }
   } catch(error){
     console.error(error)

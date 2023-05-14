@@ -1,108 +1,109 @@
 <template>
-  <v-card-subtitle v-if="routines.length <= 0">Actualmente no hay ninguna rutina agregada. Para hacerlo, utilice el botón de "Agregar Rutina"</v-card-subtitle>
-  <v-btn class="addRoutine" prepend-icon="mdi-plus" @click="showRoutine = true" >Agregar<br>Rutina</v-btn>
-  <v-dialog v-model="showRoutine" max-width="600" >
-    <v-card>
-      <v-card-text>
-        <v-card-title>Nueva Rutina</v-card-title>
-        <v-text-field
-          v-model="routineName"
-          label="Nombre de la rutina"
-        ></v-text-field>
-        <v-select
-          v-model="storeSelected"
-          label="Seleccione la categoría del dispositivo"
-          :items="devicesTypes"
-          :item-title="item => item.name"
-          :item-value="item => item.store"
-        ></v-select>
-        <v-select v-if="storeSelected.length > 0"
-                  v-model="devicesSelected"
-                  label="Seleccione los dispositivos"
-                  :items="storeSelected"
-                  :item-title="item => item.name"
-                  :item-value="item => item"
-                  multiple
-        ></v-select>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn :disabled="!isValidName()" color="primary" @click="createRoutine(routineName,devicesSelected,actionsSelected) && (showRoutine=false)">Crear</v-btn>
-        <v-btn @click="showRoutine = false">Cancelar</v-btn>
-        <v-btn :disabled="devicesSelected.length <= 0" @click="configureDevices()">Configurar dispositivos</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+  <div v-if="!isLoading">
+    <v-card-subtitle v-if="routines.length <= 0">Actualmente no hay ninguna rutina agregada. Para hacerlo, utilice el botón de "Agregar Rutina"</v-card-subtitle>
+    <v-btn class="addRoutine" prepend-icon="mdi-plus" @click="showRoutine = true" >Agregar<br>Rutina</v-btn>
+    <v-dialog v-model="showRoutine" max-width="600" >
+      <v-card>
+        <v-card-text>
+          <v-card-title>Nueva Rutina</v-card-title>
+          <v-text-field
+            v-model="routineName"
+            label="Nombre de la rutina"
+          ></v-text-field>
+          <v-select
+            v-model="storeSelected"
+            label="Seleccione la categoría del dispositivo"
+            :items="devicesTypes"
+            :item-title="item => item.name"
+            :item-value="item => item.store"
+          ></v-select>
+          <v-select v-if="storeSelected.length > 0"
+                    v-model="devicesSelected"
+                    label="Seleccione los dispositivos"
+                    :items="storeSelected"
+                    :item-title="item => item.name"
+                    :item-value="item => item"
+                    multiple
+          ></v-select>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn :disabled="!isValidName()" color="primary" @click="createRoutine(routineName,devicesSelected,actionsSelected) && (showRoutine=false)">Crear</v-btn>
+          <v-btn @click="showRoutine = false">Cancelar</v-btn>
+          <v-btn :disabled="devicesSelected.length <= 0" @click="configureDevices()">Configurar dispositivos</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
-  <v-dialog v-model="setupDevices" width="700" height="auto">
-    <v-card >
-      <v-card-title>Seleccione las acciones a realizar</v-card-title>
-      <v-container >
-        <v-row >
-          <v-col cols="4">
-            <v-container v-for="device in devicesSelected" >
-              <v-card-text >Dispositivo:{{device.name}}</v-card-text>
-            </v-container>
-          </v-col>
-          <v-col cols="4" >
-            <v-container  >
-              <v-select v-for="(device,index) in devicesSelected" :key="index"
-                        v-model="actionsSelected[`${index}`]"
-                        label="Acción"
-                        :items="getActions(device.type.id)"
-              ></v-select>
-            </v-container>
-          </v-col>
-          <v-col cols="4" >
-            <v-container  >
-              <v-btn  color="red">Eliminar dispositivo </v-btn>
-            </v-container>
-          </v-col>
-        </v-row>
-      </v-container>
-      <v-card-actions>
-        <v-btn @click="setupDevices = false">Atrás</v-btn>
-        <v-btn color="primary" @click="setupDevices = false">OK</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+    <v-dialog v-model="setupDevices" width="700" height="auto">
+      <v-card >
+        <v-card-title>Seleccione las acciones a realizar</v-card-title>
+        <v-container >
+          <v-row >
+            <v-col cols="4">
+              <v-container v-for="device in devicesSelected" >
+                <v-card-text >Dispositivo:{{device.name}}</v-card-text>
+              </v-container>
+            </v-col>
+            <v-col cols="4" >
+              <v-container  >
+                <v-select v-for="(device,index) in devicesSelected" :key="index"
+                          v-model="actionsSelected[`${index}`]"
+                          label="Acción"
+                          :items="getActions(device.type.id)"
+                ></v-select>
+              </v-container>
+            </v-col>
+            <v-col cols="4" >
+              <v-container  >
+                <v-btn  color="red">Eliminar dispositivo </v-btn>
+              </v-container>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-card-actions>
+          <v-btn @click="setupDevices = false">Atrás</v-btn>
+          <v-btn color="primary" @click="setupDevices = false">OK</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
-  <v-container>
-    <v-row>
-      <v-col v-for="routine in routines" cols="4" >
-        <v-card class="routineCard" >
-          <v-card-text>
-            <v-card-title >{{routine.name}}</v-card-title>
-            <v-list>
-              <v-list-subheader>Dispositivos</v-list-subheader>
-              <v-list-item class="routineDevices" v-for="action in routine.actions">
-                <template v-slot:prepend>
-                  <v-icon  :icon="getIcon(action.device.type.id)"></v-icon>
-                </template>
-                <v-list-item-title>{{action.device.name}}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-card-text>
-          <v-card-actions class="container">
-            <v-btn width="200" height="50" rounded="rounded" class="startRoutine" @click="executeRoutine(routine.id)">Iniciar Rutina </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
-
+    <v-container>
+      <v-row>
+        <v-col v-for="routine in routines" cols="4" >
+          <v-card class="routineCard" >
+            <v-card-text>
+              <v-card-title >{{routine.name}}</v-card-title>
+              <v-list>
+                <v-list-subheader>Dispositivos</v-list-subheader>
+                <v-list-item class="routineDevices" v-for="action in routine.actions">
+                  <template v-slot:prepend>
+                    <v-icon  :icon="getIcon(devices.filter((device) => action.device.id === device.id)[0].type.id)"></v-icon>
+                  </template>
+                  <v-list-item-title>{{devices.filter((device) => action.device.id === device.id)[0].name}}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+            <v-card-actions class="container">
+              <v-btn width="200" height="50" rounded="rounded" class="startRoutine" @click="executeRoutine(routine.id)">Iniciar Rutina </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
 </template>
 
 <script setup>
-import {UseRoutineStore} from "@/store/routineStore.js"
-import {useDeviceStore} from "@/store/deviceStore.js"
-import {Routine, RoutineActions, RoutineMeta} from "@/api/routine";
-import {computed, onMounted, ref} from "vue";
+import { UseRoutineStore } from "@/store/routineStore.js"
+import { useDeviceStore } from "@/store/deviceStore.js"
+import { Routine, RoutineActions, RoutineMeta } from "@/api/routine";
+import { computed, onMounted, ref } from "vue";
 
 
 const routineStore = UseRoutineStore()
-const routines = ref([])
+const routines = computed( () => routineStore.routines)
 const deviceStore = useDeviceStore()
-const devices = ref([])
+const devices = computed( () => deviceStore.devices)
 
 const showRoutine = ref(false)
 const setupDevices = ref(false)
@@ -228,8 +229,8 @@ async function createRoutine(routineName,devicesSelected,actionsSelected){
 
 onMounted(  async () => {
   try {
-    devices.value = await deviceStore.getAll()
-    routines.value = await routineStore.getAll()
+    await deviceStore.getAll()
+    await routineStore.getAll()
     isLoading.value = false
   } catch(error){
     throw error
