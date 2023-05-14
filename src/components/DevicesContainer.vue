@@ -1,6 +1,6 @@
 <template>
 
-  <v-container v-for="device in devicesTypes" :key="device.id">
+  <v-container fluid v-for="device in devicesTypes" :key="device.id">
     <h2>{{ device.frontName }}</h2>
     <div v-if="!isLoading">
       <v-container v-if="device.name === 'Speaker'">

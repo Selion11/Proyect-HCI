@@ -213,7 +213,7 @@
       </v-card>
     </v-dialog>
 
-    <v-container>
+    <v-container fluid>
       <v-row>
         <v-col v-for="routine in routines" cols="4" >
           <v-card class="routineCard" >

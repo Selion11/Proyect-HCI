@@ -8,7 +8,6 @@ import ACCard from "@/components/devices/ACCard.vue";
 const devStore = useDeviceStore()
 const devices = computed( () => devStore.devices)
 const mostRecentDevices = computed(() => devStore.mostRecentDevices)
-console.log(mostRecentDevices.value)
 
 const devicesTypes = ref({
   speaker: {
