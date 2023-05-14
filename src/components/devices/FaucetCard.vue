@@ -157,10 +157,17 @@
 import {ref, onMounted, mergeProps, computed, defineEmits} from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
 
+class FaucetState {
+  constructor(status){
+    this.status = status
+  }
+}
+
 const props = defineProps(["id"])
 const emits = defineEmits(["to-snackbar"])
-const faucet = ref({})
+const faucet = computed( () => deviceStore.devices.filter((device) => device.id === props.id)[0])
 const deviceStore = useDeviceStore()
+const faucetEvents = ref(null)
 
 const newName = ref('')
 const isLoading = ref(true)
@@ -170,7 +177,6 @@ const isDispensing = ref(false)
 const text = ref("0")
 const unit = ref('')
 const quantity = ref(0)
-const refreshInterval = ref(null)
 const dispenseMenu = ref(false)
 const DELdialog = ref(false)
 const editDia = ref(false)
@@ -198,9 +204,8 @@ async function editDevice(){
     name: newName.value,
     meta: faucet.value["meta"]
   }
-  const deviceId = faucet.value["id"].toString()
   try{
-    const result = await deviceStore.modify(deviceId, editedDevice)
+    const result = await deviceStore.modify(faucet.value["id"], editedDevice)
     if(result) {
       newName.value = ''
       editDia.value = false
@@ -215,30 +220,25 @@ async function editDevice(){
 
 async function execute(actionName, params= []){
   let result = await deviceStore.execute(props.id, actionName, params)
-  if(result){
-    faucet.value = await deviceStore.get(props.id)
-  } else {
+  if(!result){
     console.error(result)
   }
 }
 
 onMounted( async () => {
   try{
-    faucet.value = await deviceStore.get(props.id)
+    faucetEvents.value = deviceStore.getDeviceEvents(props.id)
+    faucetEvents.value.onmessage = async (event) => {
+      const data = JSON.parse(event.data)
+      if(data.event === 'statusChanged'){
+        deviceStore.updateState(props.id, data.args.newStatus)
+      }
+    }
     isLoading.value = false
   } catch(error) {
     console.log(error)
   }
-  try{
-    setInterval(refreshState, 1000)
-  } catch(error){
-    console.log(error)
-  }
 })
-
-async function refreshState(){
-  faucet.value = await deviceStore.get(props.id)
-}
 
 async function turnOnOff(){
   try{
@@ -259,7 +259,6 @@ async function turnOnOff(){
 async function removeDevice(){
   try{
     isLoading.value = true
-    clearInterval(refreshInterval.value)
     const result = await deviceStore.remove(props.id)
     if(!result){
       isLoading.value = false

@@ -11,19 +11,13 @@ import FaucetCard from "@/components/devices/FaucetCard.vue";
             progress="primary"
             hide-delimiters show-arrows="hover">
               <v-carousel-item cover>
-
               </v-carousel-item>
+              <v-carousel-item cover/>
+              <v-carousel-item cover>  </v-carousel-item>
+          <v-carousel></v-carousel>
 
-              <v-carousel-item
-      cover
-    >
-
-              <v-carousel-item
-      cover
-    >  </v-carousel-item>
+              <v-carousel-item/>
           </v-carousel>
-
-
       </v-card>
       <v-row justify="center">
       <v-btn variant="outlined" color="info" class="centered" href="/devices">

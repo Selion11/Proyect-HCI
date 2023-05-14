@@ -8,7 +8,6 @@ import { DevicesApi, Device, Log } from '@/api/device'
 export const useDeviceStore = defineStore('devices', () =>{
   // State - ref
   const devices = ref([])
-  const events = ref([])
   async function getAll(controller = null) {
     let result = await DevicesApi.getAll(controller);
     result = result.map((device) => Object.assign(new Device(), device))
@@ -84,9 +83,17 @@ export const useDeviceStore = defineStore('devices', () =>{
     return result
   }
 
+  function updateState(id, state){
+    devices.value.map((device) => {
+      if(device.id === id){
+        device.state = state
+      }
+    })
+  }
+
   onMounted( () => {
     setInterval(getAll, 10000)
   })
 
-  return { getAll, getAllByType, get, add, execute, modify, getLog, getLogs, getAllEvents, getDeviceEvents, getState, remove, devices, events }
+  return { getAll, getAllByType, get, add, execute, modify, getLog, getLogs, getAllEvents, getDeviceEvents, getState, remove, devices, updateState }
 })
