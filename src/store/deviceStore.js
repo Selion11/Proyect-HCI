@@ -2,12 +2,42 @@
 import { ref, onMounted } from "vue";
 import { defineStore } from 'pinia'
 import { DevicesApi, Device, Log } from '@/api/device'
+import {de} from "vuetify/locale";
 
 // Every store goes here, it can be divided by device type and a general store for
 // grouping available products of the API
 export const useDeviceStore = defineStore('devices', () =>{
   // State - ref
   const devices = ref([])
+  const events = ref([])
+  const mostRecentDevices = ref([get("ebb6c6cd0a731ef0"),get("9b9366826c884cd2"),get("99b4735993aa2cf7"),get("375370df3aedc9bd"),
+                                                          get("30f9776999d1f417")])
+  let oldestIdx = 0
+
+
+  async function addRecent(deviceID){
+    mostRecentDevices[oldestIdx] = get(deviceID)
+    if(oldestIdx === 4){
+      oldestIdx = 0
+    }else
+      oldestIdx += 1
+  }
+
+  async function removeFromRecent(deviceID){
+    let i = 0
+    while(i < 5){
+      if(mostRecentDevices[i] === deviceID){
+        let j = i
+        for(j;j < 4;j++){
+          mostRecentDevices[j] = mostRecentDevices[j+1]
+        }
+        mostRecentDevices[4] = null
+        i = 5
+      }
+      i += 1
+    }
+  }
+
   async function getAll(controller = null) {
     let result = await DevicesApi.getAll(controller);
     result = result.map((device) => Object.assign(new Device(), device))
@@ -95,5 +125,5 @@ export const useDeviceStore = defineStore('devices', () =>{
     setInterval(getAll, 10000)
   })
 
-  return { getAll, getAllByType, get, add, execute, modify, getLog, getLogs, getAllEvents, getDeviceEvents, getState, remove, devices, updateState }
+  return { getAll, getAllByType, get, add, execute, modify, getLog, getLogs, getAllEvents, getDeviceEvents, getState, remove, devices, events }
 })

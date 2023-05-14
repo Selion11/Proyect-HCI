@@ -174,7 +174,11 @@
         name: typeName,
         meta: {}
       })
+      if(typeName === undefined){
+        snackBarTxt.value = "Porfavor ingrese un nombre para el dispositivo"
+      }else{
       snackBarTxt.value = "Dispositivo " + typeName + " añadido correctamente."
+      }
       snackBar.value = true
     } catch (error) {
       snackBarTxt.value = "Dispositivo " + typeName + " ya existe!"
