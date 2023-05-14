@@ -217,9 +217,6 @@
       <v-row>
         <v-col v-for="routine in routines" cols="4" >
           <v-card class="routineCard" >
-            <h1 v-for="param in paramsSelected">{{param}}</h1>
-            <h1> Unidad:{{unit}}</h1>
-            <h1> Cantidad : {{cant}}</h1>
             <v-card-text>
               <v-card-title >{{routine.name}}</v-card-title>
               <v-list>
