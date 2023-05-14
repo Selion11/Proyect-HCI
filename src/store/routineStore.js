@@ -14,39 +14,42 @@ export const UseRoutineStore = defineStore('routine', () => {
 
   async function add(routine) {
     const result = await RoutinesApi.add(routine)
-    await getAll()
+    routines.value.push(result)
     return Object.assign(new Routine(), result)
   }
-  async function modify(routine) {
-    const result = await RoutinesApi.modify(routine)
-    await getAll()
-
-    // result = { "result": [boolean, boolean, ..., boolean] }
-    // El orden de los booleanos es el orden de los dispositivos en la rutina
+  async function modify(id, newName, newActions) {
+    // newActions = [{action1}, {action2}, ..., {actionN}] -> newActions.length > 0
+    // actioni = {device: { id: deviceId }, actionName: newAction, params: [param1, param2, ..., paramN], meta: {}}
+    const modified = {
+      name: newName,
+      actions: newActions,
+      meta: {}
+    }
+    const result = await RoutinesApi.modify(id, modified)
+    if(result){
+      routines.value.map( (routine) => routine.id === id ? routine : new Routine(newName, newActions, {}))
+    }
+    // result = { "result": boolean }
     return result
   }
 
   async function remove(id) {
     const result = await RoutinesApi.remove(id)
-    await getAll()
-
-    // result = { "result": [boolean, boolean, ..., boolean] }
-    // El orden de los booleanos es el orden de los dispositivos en la rutina
+    if(result){
+      routines.value = routines.value.filter( (routine) => routine.id !== id)
+    }
+    // result = { "result": boolean }
     return result
   }
   async function get(id) {
-    const result = await RoutinesApi.get(id);
-    await getAll()
+    const result = routines.value.filter( (routine) => routine.id === id)[0]
     return Object.assign(new Routine(), result);
   }
 
   async function execute(id){
-    const result = await RoutinesApi.execute(id)
-    await getAll()
-
     // result = { "result": [boolean, boolean, ..., boolean] }
     // El orden de los booleanos es el orden de los dispositivos en la rutina
-    return result
+    return await RoutinesApi.execute(id)
   }
 
   return {getAll, get, add, execute, modify, remove}

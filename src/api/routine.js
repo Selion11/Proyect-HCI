@@ -13,8 +13,8 @@ class RoutinesApi {
     return await Api.get(RoutinesApi.getURL(id))
   }
 
-  static async modify(routine){
-    return await Api.put(RoutinesApi.getURL(routine.id), routine)
+  static async modify(id, params){
+    return await Api.put(RoutinesApi.getURL(id), params)
   }
 
   static async execute(id){
