@@ -79,7 +79,7 @@
       <v-row justify="center">
           <v-icon class="actions" v-if="canDecreaseTemp && isOn" width="flex" block @click="decreaseTemperature()" icon="mdi-minus"/>
           <v-icon class="actions" v-else disabled block icon="mdi-minus"/>
-                 {{temperature}}ºC
+                 {{currentTemperature}}ºC
           <v-icon class="actions" v-if="isOn && canIncreaseTemp" @click="increaseTemperature()" icon="mdi-plus"/>
           <v-icon class="actions" v-else disabled icon="mdi-plus"/>
       </v-row>
@@ -201,11 +201,10 @@
 <script setup>
 import {ref, onMounted, computed, defineEmits, mergeProps} from 'vue'
 import { useDeviceStore } from "@/store/deviceStore"
-import { Device } from "@/api/device"
 
 const props = defineProps(["id"])
 const emits = defineEmits(["to-snackbar"])
-const ac = ref({})
+const ac = computed( () => deviceStore.devices.filter( (device) => device.id === props.id)[0])
 const deviceStore = useDeviceStore()
 
 
@@ -216,10 +215,10 @@ const expand = ref(false)
 const DELdialog = ref(false)
 const editDia = ref(false)
 const refreshInterval = ref(0)
-const canIncreaseTemp = computed( () => temperature.value < 38)
-const canDecreaseTemp = computed( () => temperature.value > 18)
+const canIncreaseTemp = computed( () => currentTemperature.value < 38)
+const canDecreaseTemp = computed( () => currentTemperature.value > 18)
 const status = computed( () => isOn.value ? "Encendido" : "Apagado")
-const temperature = computed( () =>  ac.value["state"].temperature)
+const currentTemperature = ref(0)
 const mode = computed( () => {
   switch(ac.value["state"].mode){
     case "cool": return "Frio"
@@ -248,6 +247,7 @@ const fanSpeed = computed ( () => {
 
 async function turnOnOff(){
   if(isOn.value){
+    await refreshState()
     await execute("turnOff")
     isOn.value = false
     expand.value = false
@@ -265,22 +265,14 @@ async function setMode(mode){
   }
 }
 async function decreaseTemperature(){
-  if(temperature.value > 18){
-    try{
-      await execute("setTemperature", [temperature.value - 1])
-    } catch(error){
-      console.error(error)
-    }
+  if(currentTemperature.value > 18){
+    currentTemperature.value = currentTemperature.value - 1
   }
 }
 
 async function increaseTemperature(){
-  if(temperature.value < 38) {
-    try {
-      await execute("setTemperature", [temperature.value + 1])
-    } catch (error) {
-      console.error(error)
-    }
+  if(currentTemperature.value < 38) {
+    currentTemperature.value = currentTemperature.value + 1
   }
 }
 
@@ -309,9 +301,7 @@ async function setFanSpeed(speed){
 }
 async function execute(actionName, params= []){
   let result = await deviceStore.execute(props.id, actionName, params)
-  if(result){
-    ac.value = await deviceStore.get(props.id)
-  } else {
+  if(!result){
     console.error(result)
   }
 }
@@ -334,9 +324,8 @@ async function editDevice(){
     name: newName.value,
     meta: ac.value["meta"]
   }
-  const deviceId = ac.value["id"].toString()
   try{
-    const result = await deviceStore.modify(deviceId, editedDevice)
+    const result = await deviceStore.modify(ac.value["id"], editedDevice)
     if(result) {
       newName.value = ''
       editDia.value = false
@@ -356,20 +345,22 @@ async function editDevice(){
 
 onMounted( async () => {
   try{
-    ac.value = await deviceStore.get(props.id)
     isOn.value = ac.value["state"].status === 'on'
+    currentTemperature.value = ac.value["state"].temperature
     isLoading.value = false
   } catch(error) {
     console.log(error)
   }
   try{
-    refreshInterval.value = setInterval(refreshState, 1000)
+    refreshInterval.value = setInterval(refreshState, 5000)
   } catch(error){
     console.log(error)
   }
 })
 async function refreshState(){
-  ac.value = await deviceStore.get(props.id)
+  if(isOn.value && currentTemperature.value !== ac.value["state"].temperature){
+    await execute("setTemperature", [currentTemperature.value])
+  }
 }
 </script>
 
