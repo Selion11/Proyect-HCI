@@ -8,6 +8,7 @@ import ACCard from "@/components/devices/ACCard.vue";
 import {UseRoutineStore} from "@/store/routineStore"
 import RoutinesView from "@/views/RoutinesView.vue";
 import RoutinesContainer from "@/components/RoutinesContainer.vue";
+import RoutineCard from "@/components/RoutineCard.vue";
 const devStore = useDeviceStore()
 const routStore = UseRoutineStore()
 const devices = computed( () => devStore.devices)
@@ -72,7 +73,7 @@ const devicesTypes = ref({
         <v-card-title class="centered">Rutinas Recientes</v-card-title>
         <v-list  progress="primary" hide-delimiters show-arrows="hover" v-for="routineID in mostRecentRoutines.reverse()">
           <v-list-item cover>
-
+            <RoutineCard :id="routineID"></RoutineCard>
           </v-list-item>
         </v-list>
       </v-card>
