@@ -102,18 +102,12 @@
               </v-form>
 
               <v-form v-if="actionsSelected[`${index}`] === 'setTemperature' && device.type.id === 'li6cbv5sdlatti0j'" @submit.prevent="rules()">
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                      v-model="paramsSelected[`${index}`]"
-                      label="Temperatura"
-                      type="number"
-                      hint="Inserte el temperatura deseada"
-                      :rules="[ ()=> paramsSelected[`${index}`] >= 18 && paramsSelected[`${index}`] <= 38 ? true : errorMessage]"
-                      :error-message="errorMessage"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
+                <v-card-text >
+                  <v-row>
+                    <v-slider max="38" thumb-label min="18" step="1" v-model="paramsSelected[`${index}`]"/>
+                  </v-row>
+                  Temperatura: {{paramsSelected[`${index}`]}}°C
+                </v-card-text>
               </v-form>
 
               <v-form v-if="(actionsSelected[`${index}`] === 'setTemperature')&& device.type.id === 'rnizejqr2di0okho'" >
@@ -246,8 +240,7 @@ const showRoutine = ref(false)
 const setupDevices = ref(false)
 
 const selectedColor= ref(null)
-const snackBarTxt = ref('')
-const snackBar = ref(false)
+
 const showColor = ref(true)
 const routineName = ref('')
 let storeSelected = ref([])
@@ -260,6 +253,12 @@ const lampActions = ["turnOn","turnOff","setColor","setBrightness"]
 const acActions = ["turnOn","turnOff","setTemperature","setMode","setVerticalSwing","setHorizontalSwing","setFanSpeed"]
 const fridgeActions = ["setFreezerTemperature","setTemperature","setMode"]
 
+const speakerActions1 = ["setear volumen","play","detener","pausar","resume","canción siguiente ","cancion previa","setear género","obtener lista de reproducción"]
+const faucetActions1 = ["abrir","cerrar","dispensar"]
+const lampActions1 = ["encender","apagar","setear color","setear brillo"]
+const acActions1 = ["encender","apagar","setear temperatura","setear modod","setear aspas verticales","setear aspas horizontales","setear velocidad del ventilador"]
+const fridgeActions1 = ["setear temperetura del freezer","setear temperatura","setear modo"]
+
 const setGenre= ["clasica","country","dance","latina","pop","rock"]
 const dispense= ["ml","cl","dl","l","dal","hl","kl"]
 const acsetMode = ["ventilación","frio","calor"]
@@ -268,7 +267,6 @@ const setHorizontalSwing = ["automatico","-90","-45","0","45","90"]
 const setFanSpeed = ["automatico","25","50","75","100"]
 const fridgesetMode = ["normal","fiesta","vacaciones"]
 
-const errorMessage = computed( () => !isNaN(Number(text.value)) && text.value > 0 ? "" : !isNaN(Number(text.value)) && text.value <= 0 ? 'Debe ingresar un número mayor a cero' : 'Debe ingresar un numero')
 const unit = ref('')
 const cant = ref('')
 let paramsSelected = ref([])
