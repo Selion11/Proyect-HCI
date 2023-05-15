@@ -16,7 +16,7 @@
             :items="devicesTypes"
             :item-title="item => item.name"
             :item-value="item => item.store"
-          ></v-select>
+          />
           <v-select v-if="storeSelected.length > 0"
                     v-model="devicesSelected"
                     label="Seleccione los dispositivos"
@@ -24,7 +24,8 @@
                     :item-title="item => item.name"
                     :item-value="item => item"
                     multiple
-          ></v-select>
+          />
+          <v-card-text v-else class="text-center text-grey-darken-1">Seleccione una categoria en la que posea dispositivos</v-card-text>
         </v-card-text>
         <v-card-actions>
           <v-btn :disabled="!isValidName()" color="primary" @click="createRoutine(routineName,devicesSelected,actionsSelected,paramsSelected) && (showRoutine=false)">Crear</v-btn>
@@ -296,7 +297,7 @@ const devicesTypes = ref([
     icon:"mdi-lamp"
   },
   {
-    name: "Accondiconador de Aire",
+    name: "Aire Acondicionado",
     id: "li6cbv5sdlatti0j",
     store: asyncAc,
     actions: acActions,
