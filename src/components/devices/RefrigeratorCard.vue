@@ -183,11 +183,13 @@ async function execute(actionName, params= []){
 async function removeDevice(){
   try{
     isLoading.value = true
+    const returnMessage =  `El dispositivo ${refrigerator.value["name"]} ha sido eliminado correctamente`
     const result = await deviceStore.remove(props.id)
     if(!result){
       isLoading.value = false
     } else{
       clearInterval(intervalId.value)
+      emits('to-snackbar', returnMessage)
     }
   } catch(error){
     console.error(error)

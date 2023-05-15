@@ -18,7 +18,4 @@ import DevicesContainer from "@/components/DevicesContainer.vue"
 h1 {
   text-align: center;
 }
-.fill-height-custom {
-  height: 100vh;
-}
 </style>

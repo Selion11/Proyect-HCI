@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container class="fill-height-custom">
+    <v-container>
       <h1>Rutinas</h1>
       <RoutinesContainer/>
     </v-container>
@@ -14,8 +14,5 @@ import RoutinesContainer from "@/components/RoutinesContainer.vue";
 <style scoped>
 h1 {
   text-align: center;
-}
-.fill-height-custom {
-  height: 90vh;
 }
 </style>
