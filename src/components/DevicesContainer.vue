@@ -154,6 +154,7 @@
   onMounted(  async () => {
     try {
       await devStore.getAll()
+      await devStore.getAll()
       isLoading.value = false
     } catch(error){
       throw error
@@ -175,7 +176,7 @@
 
   async function elemCreate (typeId,typeName) {
     if (typeName === undefined || typeName === '') {
-      snackBarTxt.value = "Por favor ingrese un nombre para el dispositivo"
+      toSnackbar("Por favor ingrese un nombre para el dispositivo")
       snackBar.value = true
     } else {
       try {
@@ -186,15 +187,19 @@
           name: typeName,
           meta: {}
         })
-        snackBarTxt.value = `Dispositivo ${result.name} añadido correctamente.`
+        toSnackbar(`Dispositivo ${result.name} añadido correctamente.`)
         snackBar.value = true
         popUp.value = false
         text.value = ''
       } catch (error){
         if (error.code === 1) {
-          snackBarTxt.value = "No debe ingresar caracteres especiales ni comenzar el nombre con números"
+          if(text.value.lenght < 3){
+            toSnackbar("El nombre ingresado debe tener al menos 3 letras")
+          } else {
+            toSnackbar("No debe ingresar caracteres especiales")
+          }
         } else {
-          snackBarTxt.value = "Dispositivo " + typeName + " ya existe!"
+          toSnackbar("Dispositivo " + typeName + " ya existe!")
         }
         snackBar.value = true
       }
