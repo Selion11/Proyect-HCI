@@ -193,7 +193,7 @@
         text.value = ''
       } catch (error){
         if (error.code === 1) {
-          if(text.value.lenght < 3){
+          if(text.value.length < 3){
             toSnackbar("El nombre ingresado debe tener al menos 3 letras")
           } else {
             toSnackbar("No debe ingresar caracteres especiales")
