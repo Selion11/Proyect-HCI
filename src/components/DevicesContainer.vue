@@ -1,43 +1,45 @@
 <template>
-
-  <v-container fluid v-for="device in devicesTypes" :key="device.id">
-    <h2>{{ device.frontName }}</h2>
-    <div v-if="!isLoading">
-      <v-container v-if="device.name === 'Speaker'">
-        <v-row >
-          <v-col cols="auto" v-for="item in asyncSpeakers" :key="item.id">
-            <SpeakerCard @to-snackbar="toSnackbar" :id="item.id"/>
-          </v-col>
-        </v-row>
-      </v-container>
-      <v-container v-if="device.name === 'Ac'">
-        <v-row >
-          <v-col cols="auto"  v-for="item in asyncAc" :key="item.id">
-            <ACCard @to-snackbar="toSnackbar" :id="item.id"/>
-          </v-col>
-        </v-row>
-      </v-container>
-      <v-container v-if="device.name === 'Faucet'">
-        <v-row >
-          <v-col cols="auto"  v-for="item in asyncFaucet" :key="item.id">
-            <FaucetCard @to-snackbar="toSnackbar" :id="item.id"/>
-          </v-col>
-        </v-row>
-      </v-container>
-      <v-container v-if="device.name === 'Lamp'" >
-        <v-row >
-          <v-col cols="auto"  v-for="item in asyncLamp" :key="item.id">
-            <LampCard @to-snackbar="toSnackbar" :id="item.id"/>
-          </v-col>
-        </v-row>
-      </v-container>
-      <v-container v-if="device.name === 'Fridge'" >
-        <v-row >
-          <v-col cols="auto"  v-for="item in asyncRefrigerator" :key="item.id">
-            <RefrigeratorCard :id="item.id"/>
-          </v-col>
-        </v-row>
-      </v-container>
+  <v-card-subtitle v-if="devices.length <= 0" class="text-center">Actualmente no hay ningún dispositivo agregado. Para hacerlo, utilice el botón de "Agregar Dispositivo"</v-card-subtitle>
+  <v-container v-else fluid v-for="device in devicesTypes" :key="device.id">
+    <div v-if="devices.filter((dev) => dev.type.id === device.id).length > 0">
+      <h2>{{ device.frontName }}</h2>
+      <div v-if="!isLoading">
+        <v-container v-if="device.name === 'Speaker'">
+          <v-row >
+            <v-col cols="auto" v-for="item in asyncSpeakers" :key="item.id">
+              <SpeakerCard @to-snackbar="toSnackbar" :id="item.id"/>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container v-if="device.name === 'Ac'">
+          <v-row >
+            <v-col cols="auto"  v-for="item in asyncAc" :key="item.id">
+              <ACCard @to-snackbar="toSnackbar" :id="item.id"/>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container v-if="device.name === 'Faucet'">
+          <v-row >
+            <v-col cols="auto"  v-for="item in asyncFaucet" :key="item.id">
+              <FaucetCard @to-snackbar="toSnackbar" :id="item.id"/>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container v-if="device.name === 'Lamp'" >
+          <v-row >
+            <v-col cols="auto"  v-for="item in asyncLamp" :key="item.id">
+              <LampCard @to-snackbar="toSnackbar" :id="item.id"/>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container v-if="device.name === 'Fridge'" >
+          <v-row >
+            <v-col cols="auto"  v-for="item in asyncRefrigerator" :key="item.id">
+              <RefrigeratorCard :id="item.id"/>
+            </v-col>
+          </v-row>
+        </v-container>
+      </div>
     </div>
   </v-container>
   <v-container>
@@ -154,6 +156,7 @@
   onMounted(  async () => {
     try {
       await devStore.getAll()
+      await devStore.getAll()
       isLoading.value = false
     } catch(error){
       throw error
@@ -175,7 +178,7 @@
 
   async function elemCreate (typeId,typeName) {
     if (typeName === undefined || typeName === '') {
-      snackBarTxt.value = "Por favor ingrese un nombre para el dispositivo"
+      toSnackbar("Por favor ingrese un nombre para el dispositivo")
       snackBar.value = true
     } else {
       try {
@@ -186,15 +189,19 @@
           name: typeName,
           meta: {}
         })
-        snackBarTxt.value = `Dispositivo ${result.name} añadido correctamente.`
+        toSnackbar(`Dispositivo ${result.name} añadido correctamente.`)
         snackBar.value = true
         popUp.value = false
         text.value = ''
       } catch (error){
         if (error.code === 1) {
-          snackBarTxt.value = "No debe ingresar caracteres especiales ni comenzar el nombre con números"
+          if(text.value.length < 3){
+            toSnackbar("El nombre ingresado debe tener al menos 3 letras")
+          } else {
+            toSnackbar("No debe ingresar caracteres especiales")
+          }
         } else {
-          snackBarTxt.value = "Dispositivo " + typeName + " ya existe!"
+          toSnackbar("Dispositivo " + typeName + " ya existe!")
         }
         snackBar.value = true
       }

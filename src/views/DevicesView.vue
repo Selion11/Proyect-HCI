@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container id="dispositivos">
+    <v-container id="dispositivos" class="fill-height-custom">
       <h1>Dispositivos</h1>
       <DevicesContainer/>
     </v-container>

@@ -228,12 +228,14 @@ async function volumeDown(){
 async function removeDevice(){
   try{
     isLoading.value = true
+    const returnMessage =  `El dispositivo ${speaker.value["name"]} ha sido eliminado correctamente`
     const result = await deviceStore.remove(props.id)
     if(!result){
       isLoading.value = false
     } else{
       clearInterval(refreshInterval.value)
       clearInterval(songProgressInterval.value)
+      emits('to-snackbar', returnMessage)
     }
   } catch(error){
     console.error(error)

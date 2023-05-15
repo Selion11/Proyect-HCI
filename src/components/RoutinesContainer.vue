@@ -1,6 +1,6 @@
 <template>
   <div v-if="!isLoading">
-    <v-card-subtitle v-if="routines.length <= 0">Actualmente no hay ninguna rutina agregada. Para hacerlo, utilice el botón de "Agregar Rutina"</v-card-subtitle>
+    <v-card-subtitle v-if="routines.length <= 0" class="text-center">Actualmente no hay ninguna rutina agregada. Para hacerlo, utilice el botón de "Agregar Rutina"</v-card-subtitle>
     <v-btn class="addRoutine" prepend-icon="mdi-plus" @click="showRoutine = true" >Agregar<br>Rutina</v-btn>
     <v-dialog v-model="showRoutine" max-width="600" >
       <v-card>
@@ -16,7 +16,7 @@
             :items="devicesTypes"
             :item-title="item => item.name"
             :item-value="item => item.store"
-          ></v-select>
+          />
           <v-select v-if="storeSelected.length > 0"
                     v-model="devicesSelected"
                     label="Seleccione los dispositivos"
@@ -24,7 +24,8 @@
                     :item-title="item => item.name"
                     :item-value="item => item"
                     multiple
-          ></v-select>
+          />
+          <v-card-text v-else class="text-center text-grey-darken-1">Seleccione una categoria en la que posea dispositivos</v-card-text>
         </v-card-text>
         <v-card-actions>
           <v-btn :disabled="!isValidName()" color="primary" @click="createRoutine(routineName,devicesSelected,actionsSelected,paramsSelected) && (showRoutine=false)">Crear</v-btn>
@@ -302,7 +303,7 @@ const devicesTypes = ref([
     icon:"mdi-lamp"
   },
   {
-    name: "Accondiconador de Aire",
+    name: "Aire Acondicionado",
     id: "li6cbv5sdlatti0j",
     store: asyncAc,
     actions: acActions,
