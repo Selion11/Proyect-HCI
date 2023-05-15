@@ -38,47 +38,66 @@
         <v-card-title>Seleccione las acciones a realizar</v-card-title>
         <v-container v-for="(device,index) in devicesSelected" :key="index" >
           <v-row>
-            <v-col cols="2" >
-              <v-card-text >{{device.name}}</v-card-text>
-            </v-col>
-            <v-col cols="3" >
+            <v-container></v-container>
+              <v-col cols="2" >
+                <v-card-text >{{device.name}}</v-card-text>
+              </v-col>
+              <v-col cols="5" >
               <v-container  >
                 <v-select
-                          v-model="actionsSelected[`${index}`]"
-                          label="Acción"
-                          :items="getActions(device.type.id)"
+                v-model="actionsSelected[`${index}`]"
+                label="Acción"
+                :items="getActions(device.type.id)"
                 ></v-select>
               </v-container>
             </v-col>
-            <v-col cols="5" v-if="needParams(actionsSelected[`${index}`])">
-              <v-form v-if="actionsSelected[`${index}`] === 'setVolume'" @submit.prevent="rules()">
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                      v-model="paramsSelected[`${index}`]"
-                      label="Volumen"
-                      type="number"
-                      hint="Inserte el volumen deseado"
-                      :rules="[ ()=> paramsSelected[`${index}`] >= 0 && paramsSelected[`${index}`] <= 10 ? true : errorMessage]"
-                      :error-message="errorMessage"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
+              <v-col cols="4" v-if="needParams(actionsSelected[`${index}`])">
+              <v-form v-if="actionsSelected[`${index}`] === 'setVolume'">
+                <v-card-text >
+                  <v-row>
+                    <v-slider max="10" thumb-label min="0" step="1" v-model="paramsSelected[`${index}`]"/>
+                  </v-row>
+                  Volumen: {{paramsSelected[`${index}`]}}
+                </v-card-text>
+              </v-form>
+              <v-form v-if="actionsSelected[`${index}`] === 'setBrightness'">
+                <v-card-text >
+                  <v-row>
+                    <v-slider max="100" thumb-label min="0" step="1" v-model="paramsSelected[`${index}`]"/>
+                  </v-row>
+                  Brillo: {{paramsSelected[`${index}`]}}%
+                </v-card-text>
               </v-form>
 
-              <v-form v-if="actionsSelected[`${index}`] === 'setBrightness'" @submit.prevent="rules()">
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                      v-model="paramsSelected[`${index}`]"
-                      label="Brillo"
-                      type="number"
-                      hint="Inserte el porcentaje de brillo deseado"
-                      :rules="[ ()=> paramsSelected[`${index}`] >= 0 && paramsSelected[`${index}`] <= 100 ? true : errorMessage]"
-                      :error-message="errorMessage"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
+              <v-form v-if="actionsSelected[`${index}`] === 'setColor'">
+                <v-form   width="auto" height="auto">
+                  <v-card v-if="showColor">
+                    <v-card-title/>
+                    <v-card-title/>
+                    <v-card-text>
+                      <v-row justify="center">
+                        <v-list-item >
+                          <v-color-picker v-model="paramsSelected[`${index}`]" hide-inputs></v-color-picker>
+                        </v-list-item>
+                      </v-row>
+                      <v-divider/>
+                      <v-list-item>
+                        <v-row justify="center">
+                          <v-col cols="12">
+                            <v-btn class ="actions" block @click=getColor(index)>Aceptar</v-btn>
+                          </v-col>
+                        </v-row>
+                      </v-list-item>
+                      <v-list-item v-if="selectedColor">
+                        <v-row justify="center">
+                          <v-col cols="12">
+                            <div>Color seleccionado: {{ selectedColor }}</div>
+                          </v-col>
+                        </v-row>
+                      </v-list-item>
+                    </v-card-text>
+                    </v-card>
+                </v-form>
               </v-form>
 
               <v-form v-if="actionsSelected[`${index}`] === 'setTemperature' && device.type.id === 'li6cbv5sdlatti0j'" @submit.prevent="rules()">
@@ -96,34 +115,22 @@
                 </v-row>
               </v-form>
 
-              <v-form v-if="(actionsSelected[`${index}`] === 'setTemperature')&& device.type.id === 'rnizejqr2di0okho'" @submit.prevent="rules()">
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                      v-model="paramsSelected[`${index}`]"
-                      label="Temperatura"
-                      type="number"
-                      hint="Inserte el temperatura deseada"
-                      :rules="[ ()=> paramsSelected[`${index}`] >= 2 && paramsSelected[`${index}`] <= 8 ? true : errorMessage]"
-                      :error-message="errorMessage"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
+              <v-form v-if="(actionsSelected[`${index}`] === 'setTemperature')&& device.type.id === 'rnizejqr2di0okho'" >
+                <v-card-text >
+                  <v-row>
+                    <v-slider max="8" thumb-label min="2" step="1" v-model="paramsSelected[`${index}`]"/>
+                  </v-row>
+                  Temperatura: {{paramsSelected[`${index}`]}}°C
+                </v-card-text>
               </v-form>
 
-              <v-form v-if="actionsSelected[`${index}`] === 'setFreezerTemperature'" @submit.prevent="rules()">
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                      v-model="paramsSelected[`${index}`]"
-                      label="Temperatura"
-                      type="number"
-                      hint="Inserte el temperatura deseada"
-                      :rules="[ ()=> paramsSelected[`${index}`] >= (-8) && paramsSelected[`${index}`] <= (-20) ? true : errorMessage]"
-                      :error-message="errorMessage"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
+              <v-form v-if="actionsSelected[`${index}`] === 'setFreezerTemperature'" >
+                <v-card-text >
+                  <v-row>
+                    <v-slider max="-8" thumb-label min="-20" step="1" v-model="paramsSelected[`${index}`]"/>
+                  </v-row>
+                  Temperatura: {{paramsSelected[`${index}`]}}°C
+                </v-card-text>
               </v-form>
 
               <v-form v-if="actionsSelected[`${index}`] === 'setGenre'">
@@ -190,11 +197,10 @@
                 ></v-select>
               </v-form>
             </v-col>
-            <v-col v-else-if="noParams(index)">
-              <v-list-item title="Esta acción no recibe parámetros"></v-list-item>
-            </v-col>
-           <v-container>
-             <v-col cols="2" >
+              <v-col v-else-if="noParams(index)">
+                <v-list-item> Esta acción no <br> recibe parámetros</v-list-item>
+              </v-col>
+              <v-col cols="1">
                <v-btn
                  icon="mdi-delete"
                  variant="text"
@@ -202,8 +208,7 @@
                  class="close"
                  @click="deleteDevice(device.name)">
                </v-btn>
-             </v-col>
-           </v-container>
+              </v-col>
           </v-row>
         </v-container>
         <v-card-actions>
@@ -239,9 +244,10 @@ const devices = computed( () => deviceStore.devices)
 const showRoutine = ref(false)
 const setupDevices = ref(false)
 
+const selectedColor= ref(null)
 const snackBarTxt = ref('')
 const snackBar = ref(false)
-
+const showColor = ref(true)
 const routineName = ref('')
 let storeSelected = ref([])
 const devicesSelected = ref([])
@@ -318,9 +324,12 @@ function needParams(action){
   return !(action === 'play' || action === 'stop' || action === 'pause' || action === 'resume' || action === 'nextSong' || action === 'previousSong' || action === 'getPlaylist'
     || action === 'open' || action === 'close' || action === 'turnOn' || action === 'turnOff');
 }
-function getIcon(id){
-  return devicesTypes.value.find((type) => type.id === id).icon
+
+function getColor(index){
+  selectedColor.value = paramsSelected[index]
+  showColor.value = false
 }
+
 function isValidName(){
   return routineName.value.length >0
 }
@@ -353,16 +362,6 @@ function getActions(typeId){
   return devicesTypes.value.find((type) => type.id === typeId ).actions
 }
 
-async function executeRoutine(id){
-  snackBar.value = true
-  snackBarTxt.value = "Ejecutando rutina"
-  try {
-    await routineStore.execute(id)
-    await deviceStore.getAll()
-  }catch (error) {
-    console.log(error)
-  }
-}
 async function createRoutine(routineName,devicesSelected,actionsSelected,paramsSelected){
 
   const routineIDs = []
@@ -438,11 +437,16 @@ async function refreshState(){
   right: 16px;
 }
 
-.close{
+.delete{
   position: absolute;
   top: 5px;
   right: 5px;
   margin: 0;
+}
+.actions {
+  margin-right: 7px;
+  margin-left: 7px;
+  margin-bottom: 4px;
 }
 
 </style>

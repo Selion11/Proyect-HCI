@@ -6,8 +6,6 @@ import SpeakerCard from "@/components/devices/SpeakerCard.vue";
 import LampCard from "@/components/devices/LampCard.vue";
 import ACCard from "@/components/devices/ACCard.vue";
 import {UseRoutineStore} from "@/store/routineStore"
-import RoutinesView from "@/views/RoutinesView.vue";
-import RoutinesContainer from "@/components/RoutinesContainer.vue";
 import RoutineCard from "@/components/RoutineCard.vue";
 const devStore = useDeviceStore()
 const routStore = UseRoutineStore()
