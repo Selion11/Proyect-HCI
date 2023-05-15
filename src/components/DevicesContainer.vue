@@ -1,43 +1,45 @@
 <template>
-
-  <v-container fluid v-for="device in devicesTypes" :key="device.id">
-    <h2>{{ device.frontName }}</h2>
-    <div v-if="!isLoading">
-      <v-container v-if="device.name === 'Speaker'">
-        <v-row >
-          <v-col cols="auto" v-for="item in asyncSpeakers" :key="item.id">
-            <SpeakerCard @to-snackbar="toSnackbar" :id="item.id"/>
-          </v-col>
-        </v-row>
-      </v-container>
-      <v-container v-if="device.name === 'Ac'">
-        <v-row >
-          <v-col cols="auto"  v-for="item in asyncAc" :key="item.id">
-            <ACCard @to-snackbar="toSnackbar" :id="item.id"/>
-          </v-col>
-        </v-row>
-      </v-container>
-      <v-container v-if="device.name === 'Faucet'">
-        <v-row >
-          <v-col cols="auto"  v-for="item in asyncFaucet" :key="item.id">
-            <FaucetCard @to-snackbar="toSnackbar" :id="item.id"/>
-          </v-col>
-        </v-row>
-      </v-container>
-      <v-container v-if="device.name === 'Lamp'" >
-        <v-row >
-          <v-col cols="auto"  v-for="item in asyncLamp" :key="item.id">
-            <LampCard @to-snackbar="toSnackbar" :id="item.id"/>
-          </v-col>
-        </v-row>
-      </v-container>
-      <v-container v-if="device.name === 'Fridge'" >
-        <v-row >
-          <v-col cols="auto"  v-for="item in asyncRefrigerator" :key="item.id">
-            <RefrigeratorCard :id="item.id"/>
-          </v-col>
-        </v-row>
-      </v-container>
+  <v-card-subtitle v-if="devices.length <= 0" class="text-center">Actualmente no hay ningún dispositivo agregado. Para hacerlo, utilice el botón de "Agregar Dispositivo"</v-card-subtitle>
+  <v-container v-else fluid v-for="device in devicesTypes" :key="device.id">
+    <div v-if="devices.filter((dev) => dev.type.id === device.id).length > 0">
+      <h2>{{ device.frontName }}</h2>
+      <div v-if="!isLoading">
+        <v-container v-if="device.name === 'Speaker'">
+          <v-row >
+            <v-col cols="auto" v-for="item in asyncSpeakers" :key="item.id">
+              <SpeakerCard @to-snackbar="toSnackbar" :id="item.id"/>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container v-if="device.name === 'Ac'">
+          <v-row >
+            <v-col cols="auto"  v-for="item in asyncAc" :key="item.id">
+              <ACCard @to-snackbar="toSnackbar" :id="item.id"/>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container v-if="device.name === 'Faucet'">
+          <v-row >
+            <v-col cols="auto"  v-for="item in asyncFaucet" :key="item.id">
+              <FaucetCard @to-snackbar="toSnackbar" :id="item.id"/>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container v-if="device.name === 'Lamp'" >
+          <v-row >
+            <v-col cols="auto"  v-for="item in asyncLamp" :key="item.id">
+              <LampCard @to-snackbar="toSnackbar" :id="item.id"/>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container v-if="device.name === 'Fridge'" >
+          <v-row >
+            <v-col cols="auto"  v-for="item in asyncRefrigerator" :key="item.id">
+              <RefrigeratorCard :id="item.id"/>
+            </v-col>
+          </v-row>
+        </v-container>
+      </div>
     </div>
   </v-container>
   <v-container>
