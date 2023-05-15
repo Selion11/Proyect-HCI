@@ -75,7 +75,7 @@
                         <v-form @submit.prevent="rules()">
                           <v-text-field
                             v-model="text"
-                            :rules="[ ()=> text >= 0 && text <= 100 ? true : errorMessage]"
+                            :rules="[ ()=> text > 0 && text <= 100 ? true : errorMessage]"
                             :error-message="errorMessage"
                             label="Cantidad"
                             type="number"
@@ -174,7 +174,7 @@ const isLoading = ref(true)
 const unitAct = ref(false)
 const isOn = computed( () => faucet.value["state"].status !== 'closed')
 const isDispensing = ref(false)
-const text = ref("0")
+const text = ref(1)
 const unit = ref('')
 const quantity = ref(0)
 const dispenseMenu = ref(false)

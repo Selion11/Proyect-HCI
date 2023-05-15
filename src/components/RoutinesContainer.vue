@@ -28,7 +28,7 @@
           <v-card-text v-else class="text-center text-grey-darken-1">Seleccione una categoria en la que posea dispositivos</v-card-text>
         </v-card-text>
         <v-card-actions>
-          <v-btn :disabled="!isValidName()" color="primary" @click="createRoutine(routineName,devicesSelected,actionsSelected,paramsSelected) && (showRoutine=false)">Crear</v-btn>
+          <v-btn :disabled="!isValidName() || actionsSelected.length < 1 || devicesSelected.length < 1" color="primary" @click="createRoutine(routineName,devicesSelected,actionsSelected,paramsSelected) && (showRoutine=false)">Crear</v-btn>
           <v-btn @click="showRoutine = false">Cancelar</v-btn>
           <v-btn :disabled="devicesSelected.length <= 0" @click="configureDevices()">Configurar dispositivos</v-btn>
         </v-card-actions>
@@ -70,6 +70,19 @@
                 </v-card-text>
               </v-form>
 
+              <v-form v-if="actionsSelected[`${index}`] === 'setBrightness'" @submit.prevent="rules()">
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="paramsSelected[`${index}`]"
+                      label="Brillo"
+                      type="number"
+                      hint="Inserte el porcentaje de brillo deseado"
+                      :rules="[ ()=> paramsSelected[`${index}`] >= 0 && paramsSelected[`${index}`] <= 100 ? true : 'Debe ingresar un número entre 0 y 100']"
+                      :error-message="'Debe ingresar un número entre 0 y 100'"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
               <v-form v-if="actionsSelected[`${index}`] === 'setColor'">
                 <v-form   width="auto" height="auto">
                   <v-card v-if="showColor">
@@ -141,6 +154,8 @@
                 <v-text-field
                   v-model="cant"
                   label="Líquido"
+                  :rules="[ ()=> cant > 0 && cant <= 100 ? true : 'Debe ingresar un número entre 1 y 100']"
+                  :error-message="'Debe ingresar un número entre 1 y 100'"
                   type="number"
                   hint="Inserte el cantidad deseada"
                 ></v-text-field>
@@ -207,8 +222,9 @@
           </v-row>
         </v-container>
         <v-card-actions>
-          <v-btn @click="setupDevices = false">Atrás</v-btn>
-          <v-btn color="primary" @click="setupDevices = false">OK</v-btn>
+          <v-btn @click="(setupDevices = false) && (actionsSelected = [])">Atrás</v-btn>
+          <v-btn v-if="actionsSelected.length === devicesSelected.length && areAllSet()" color="primary" @click="setupDevices = false">OK</v-btn>
+          <v-btn v-else color="primary" disabled class="text-grey-darken-1" >OK</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -230,7 +246,6 @@ import { Routine, RoutineActions, RoutineMeta } from "@/api/routine";
 import {computed, onMounted, ref} from "vue";
 import RoutineCard from "@/components/RoutineCard.vue";
 
-const DELdialog = ref(false)
 const routineStore = UseRoutineStore()
 const routines = ref( () => routineStore.routines)
 const deviceStore = useDeviceStore()
@@ -268,8 +283,8 @@ const setFanSpeed = ["automatico","25","50","75","100"]
 const fridgesetMode = ["normal","fiesta","vacaciones"]
 
 const unit = ref('')
-const cant = ref('')
-let paramsSelected = ref([])
+const cant = ref(1)
+const paramsSelected = ref([])
 
 const asyncSpeakers = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[0].id))
 const asyncFaucet = computed(() => devices.value.filter((device) => device.type.id === devicesTypes.value[1].id))
@@ -315,13 +330,24 @@ const devicesTypes = ref([
     icon:"mdi-fridge"
   }])
 
+function areAllSet(){
+  for(let i=0; i<actionsSelected.value.length ;i++){
+    if(!needParams(actionsSelected.value[i]) && paramsSelected.value[i] !== "noparams"){
+      return false
+    } else{
+
+    }
+  }
+  return true
+}
+
 function configureDevices(){
   setupDevices.value = true
 
 }
 function needParams(action){
   return !(action === 'play' || action === 'stop' || action === 'pause' || action === 'resume' || action === 'nextSong' || action === 'previousSong' || action === 'getPlaylist'
-    || action === 'open' || action === 'close' || action === 'turnOn' || action === 'turnOff');
+    || action === 'open' || action === 'close' || action === 'turnOn' || action === 'turnOff')
 }
 
 function getColor(index){
@@ -410,21 +436,7 @@ onMounted(  async () => {
   } catch(error){
     throw error
   }
-
-  try{
-    setInterval(refreshState, 1000)
-  } catch(error){
-    console.log(error)
-  }
 })
-
-async function refreshState(){
-  try{
-    routines.value = await routineStore.getAll()
-  } catch(error){
-    throw error
-  }
-}
 </script>
 
 <style scoped>
