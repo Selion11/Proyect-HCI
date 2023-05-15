@@ -32,8 +32,9 @@
         </RouterLink>
       </v-tabs>
     </v-toolbar>
+    <div class="fill-height">
     <RouterView v-slot="{ Component }">
-      <v-window >
+      <v-window>
         <v-window-item
           v-for="n in 3"
           :key="n"
@@ -45,21 +46,23 @@
         </v-window-item>
       </v-window>
     </RouterView>
+    </div>
   </v-card>
 </template>
 
 <script setup>
   import { RouterView, RouterLink } from 'vue-router'
-  import { ref, watchEffect, onMounted } from 'vue'
+  import { ref } from 'vue'
 
-  // Logic to link the tab selected to its corresponding path (preserves state after reload)
-  const selectedTabKey = ref("selectedTab")
-  const selectedTab = ref(0)
-  watchEffect(() => { localStorage.setItem(selectedTabKey.value, selectedTab.value.toString()) })
+  const getTab = () => {
+    switch(window.location.pathname){
+      case '/': return 1
+      case '/devices': return 2
+      case '/routines': return 3
+    }
+  }
 
-  onMounted( () => {
-    selectedTab.value = parseInt(localStorage.getItem(selectedTabKey.value)) || 0
-  })
+  const selectedTab = ref(getTab())
 
 </script>
 

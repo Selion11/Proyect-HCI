@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container id="dispositivos">
+    <v-container id="dispositivos" class="fill-height-custom">
       <h1>Dispositivos</h1>
       <DevicesContainer/>
     </v-container>
@@ -17,5 +17,8 @@ import DevicesContainer from "@/components/DevicesContainer.vue"
 <style scoped>
 h1 {
   text-align: center;
+}
+.fill-height-custom {
+  height: 100vh;
 }
 </style>

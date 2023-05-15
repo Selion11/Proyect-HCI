@@ -36,11 +36,10 @@ const devicesTypes = ref({
 <template>
   <v-row>
   <v-col cols="6" justify="center">
-    <v-container fluid>
+    <v-container fill-height>
       <v-card class="overflow-auto spacing" height="400px">
         <v-card-title class="centered">Dispositivos Recientes</v-card-title>
-          <v-list  progress="primary" hide-delimiters show-arrows="hover" v-for="deviceID in mostRecentDevices.reverse()" :id="deviceID
-">
+          <v-list  progress="primary" hide-delimiters show-arrows="hover" v-for="deviceID in mostRecentDevices.reverse()" :id="deviceID">
               <v-list-item v-if="devices.filter((device) => device.id === deviceID)[0].type.id === devicesTypes.faucet.id" cover>
                 <FaucetCard :id="deviceID"/>
               </v-list-item>
@@ -68,7 +67,7 @@ const devicesTypes = ref({
     </v-container>
   </v-col>
   <v-col cols="6" justify="center">
-    <v-container fluid>
+    <v-container>
       <v-card class="overflow-auto spacing" height="400px">
         <v-card-title class="centered">Rutinas Recientes</v-card-title>
         <v-list  progress="primary" hide-delimiters show-arrows="hover" v-for="routineID in mostRecentRoutines.reverse()">
@@ -77,6 +76,13 @@ const devicesTypes = ref({
           </v-list-item>
         </v-list>
       </v-card>
+      <v-row justify="center">
+        <RouterLink to="/routines">
+          <v-btn variant="outlined" color="info" class="centered">
+            Ver todas las rutinas!
+          </v-btn>
+        </RouterLink>
+      </v-row>
     </v-container>
   </v-col>
   </v-row>
