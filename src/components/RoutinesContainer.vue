@@ -69,20 +69,6 @@
                   Brillo: {{paramsSelected[`${index}`]}}%
                 </v-card-text>
               </v-form>
-
-              <v-form v-if="actionsSelected[`${index}`] === 'setBrightness'" @submit.prevent="rules()">
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                      v-model="paramsSelected[`${index}`]"
-                      label="Brillo"
-                      type="number"
-                      hint="Inserte el porcentaje de brillo deseado"
-                      :rules="[ ()=> paramsSelected[`${index}`] >= 0 && paramsSelected[`${index}`] <= 100 ? true : 'Debe ingresar un número entre 0 y 100']"
-                      :error-message="'Debe ingresar un número entre 0 y 100'"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
               <v-form v-if="actionsSelected[`${index}`] === 'setColor'">
                 <v-form   width="auto" height="auto">
                   <v-card v-if="showColor">
@@ -150,16 +136,12 @@
               </v-form>
 
               <v-form v-if="actionsSelected[`${index}`] === 'dispense' && dispenseParams(index)">
-
-                <v-text-field
-                  v-model="cant"
-                  label="Líquido"
-                  :rules="[ ()=> cant > 0 && cant <= 100 ? true : 'Debe ingresar un número entre 1 y 100']"
-                  :error-message="'Debe ingresar un número entre 1 y 100'"
-                  type="number"
-                  hint="Inserte el cantidad deseada"
-                ></v-text-field>
-
+                <v-card-text>
+                  <v-row>
+                    <v-slider max="100" thumb-label min="1" step="1" v-model="cant"/>
+                  </v-row>
+                  Cantidad: {{cant}}
+                </v-card-text>
                 <v-select
                   v-model="unit"
                   label="Seleccione la unidad"
@@ -206,7 +188,6 @@
                   :items="fridgesetMode"
                 ></v-select>
               </v-form>
-              </v-form>
             </v-col>
               <v-col v-else-if="noParams(index)">
                 <v-list-item> Esta acción no <br> recibe parámetros</v-list-item>
@@ -223,7 +204,7 @@
           </v-row>
         </v-container>
         <v-card-actions>
-          <v-btn @click="(setupDevices = false) && (actionsSelected = []) && (paramsSelected = [])">Atrás</v-btn>
+          <v-btn @click="(setupDevices = false) && (actionsSelected = []) && (paramsSelected = []) && (unit = '')">Atrás</v-btn>
           <v-btn v-if="actionsSelected.length === devicesSelected.length && areAllSet()" color="primary" @click="setupDevices = false">OK</v-btn>
           <v-btn v-else color="primary" disabled class="text-grey-darken-1" >OK</v-btn>
         </v-card-actions>
@@ -335,8 +316,8 @@ function areAllSet(){
   for(let i=0; i<actionsSelected.value.length ;i++){
     if(!needParams(actionsSelected.value[i]) && paramsSelected.value[i] !== "noparams"){
       return false
-    } else{
-
+    } else if( actionsSelected.value[i] == 'dispense' && unit.value === ''){
+      return false
     }
   }
   return true
