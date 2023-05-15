@@ -206,6 +206,7 @@
                   :items="fridgesetMode"
                 ></v-select>
               </v-form>
+              </v-form>
             </v-col>
               <v-col v-else-if="noParams(index)">
                 <v-list-item> Esta acción no <br> recibe parámetros</v-list-item>
@@ -222,7 +223,7 @@
           </v-row>
         </v-container>
         <v-card-actions>
-          <v-btn @click="(setupDevices = false) && (actionsSelected = [])">Atrás</v-btn>
+          <v-btn @click="(setupDevices = false) && (actionsSelected = []) && (paramsSelected = [])">Atrás</v-btn>
           <v-btn v-if="actionsSelected.length === devicesSelected.length && areAllSet()" color="primary" @click="setupDevices = false">OK</v-btn>
           <v-btn v-else color="primary" disabled class="text-grey-darken-1" >OK</v-btn>
         </v-card-actions>
