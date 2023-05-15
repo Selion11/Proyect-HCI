@@ -309,7 +309,7 @@ async function execute(actionName, params= []){
 async function removeDevice(){
   try{
     isLoading.value = true
-    const returnMessage =  `El dispositivo ${lamp.value["name"]} ha sido eliminado correctamente`
+    const returnMessage =  `El dispositivo ${ac.value["name"]} ha sido eliminado correctamente`
     const result = await deviceStore.remove(props.id)
     if(!result){
       isLoading.value = false
